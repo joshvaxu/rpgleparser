@@ -1,0 +1,245 @@
+      *====================================================================*
+      *                                                                    *
+      *           SUB-SYSTEM  : 手配・納品・引取                         *
+      *                                                                    *
+      *           PGMID       :  RCE210             RZE030-20061110        *
+      *           TEXT        : 修理預り機械の抹消処理                   *
+      *           NAME        :  NSW A.FUJITA                              *
+      *           DATE        :  2007/02/14                                *
+      *           UPDATE      :  2007/07/04 BY H.MATSUMOTO    UT2-002791   *
+      *                       :  2007/09/20 BY K.FUKAYA       SI -000187   *
+      *                                                                    *
+      *====================================================================*
+     H DATFMT(*ISO) DATEDIT(*YMD) TIMFMT(*ISO)
+     F*====================================================================*
+     F*                 ファイル
+     F*====================================================================*
+     F*<<入出庫ファイル(PF)>>
+     FRFC08P    O    E           K DISK    RENAME(RFC08P:RFC08R) INFSR(*PSSR)
+     F                                     COMMIT
+     F*<<修理預り在庫ファイル(PF)>>
+     FRFC14P    IF   E           K DISK    RENAME(RFC14P:RFC14R)
+     D*====================================================================*
+     D*                 配列／テーブル
+     D*====================================================================*
+     D                 DS
+     D  ATSHBC                       16    DIM(20)
+     D    ASHBC                      16    OVERLAY(ATSHBC:1) INZ                商品部材コード
+     D                 DS
+     D  ATSHBCE                      16    DIM(20)
+     D    ASHBCE                     16    OVERLAY(ATSHBCE:1) INZ               商品部材コード
+     D*====================================================================*
+     D*                 定数／変数／データ構造
+     D*====================================================================*
+     D*<<プログラム状況データ構造>>
+     D                SDS
+     D  WPGM             *PROC                                                  プログラム
+     D  WSTAT            *STATUS                                                状況
+     D  WREID                 40     46                                         例外エラーＩＤ
+     D  WREMG                 91    170                                         例外メッセージ
+     D  WJBID                244    253                                         ＪＯＢＩＤ
+     D  WUSER                254    263                                         ＵＳＥＲ
+     D  WJBNO                264    269                                         ＪＯＢ番号
+     D*<<ジョブ日付>>
+     D                 DS
+     D  #WDATE                 1      8  0 INZ                                  ジョブ日付
+     D   #WYYMM                3      6  0                                       YYMM
+     D                 DS
+     C*====================================================================*
+     C*                 パラメータ　リスト
+     C*====================================================================*
+     C*<<受渡しパラメータ>>
+     C     *ENTRY        PLIST
+     C                   PARM                    P#SYKB            1            処理区分
+     C                   PARM                    P#NKNO           10            内部管理番号
+     C                   PARM                    P#BMCD            7            入力部門コード
+     C                   PARM                    P#TNCD            9            入力担当者番号
+     C                   PARM                    P#ERFG            1            エラーフラグ
+     C*<<修理預り在庫更新処理>>
+     C     PCS490        PLIST
+     C                   PARM                    P#SYKB            1            処理区分
+     C                   PARM                    P#SBAT1          13            採番値
+     C                   PARM                    P#BMNC            7            部門コード
+     C                   PARM                    P#IDKB            1            移動区分
+     C                   PARM                    P#USID           10            ユーザＩＤ
+     C                   PARM                    P#PGID           10            プログラムＩＤ
+     C*<<番号採番処理>>
+     C     PSS040        PLIST
+     C                   PARM                    P#DMSK            2            伝票種別
+     C                   PARM                    P#BMNC                         部門コード
+     C                   PARM                    P#THIC            7            取引先コード
+     C                   PARM                    P#YMYM            6 0          年月
+     C                   PARM                    P#SBAT           15            採番値
+     C* <<エラーログ出力処理>>
+     C     PSS230C       PLIST
+     C                   PARM                    P#PGID           10            ＰＧＭＩＤ
+     C                   PARM                    P#JBID           10            ＪＯＢＩＤ
+     C                   PARM                    P#SYRD            8            処理日
+     C                   PARM                    P#SRTM            6            処理時刻
+     C                   PARM                    P#LGSN            9            ログイン社員番号
+     C                   PARM                    P#LGBC            7            ログイン部門コード
+     C                   PARM                    P#EMID           10            エラーメッセージ
+     C                   PARM                    P#MSGO           80            メッセージ
+     C                   PARM                    P#ERSB            2            エラー種別
+     C*====================================================================*
+     C*                 キー　リスト
+     C*====================================================================*
+     C*<<入出庫ファイル(PF)>>
+     C     KEYC141       KLIST
+     C                   KFLD                    C14NAMN                        内部管理番号
+     C*====================================================================*
+     C*                 メイン処理
+     C*====================================================================*
+     C*<<初期設定>>
+     C                   EXSR      SBINIT                                       初期設定
+     C*
+     C*<<入手っこファイルの更新処理>>
+     C                   EXSR      SB1000
+     C*<<修理預り在庫ファイルの更新処理>>
+     C                   EXSR      SB2000
+     C*<<終了処理>>
+     C                   EXSR      SBEND                                        終了処理
+     C*====================================================================*
+     C*    SBINIT       初期設定処理
+     C*====================================================================*
+     C     SBINIT        BEGSR
+     C*<<標識クリア>>
+     C                   CLEAR                   *IN                            標識クリア
+     C*
+     C*<<指標クリア>>
+     C                   Z-ADD     *ZERO         K                 3 0          指標
+     C*<<日付取得>>
+     C                   Z-ADD     *DATE         #WDATE            8 0          ジョブ日付
+     C*<<時刻取得>>
+     C                   TIME                    #WTIME            6 0          システム時刻
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB1000       入出庫ファイル更新処理
+     C*====================================================================*
+     C     SB1000        BEGSR
+     C*
+     C                   CLEAR                   RFC08R                         入出庫ファイル
+     C                   MOVEL(P)  P#NKNO        C14NAMN
+     C     KEYC141       CHAIN     RFC14R                             90
+     C*
+     C                   MOVEL(P)  *BLANK        C08JYTK                        状態区分
+     C*** SI-000187 EDIT START K.FUKAYA 2007/09/20
+     C*                  MOVEL(P)  1             C08RERN                        履歴番号
+     C                   Z-ADD     1             C08RERN                        履歴番号
+     C*** SI-000187 EDIT END   K.FUKAYA 2007/09/20
+     C                   MOVEL(P)  '1'           C08AKKK                        赤黒区分
+     C  N90              MOVEL(P)  C14HBMC       C08HBMC                        保有部門コード
+     C                   MOVEL(P)  '2'           C08NSKK                        入出庫区分
+     C                   MOVEL(P)  '67'          C08NKBA                        入出庫分類
+     C*<<番号採番処理>>
+     C                   EXSR      SB1100
+     C                   MOVEL(P)  P#SBAT        C08MBNN                        元番号
+     C                   Z-ADD     *ZERO         C08MGNN                        元行番号
+     C                   Z-ADD     *ZERO         C08MMBN                        元孫番号
+     C                   MOVEL(P)  *BLANK        C08YSON                        予算書番号
+     C                   MOVEL(P)  '6'           C08PRPK                        資産区分
+     C                   MOVEL(P)  *BLANK        C08ZIKK                        在庫区分
+     C  N90              MOVEL(P)  C14HBMC       C08HCOC                        保有会社コード
+     C                   MOVEL(P)  P#NKNO        C08HINC                        品コード
+     C                   MOVEL(P)  *BLANK        C08KSHC                        機種コード
+     C                   MOVEL(P)  *BLANK        C08SENC                        性能コード
+     C                   MOVEL(P)  *BLANK        C08KTSC                        型式コード
+     C  N90              EVAL      C08HNNM1 = %TRIMR(C14HNNM1)                  品名１
+     C  N90              EVAL      C08HNNM2 = %TRIMR(C14HNNM2)                  品名２
+     C                   MOVEL(P)  *BLANK        C08KRBC                        借入先部門コード
+     C  N90              MOVEL(P)  C14SSTA       C08SSTA                        所在ステータス
+     C  N90              MOVEL(P)  C14KJOK       C08KJOK                        機械状況区分
+     C  N90              MOVEL(P)  C14MBMC       C08BMNC                        部門コード
+     C  N90              MOVEL(P)  C14TKSC       C08TKSC                        得意先コード
+     C  N90              MOVEL(P)  C14GNBC       C08GNBC                        現場コード
+     C                   MOVEL(P)  *BLANK        C08SIRC                        仕入先コード
+     C                   MOVEL(P)  *BLANK        C08SIMC                        仕入先窓口コード
+     C                   MOVEL(P)  *BLANK        C08TSQN                        単品シーケンス番号
+     C                   Z-ADD     C14CHTD       C08CHTD                        完成品登録日
+     C                   Z-ADD     1             C08SRSU                        数量
+     C                   EVAL      C08TINM = %TRIMR(C14TINM)                    単位名
+     C                   Z-ADD     *ZERO         C08TNTN                        単価
+     C                   Z-ADD     *ZERO         C08KNGM                        金額
+     C                   Z-ADD     *ZERO         C08ZKMM                        在庫未反映金額
+     C                   Z-ADD     #WDATE        C08NYSD                        入出庫日
+     C                   MOVEL(P)  P#BMCD        C08NRBC                        入力部門コード
+     C                   MOVEL(P)  P#TNCD        C08NTNN                        入力担当者番号
+     C                   MOVEL(P)  *BLANK        C08FRKK                        振替区分
+     C                   Z-ADD     *ZERO         C08TRRT                        振替率
+     C*****CHG-STR UT2-002791
+     C***                Z-ADD     *ZERO         C08KJOD                        計上日
+     C                   Z-ADD     #WDATE        C08KJOD                        計上日
+     C*****CHG-END UT2-002791
+     C                   Z-ADD     *ZERO         C08SWKD                        仕訳計上日
+     C                   MOVEL(P)  *BLANK        C08IKOK                        移行区分
+     C                   MOVEL     WUSER         C08TUID                        登録ユーザーＩＤ
+     C                   MOVEL     WPGM          C08TPID                        登録ＰＧＭＩＤ
+     C                   Z-ADD     *DATE         C08TRKD                        登録日
+     C                   TIME                    C08TRTM                        登録時刻
+     C                   MOVEL(P)  *BLANK        C08KUID                        更新ユーザーＩＤ
+     C                   MOVEL(P)  *BLANK        C08KPID                        更新ＰＧＭＩＤ
+     C                   Z-ADD     *ZERO         C08KSND                        更新日
+     C                   Z-ADD     *ZERO         C08KNTM                        更新時刻
+     C*
+     C                   WRITE     RFC08R
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB1100       番号採番処理の呼出し
+     C*====================================================================*
+     C     SB1100        BEGSR
+     C*
+     C*<<番号採番処理>>
+     C                   MOVEL     '44'          P#DMSK                         伝票種別
+     C                   MOVEL     *BLANK        P#BMNC                         部門コード
+     C                   MOVEL     *BLANK        P#THIC                         取引先コード
+     C                   Z-ADD     *ZERO         P#YMYM                         年月
+     C                   MOVEL     *BLANK        P#SBAT                         採番値
+     C                   CALL      'RSS040'      PSS040
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB2000       商品部材在庫ファイルの更新処理呼出し
+     C*====================================================================*
+     C     SB2000        BEGSR
+     C*
+     C*** EDIT START K.FUKAYA 2007/04/06
+     C*                  MOVEL     '3'           P#SYKB                         処理区分
+     C                   MOVEL     '1'           P#SYKB                         処理区分
+     C*** EDIT END   K.FUKAYA 2007/04/06
+     C                   MOVEL     P#SBAT        P#SBAT1                        採番値
+     C                   MOVEL     *BLANK        P#BMNC                         部門コード
+     C                   MOVEL     *BLANK        P#IDKB                         移動区分
+     C                   MOVEL(P)  WUSER         P#USID                         ユーザＩＤ
+     C                   MOVEL(P)  WPGM          P#PGID                         プログラムＩＤ
+     C                   CALL      'RCS490'      PCS490
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBEND        終了処理
+     C*====================================================================*
+     C     SBEND         BEGSR
+     C*
+     C                   SETON                                        LR
+     C                   RETURN
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    *PSSR        例外エラー処理
+     C*====================================================================*
+     C     *PSSR         BEGSR
+     C*
+     C*  <<エラーログ出力処理>>
+     C                   MOVEL     WPGM          P#PGID                         ＰＧＭＩＤ
+     C                   MOVEL     WJBID         P#JBID                         ＪＯＢＩＤ
+     C                   MOVEL     #WDATE        P#SYRD                         処理日
+     C                   MOVEL     #WTIME        P#SRTM                         処理時刻
+     C                   MOVEL     *BLANK        P#LGSN                         ログイン社員番号
+     C                   MOVEL     *BLANK        P#LGBC                         ログイン部門コード
+     C                   MOVEL     WREID         P#EMID                         メッセージＩＤ
+     C                   MOVEL     WREMG         P#MSGO                         メッセージ
+     C                   MOVEL     'BH'          P#ERSB                         エラー種別
+     C                   CALL      'RSS230C'     PSS230C
+     C*
+     C                   ENDSR     '*CANCL'

@@ -1,0 +1,1001 @@
+      *====================================================================*
+      *                                                                    *
+      *           SUB-SYSTEM  : 手配・納品・引取                         *
+      *                                                                    *
+      *           PGMID       :  RCE200             RZE030-20061110        *
+      *           TEXT        : 商品部材振替入力                         *
+      *           NAME        :  NSW M.MATSUNO                             *
+      *           DATE        :  2007/01/11                                *
+      *           UPDATE      :  2007/06/04 BY K.FUKAYA    UT2-002626      *
+      *                       :  2007/07/13 BY H.MATSUMOTO ITB-000252      *
+      *                       :  2007/07/17 BY K.FUKAYA    ITA-000554      *
+      *                       :  2007/08/03 BY H.KAMEDA    ITa-000626      *
+      *                                                                    *
+      *====================================================================*
+     H DATFMT(*ISO) DATEDIT(*YMD) TIMFMT(*ISO)
+     F*====================================================================*
+     F*                 ファイル
+     F*====================================================================*
+     F*<<入出庫ファイル(LF00)>>
+     FRFC0800   O    E           K DISK    RENAME(RFC08P:RFC08R) INFSR(*PSSR)
+     F                                     COMMIT
+     F*<<商品部材在庫ファイル(LF00)>>
+     FRFC28P    IF   E           K DISK    RENAME(RFC28P:RFC28R)
+     F*<<商品部材マスター(LF00)>>
+     FRMR5000   IF   E           K DISK    RENAME(RMR50P:RMR50R)
+     F*<<部門マスター(LF00)>>
+     FRMR0100   IF   E           K DISK    RENAME(RMR01P:RMR01R)
+     F*<<社員マスター(LF00)>>
+     FRMR1500   IF   E           K DISK    RENAME(RMR15P:RMR15R)
+     F*<<名称マスター(LF00)>>
+     FRMR3100   IF   E           K DISK    RENAME(RMR31P:RMR31R)
+     F*<<メッセージマスター(PF)>>
+     FRMR42P    IF   E           K DISK    RENAME(RMR42P:RMR42R)
+     D*====================================================================*
+     D*                 配列／テーブル
+     D*====================================================================*
+     D                 DS
+     D  ATSHBC                       16    DIM(20)
+     D    ASHBC                      16    OVERLAY(ATSHBC:1) INZ                商品部材コード
+     D                 DS
+     D  ATSHBCE                      16    DIM(20)
+     D    ASHBCE                     16    OVERLAY(ATSHBCE:1) INZ               商品部材コード
+     D*====================================================================*
+     D*                 定数／変数／データ構造
+     D*====================================================================*
+     D*<<明細１最大数>>
+     D  #WM1MAX        C                   10                                   明細１最大数
+     D*<<明細２最大数>>
+     D  #WM2MAX        C                   10                                   明細２最大数
+     D*<<パラメータの設定>>
+     D  P1             S               *
+     D  RCVARY         S           1024    BASED(P1) DIM(1024)                  受信配列
+     D  P2             S               *
+     D  SNDARY         S           1024    BASED(P2) DIM(1024)                  送信配列
+     D*<<プログラム状況データ構造>>
+     D                SDS
+     D  WPGM             *PROC                                                  プログラム
+     D  WSTAT            *STATUS                                                状況
+     D  WREID                 40     46                                         例外エラーＩＤ
+     D  WREMG                 91    170                                         例外メッセージ
+     D  WJBID                244    253                                         ＪＯＢＩＤ
+     D  WUSER                254    263                                         ＵＳＥＲ
+     D  WJBNO                264    269                                         ＪＯＢ番号
+     D*<<ジョブ日付>>
+     D                 DS
+     D  #WDATE                 1      8  0 INZ                                  ジョブ日付
+     D   #WYYMM                3      6  0                                       YYMM
+     D*<<起動日年月>>
+     D                 DS
+     D  #WKDOD                 1      8  0 INZ                                  起動日
+     D   #WKDOD6               3      8  0                                       YYMMDD
+     D                 DS
+     D*<<電文処理ソース取込>>
+     D/COPY QRPGLESRC,RCE200D
+     C*====================================================================*
+     C*                 パラメータ　リスト
+     C*====================================================================*
+     C*<<受渡しパラメータ>>
+     C     *ENTRY        PLIST
+     C                   PARM                    P1                             受信データ
+     C                   PARM                    P2                             送信データ
+     C                   PARM                    P1CNT             4 0          受信件数
+     C                   PARM                    P2CNT             4 0          送信件数
+     C*<<数値文字変換処理>>
+     C     PSS160        PLIST
+     C                   PARM                    P#CHAR           24            文字
+     C                   PARM                    P#DEC            22 5          数値
+     C                   PARM                    P#KETA1           2 0          整数部桁数
+     C                   PARM                    P#KETA2           1 0          小数部桁数
+     C                   PARM                    P#CHGK            1            数値文字変換区分
+     C                   PARM                    P#CHKK            2            チェック区分
+     C                   PARM                    P#ENDK            1            終了区分
+     C                   PARM                    P#EMID           10            エラーメッセージ
+     C*<<排他制御処理>>
+     C     PSS010        PLIST
+     C                   PARM                    P#HTKO           30            排他キー
+     C                   PARM                    P#KSRF            1            開始終了フラグ
+     C                   PARM                    P#YPGA           10            呼出元ＰＧＭ
+     C                   PARM                    P#LSID            9            ログイン識別ＩＤ
+     C                   PARM                    P#LGSN            9            ログイン社員番号
+     C                   PARM                    P#KDOD            8 0          起動日
+     C                   PARM                    P#KITM            6 0          起動時刻
+     C                   PARM                    P#ERFG            1            エラーフラグ
+     C*<<番号採番処理>>
+     C     PSS040        PLIST
+     C                   PARM                    P#DMSK            2            伝票種別
+     C                   PARM                    P#BMNC            7            部門コード
+     C                   PARM                    P#THIC            7            取引先コード
+     C                   PARM                    P#YMYM            6 0          年月
+     C                   PARM                    P#SBAT           15            採番値
+     C*<<在庫更新処理>>
+     C     PCS490        PLIST
+     C                   PARM                    P#SYKB            1            処理区分
+     C                   PARM                    P#SBAT1          13            採番値
+     C                   PARM                    P#BMNC            7            部門コード
+     C                   PARM                    P#IDKB            1            移動区分
+     C                   PARM                    P#USID           10            ユーザＩＤ
+     C                   PARM                    P#PGID           10            プログラムＩＤ
+     C*====================================================================*
+     C*                 キー　リスト
+     C*====================================================================*
+     C*<<商品部材在庫ファイル(PF) >>
+     C     KEYC2801      KLIST
+     C                   KFLD                    C28HBMC                        保有部門コード
+     C                   KFLD                    C28SHBC                        商品部材コード
+     C*<<名称マスター(LF00)>>
+     C     KEYR311       KLIST
+     C                   KFLD                    R31KBSA                        区分種別
+     C                   KFLD                    R31KBNC                        区分コード
+     C*====================================================================*
+     C*                 メイン処理
+     C*====================================================================*
+     C*<<初期設定>>
+     C                   EXSR      SBINIT                                       初期設定
+     C*<<受信電文展開>>
+     C                   EXSR      SBRECV                                       受信電文展開
+     C*
+     C                   IF        *IN30 = *OFF
+     C*<<受信電文展開後の共通処理>>
+     C                   EXSR      SBRCOM                                       受信後共通処理
+     C*<<振分処理>>
+     C  N30              SELECT
+     C                   WHEN      R#KNUK  =  '00'
+     C                   EXSR      SB0000                                       初期値セット
+     C                   WHEN      R#KNUK  =  '11'
+     C                   EXSR      SB1000                                       見出明細チェック
+     C                   WHEN      R#KNUK  =  '90'
+     C                   EXSR      SB4000                                       更新
+     C                   ENDSL
+     C                   ENDIF
+     C*<<送信電文展開前の共通処理>>
+     C                   EXSR      SBSCOM                                       送信前共通処理
+     C*<<エラー／メッセージ処理>>
+     C                   EXSR      SBERMS                                       エラー／メッセージ
+     C*<<送信電文展開>>
+     C                   EXSR      SBSEND                                       送信電文展開
+     C*<<終了処理>>
+     C                   EXSR      SBEND                                        終了処理
+     C*====================================================================*
+     C*    SBINIT       初期設定処理
+     C*====================================================================*
+     C     SBINIT        BEGSR
+     C*<<標識クリア>>
+     C                   CLEAR                   *IN                            標識クリア
+     C*<<ワーククリア>>
+     C                   MOVEL     *BLANK        #WMSID           10            メッセージＩＤ
+     C*<<指標クリア>>
+     C                   Z-ADD     *ZERO         K                 3 0          指標
+     C*<<日付取得>>
+     C                   Z-ADD     *DATE         #WDATE            8 0          ジョブ日付
+     C*<<時刻取得>>
+     C                   TIME                    #WTIME            6 0          システム時刻
+     C*<<ワークフィールド定義>>
+     C     *LIKE         DEFINE    C28ZIKP       #WZIKP                         在庫数WK
+     C                   Z-ADD     *ZERO         #WZIKP
+     C     *LIKE         DEFINE    P#SBAT        #WSBAT                         採番値WK
+     C*
+     C*<<明細件数セット>>
+     C                   Z-ADD     #WM1MAX       M#1CNT                         明細件数
+     C                   Z-ADD     #WM2MAX       M#2CNT                         明細件数
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBRECV       受信電文展開
+     C*====================================================================*
+     C     SBRECV        BEGSR
+     C*
+     C/COPY QRPGLESRC,RCE200D
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBRCOM       受信電文展開後の共通処理
+     C*====================================================================*
+     C     SBRCOM        BEGSR
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB0000       初期値セット
+     C*====================================================================*
+     C     SB0000        BEGSR
+     C*<<表示区分>>
+     C                   EXSR      SB0100
+     C*<<明細配列読込>>
+     C                   CLEAR                   M1ARAY                         明細配列１クリア
+     C                   Z-ADD     *ZERO         K                              指標
+     C                   DO        #WM1MAX       K
+     C*
+     C                   MOVEL     '1'           M1ERUK(K)                      エラー有無区分
+     C                   MOVEL     '0'           M1HYOK(K)                      表示区分
+     C*
+     C                   MOVEL     *BLANK        M1SHBC(K)                      商品部材コード
+     C                   MOVEL     '0'           M1SHBCH(K)                     商品部材コード表示
+     C                   MOVEL     '1'           M1SHBCE(K)                     商品部材コードエラ
+     C*
+     C                   MOVEL     *BLANK        M1SBZK(K)                      商品部材区分
+     C                   MOVEL     '0'           M1SBZKH(K)                     商品部材区分表示区
+     C                   MOVEL(P)  *BLANK        M1SBKN(K)                      商品部材区分名
+     C                   MOVEL     '0'           M1SBKNH(K)                     商品部材区分名表示
+     C*
+     C                   MOVEL(P)  *BLANK        M1SRSU(K)                      数量
+     C                   MOVEL     '0'           M1SRSUH(K)                     数量表示区分
+     C                   MOVEL     '1'           M1SRSUE(K)                     数量エラー区分
+     C*
+     C                   MOVEL(P)  *BLANK        M1TINM(K)                      単位名
+     C                   MOVEL     '0'           M1TINMH(K)                     単位名表示区分
+     C                   MOVEL(P)  *BLANK        M1HNNM(K)                      品名
+     C                   MOVEL     '0'           M1HNNMH(K)                     品名表示区分
+     C                   MOVEL(P)  *BLANK        M1SIYO(K)                      仕様
+     C                   MOVEL     '0'           M1SIYOH(K)                     仕様表示区分
+     C*
+     C                   ENDDO
+     C*
+     C                   CLEAR                   M2ARAY                         明細配列２クリア
+     C                   Z-ADD     *ZERO         K                              指標
+     C                   DO        #WM1MAX       K
+     C*
+     C                   MOVEL     '1'           M2ERUK(K)                      エラー有無区分
+     C                   MOVEL     '0'           M2HYOK(K)                      表示区分
+     C*
+     C                   MOVEL(P)  *BLANK        M2SHBC(K)                      商品部材コード
+     C                   MOVEL     '0'           M2SHBCH(K)                     商品部材コード表示
+     C                   MOVEL     '1'           M2SHBCE(K)                     商品部材コードエラ
+     C*
+     C                   MOVEL(P)  *BLANK        M2SBZK(K)                      商品部材区分
+     C                   MOVEL     '0'           M2SBZKH(K)                     商品部材区分表示区
+     C                   MOVEL(P)  *BLANK        M2SBKN(K)                      商品部材区分名
+     C                   MOVEL     '0'           M2SBKNH(K)                     商品部材区分名表示
+     C*
+     C                   MOVEL(P)  *BLANK        M2SRSU(K)                      数量
+     C                   MOVEL     '0'           M2SRSUH(K)                     数量表示区分
+     C                   MOVEL     '1'           M2SRSUE(K)                     数量エラー区分
+     C*
+     C                   MOVEL(P)  *BLANK        M2TINM(K)                      単位名
+     C                   MOVEL     '0'           M2TINMH(K)                     単位名表示区分
+     C*
+     C                   MOVEL     '0'           M2TRRTH(K)                     振替率表示区分
+     C                   MOVEL     '1'           M2TRRTE(K)                     振替率エラー区分
+     C*
+     C                   MOVEL(P)  *BLANK        M2HNNM(K)                      品名
+     C                   MOVEL     '0'           M2ITNMH(K)                     品名表示区分
+     C                   MOVEL(P)  *BLANK        M2SIYO(K)                      仕様
+     C                   MOVEL     '0'           M2SIYOH(K)                     仕様表示区分
+     C*
+     C                   ENDDO
+     C*<<部門名の取得>>
+     C                   MOVEL(P)  R#LGBC        T#BMNC                         部門コード
+     C                   MOVEL(P)  *BLANK        T#BMNM                         部門名
+     C     R#LGBC        CHAIN     RMR01R                             90
+     C                   IF        *IN90 = *ON
+     C                   MOVEL     '2'           T#BMNC6                        エラー有無区分
+     C  N30              MOVEL     'COMMON-043'  #WMSID
+     C  N30              SETON                                        30
+     C                   ELSE
+     C                   MOVEL(P)  R01BMRM       T#BMNM                         部門名
+     C                   ENDIF
+     C*
+     C*<<社員名の取得>>
+     C                   MOVEL(P)  R#LGSN        T#TRSN                         登録者社員番号
+     C                   MOVEL(P)  *BLANK        T#TRSM                         登録者社員名
+     C     R#LGSN        CHAIN     RMR15R                             90
+     C                   IF        *IN90 = *ON
+     C                   MOVEL     '2'           T#TRSN6                        エラー有無区分
+     C  N30              MOVEL     'COMMON-043'  #WMSID
+     C  N30              SETON                                        30
+     C                   ELSE
+     C                   EVAL      T#TRSM = %TRIMR(R15SHNM)                     登録者社員名
+     C                   ENDIF
+     C*
+     C                   MOVEL     R#KDOD        #WKDOD                         起動日
+     C                   MOVEL     #WKDOD6       T#FRKD                         振替日
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB0100       表示区分初期セット
+     C*====================================================================*
+     C     SB0100        BEGSR
+     C*
+     C                   MOVEL     '0'           T#BMNC7                        部門コード
+     C                   MOVEL     '0'           T#BMNM7                        部門名
+     C                   MOVEL     '0'           T#TRSN7                        登録者社員番号
+     C                   MOVEL     '0'           T#TRSM7                        登録者社員名
+     C                   MOVEL     '0'           T#FRKD7                        振替日
+     C                   MOVEL     '0'           T#FRKK7                        振替区分
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB1000       見出明細チェック
+     C*====================================================================*
+     C     SB1000        BEGSR
+     C*<<見出項目チェック>>
+     C                   EXSR      SB1100
+     C*<<明細項目チェック>>
+     C                   EXSR      SB1200
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB1100       見出項目チェック
+     C*====================================================================*
+     C     SB1100        BEGSR
+     C*<<振替区分>>
+     C                   IF        T#FRKK = *BLANK
+     C                   MOVEL     '2'           T#FRKK6                        エラー有無区分
+     C  N30              MOVEL     'COMMON-031'  #WMSID
+     C  N30              SETON                                        30
+     C                   ELSE
+     C*<<名称マスター存在チェック>>
+     C                   MOVEL(P)  'FRKK'        R31KBSA                        区分種別
+     C                   MOVEL(P)  T#FRKK        R31KBNC                        区分コード
+     C     KEYR311       CHAIN     RMR31R                             90
+     C                   IF        *IN90 = *ON
+     C                   MOVEL     '2'           T#FRKK6                        エラー有無区分
+     C  N30              MOVEL     'COMMON-043'  #WMSID
+     C  N30              SETON                                        30
+     C                   ENDIF
+     C                   ENDIF
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB1200       明細項目チェック
+     C*====================================================================*
+     C     SB1200        BEGSR
+     C*
+     C                   RESET                   ATSHBC
+     C                   RESET                   ATSHBCE
+     C                   Z-ADD     *ZERO         #WM1CNT           2 0          明細入力件数
+     C                   Z-ADD     *ZERO         #WM2CNT           2 0          明細入力件数
+     C                   Z-ADD     *ZERO         K                              指標
+     C                   Z-ADD     *ZERO         J                 2 0          指標
+     C                   Z-ADD     *ZERO         L                 2 0          指標
+     C                   MOVEL     *BLANK        #WREPT            1            重複確認ﾌﾗｸﾞ
+     C*<<明細配列読込>>
+     C*<<明細１についてのチェック>>
+00S  C                   DO        #WM1MAX       K
+     C*<<エラー／表示区分／表示項目初期化>>
+     C                   MOVEL     '1'           M1SHBCE(K)                     商品部材コードエラ
+     C                   MOVEL(P)  *BLANK        M1SBZK(K)                      商品部材区分
+     C                   MOVEL(P)  *BLANK        M1SBKN(K)                      商品部材区分名
+     C                   MOVEL     '1'           M1SRSUE(K)                     数量エラー区分
+     C                   MOVEL(P)  *BLANK        M1TINM(K)                      単位名
+     C                   MOVEL(P)  *BLANK        M1HNNM(K)                      品名
+     C                   MOVEL(P)  *BLANK        M1SIYO(K)                      仕様
+     C*<<明細入力確認>>
+01S  C                   IF        M1SHBC(K) = *BLANK AND
+     C                             M1SRSU(K) = *BLANK
+     C                   ITER
+01E  C                   ENDIF
+     C*<<商品部材コード>>
+01S  C                   IF        M1SHBC(K) = *BLANK
+     C                   MOVEL     '2'           M1SHBCE(K)                     商品部材コードエラ
+     C  N30              MOVEL     'COMMON-031'  #WMSID
+     C  N30              SETON                                        30
+01X  C                   ELSE
+     C                   ADD       1             #WM1CNT                        明細入力件数
+     C                   MOVEL     R#LGBC        C28HBMC                        保有部門コード
+     C                   MOVEL     M1SHBC(K)     C28SHBC                        商品部材コード
+     C*
+     C     C28SHBC       CHAIN     RMR50R                             90
+02S  C                   IF        *IN90 = *ON
+     C                   MOVEL     '2'           M1SHBCE(K)                     商品部材コードエラ
+     C  N30              MOVEL     'COMMON-043'  #WMSID
+     C  N30              SETON                                        30
+02X  C                   ELSE
+     C*
+02S  C                   IF        R50SBZK = '3'
+     C                   MOVEL     '2'           M1SHBCE(K)                     商品部材コードエラ
+     C  N30              MOVEL     'RCE200-006'  #WMSID
+     C  N30              SETON                                        30
+02X  C                   ELSE
+     C*  <<商品部材区分、単位名、品名、仕様を取得>>
+     C                   MOVEL     R50SBZK       M1SBZK(K)                      商品部材区分
+     C                   MOVEL     R50TINM       M1TINM(K)                      単位名
+     C                   EVAL      M1HNNM(K) = %TRIMR(R50HNNM)                  品名
+     C                   EVAL      M1SIYO(K) = %TRIMR(R50SIYO)                  仕様
+     C*<<名称マスター存在チェック>>
+     C                   MOVEL(P)  'SBZK'        R31KBSA                        区分種別
+     C                   MOVEL(P)  R50SBZK       R31KBNC                        区分コード
+     C     KEYR311       CHAIN     RMR31R                             90
+     C  N90              EVAL      M1SBKN(K) = %TRIMR(R31MSNM)                  商品部材区分名
+     C*
+     C                   MOVEL     R#LGBC        C28HBMC                        保有部門コード
+     C                   MOVEL     M1SHBC(K)     C28SHBC                        商品部材コード
+     C     KEYC2801      CHAIN     RFC28R                             90
+03S  C                   IF        *IN90 = *ON
+     C                   MOVEL     '2'           M1SHBCE(K)                     商品部材コードエラ
+     C  N30              MOVEL     'COMMON-043'  #WMSID
+     C  N30              SETON                                        30
+03X  C                   ELSE
+     C*<<数量チェック>>
+     C*   <<数量数値変換>>
+04S  C                   IF        M1SRSU(K) = *BLANK
+     C                   MOVEL     '2'           M1SRSUE(K)                     数量エラ－
+     C  N30              MOVEL     'COMMON-031'  #WMSID
+     C  N30              SETON                                        30
+04X  C                   ELSE
+     C                   Z-ADD     *ZERO         #WSRSU1           3 0          数値１ワーク
+     C                   MOVEL(P)  M1SRSU(K)     P#CHAR                         文字
+     C                   Z-ADD     3             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'S1'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG1
+05S  C                   IF        P#EMID <> *BLANK
+     C                   MOVEL     '2'           M1SRSUE(K)                     数量エラ－
+     C  N30              MOVEL     P#EMID        #WMSID                         メッセージＩＤ
+     C  N30              SETON                                        30
+05X  C                   ELSE
+     C                   Z-ADD     P#DEC         #WSRSU1                        数値１ワーク
+     C*** ITA-000554 EDIT START K.FUKAYA 2007/07/17
+     C*  <<ゼロはエラー>>
+     C                   IF        #WSRSU1 = *ZERO
+     C                   MOVEL     '2'           M1SRSUE(K)
+     C  N30              MOVEL     'COMMON-031'  #WMSID
+     C  N30              SETON                                        30
+     C                   ENDIF
+     C*** ITA-000554 EDIT END   K.FUKAYA 2007/07/17
+     C*  <<マイナスはエラー>>
+     C                   IF        #WSRSU1 < *ZERO
+     C                   MOVEL     '2'           M1SRSUE(K)                     数量エラ－
+     C  N30              MOVEL     'COMMON-170'  #WMSID
+     C  N30              SETON                                        30
+     C                   ENDIF
+05E  C                   ENDIF
+04E  C                   ENDIF
+04E  C                   ENDIF
+03E  C                   ENDIF
+     C*
+03S  C                   IF        C28ZIKP < #WSRSU1
+     C                   MOVEL     '2'           M1SHBCE(K)                     商品部材コードエラ
+     C  N30              MOVEL     'RCE200-001'  #WMSID
+     C  N30              SETON                                        30
+03X  C                   ELSE
+     C*  <<商品部材コード重複チェック>>
+     C                   Z-ADD     1             I                 2 0
+     C     C28SHBC       LOOKUP    ATSHBC(I)                              50
+     C                   IF        *IN50 = *ON
+     C                   MOVEL     '1'           #WREPT
+     C                   ADD       1             L
+     C                   MOVEL     C28SHBC       ASHBCE(L)
+     C                   ELSE
+     C                   ADD       1             J
+     C                   MOVEL     C28SHBC       ASHBC(J)
+     C                   ENDIF
+     C*
+03E  C                   ENDIF
+02E  C                   ENDIF
+01E  C                   ENDIF
+00E  C                   ENDDO
+     C*
+     C*<<明細２についてのチェック>>
+     C                   Z-ADD     *ZERO         #WTRRTA           3 0          振替率合計WK
+     C*** ITA-000554 ADD START K.FUKAYA 2007/07/17
+     C                   Z-ADD     *ZERO         #WTRRTT           3 0          振替率合計WK
+     C*** ITA-000554 ADD END   K.FUKAYA 2007/07/17
+00S  C                   DO        #WM1MAX       K
+     C*<<エラー／表示区分／表示項目初期化>>
+     C                   MOVEL     '1'           M2SHBCE(K)                     商品部材コードエラ
+     C                   MOVEL(P)  *BLANK        M2SBZK(K)                      商品部材区分
+     C                   MOVEL(P)  *BLANK        M2SBKN(K)                      商品部材区分名
+     C                   MOVEL     '1'           M2SRSUE(K)                     数量エラー区分
+     C                   MOVEL(P)  *BLANK        M2TINM(K)                      単位名
+     C                   MOVEL     '1'           M2TRRTE(K)                     振替率エラー区分
+     C                   MOVEL(P)  *BLANK        M2HNNM(K)                      品名
+     C                   MOVEL(P)  *BLANK        M2SIYO(K)                      仕様
+     C*<<明細入力確認>>
+01S  C                   IF        M2SHBC(K) = *BLANK AND
+     C                             M2SRSU(K) = *BLANK AND
+     C                             M2TRRT(K) = *BLANK
+     C                   ITER
+01E  C                   ENDIF
+     C*<<商品部材コード>>
+01S  C                   IF        M2SHBC(K) = *BLANK
+     C                   MOVEL     '2'           M2SHBCE(K)                     商品部材コードエラ
+     C  N30              MOVEL     'COMMON-031'  #WMSID
+     C  N30              SETON                                        30
+01X  C                   ELSE
+     C                   ADD       1             #WM2CNT                        明細入力件数
+     C                   MOVEL     R#LGBC        C28HBMC                        保有部門コード
+     C                   MOVEL     M2SHBC(K)     C28SHBC                        商品部材コード
+     C*
+     C     C28SHBC       CHAIN     RMR50R                             90        商品部材マスター
+02S  C                   IF        *IN90 = *ON
+     C                   MOVEL     '2'           M2SHBCE(K)                     商品部材コードエラ
+     C  N30              MOVEL     'COMMON-043'  #WMSID
+     C  N30              SETON                                        30
+02X  C                   ELSE
+     C*
+02S  C                   IF        R50SBZK = '3'
+     C                   MOVEL     '2'           M2SHBCE(K)                     商品部材コードエラ
+     C  N30              MOVEL     'RCE200-006'  #WMSID
+     C  N30              SETON                                        30
+02X  C                   ELSE
+     C*  <<商品部材区分、単位名、品名、仕様を取得>>
+     C                   MOVEL     R50SBZK       M2SBZK(K)                      商品部材区分
+     C                   MOVEL     R50TINM       M2TINM(K)                      単位名
+     C                   EVAL      M2HNNM(K) = %TRIMR(R50HNNM)                  品名
+     C                   EVAL      M2SIYO(K) = %TRIMR(R50SIYO)                  仕様
+     C*<<名称マスター存在チェック>>
+     C                   MOVEL(P)  'SBZK'        R31KBSA                        区分種別
+     C                   MOVEL(P)  R50SBZK       R31KBNC                        区分コード
+     C     KEYR311       CHAIN     RMR31R                             90
+     C  N90              EVAL      M2SBKN(K) = %TRIMR(R31MSNM)                  商品部材区分名
+     C*
+     C*<<数量チェック>>
+     C*   <<数量数値変換>>
+04S  C                   IF        M2SRSU(K) = *BLANK
+     C                   MOVEL     '2'           M2SRSUE(K)                     数量エラ－
+     C  N30              MOVEL     'COMMON-031'  #WMSID
+     C  N30              SETON                                        30
+04X  C                   ELSE
+     C                   Z-ADD     *ZERO         #WSRSU2           3 0          数値２ワーク
+     C                   MOVEL(P)  M2SRSU(K)     P#CHAR                         文字
+     C                   Z-ADD     3             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'S1'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG1
+05S  C                   IF        P#EMID <> *BLANK
+     C                   MOVEL     '2'           M2SRSUE(K)                     数量エラ－
+     C  N30              MOVEL     P#EMID        #WMSID                         メッセージＩＤ
+     C  N30              SETON                                        30
+05X  C                   ELSE
+     C                   Z-ADD     P#DEC         #WSRSU2                        数値２ワーク
+     C*** ITA-000554 EDIT START K.FUKAYA 2007/07/17
+     C*  <<ゼロはエラー>>
+     C                   IF        #WSRSU2 = *ZERO
+     C                   MOVEL     '2'           M2SRSUE(K)
+     C  N30              MOVEL     'COMMON-031'  #WMSID
+     C  N30              SETON                                        30
+     C                   ENDIF
+     C*** ITA-000554 EDIT END   K.FUKAYA 2007/07/17
+     C*  <<マイナスはエラー>>
+     C                   IF        #WSRSU2 < *ZERO
+     C                   MOVEL     '2'           M2SRSUE(K)                     数量エラ－
+     C  N30              MOVEL     'COMMON-170'  #WMSID
+     C  N30              SETON                                        30
+     C                   ENDIF
+05E  C                   ENDIF
+04E  C                   ENDIF
+     C*
+     C*
+     C*  <<商品部材コード重複チェック>>
+     C                   Z-ADD     1             I                 2 0
+     C     C28SHBC       LOOKUP    ATSHBC(I)                              50
+     C                   IF        *IN50 = *ON
+     C                   MOVEL     '1'           #WREPT
+     C                   ADD       1             L
+     C                   MOVEL     C28SHBC       ASHBCE(L)
+     C                   ELSE
+     C                   ADD       1             J
+     C                   MOVEL     C28SHBC       ASHBC(J)
+     C                   ENDIF
+     C*
+02E  C                   ENDIF
+02E  C                   ENDIF
+01E  C                   ENDIF
+     C*<<振替率>>
+01S  C                   IF        M2TRRT(K) = *BLANK
+     C                   MOVEL     '2'           M2TRRTE(K)                     振替率エラー区分
+     C  N30              MOVEL     'COMMON-031'  #WMSID
+     C  N30              SETON                                        30
+01X  C                   ELSE
+     C                   MOVEL(P)  M2TRRT(K)     P#CHAR                         文字
+     C                   Z-ADD     3             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'S1'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG1
+02S  C                   IF        P#EMID <> *BLANK
+     C                   MOVEL     '2'           M2TRRTE(K)                     振替率エラー区分
+     C  N30              MOVEL     P#EMID        #WMSID                         メッセージＩＤ
+     C  N30              SETON                                        30
+02X  C                   ELSE
+     C*** ITA-000554 EDIT START K.FUKAYA 2007/07/17
+     C*                  ADD       P#DEC         #WTRRTA                        振替率合計WK
+     C                   Z-ADD     P#DEC         #WTRRTA                        振替率合計WK
+     C*  <<ゼロはエラー>>
+     C                   IF        #WTRRTA = *ZERO
+     C                   MOVEL     '2'           M2TRRTE(K)
+     C  N30              MOVEL     'COMMON-031'  #WMSID
+     C  N30              SETON                                        30
+     C                   ENDIF
+     C*** ITA-000554 EDIT END   K.FUKAYA 2007/07/17
+     C*  <<マイナスはエラー>>
+     C                   IF        #WTRRTA  < *ZERO
+     C                   MOVEL     '2'           M2TRRTE(K)                     振替率エラー区分
+     C  N30              MOVEL     'COMMON-170'  #WMSID
+     C  N30              SETON                                        30
+     C                   ENDIF
+02E  C                   ENDIF
+01E  C                   ENDIF
+     C*
+     C*** ITA-000554 ADD START K.FUKAYA 2007/07/17
+     C                   ADD       #WTRRTA       #WTRRTT
+     C*** ITA-000554 ADD END   K.FUKAYA 2007/07/17
+     C*
+00E  C                   ENDDO
+     C*
+     C*<<明細間チェック１>>
+     C*   <<明細入力なしチェック>>
+     C                   IF        #WM1CNT = *ZERO OR
+     C                             #WM2CNT = *ZERO
+     C  N30              MOVEL     'RCE200-005'  #WMSID
+     C  N30              SETON                                        30
+     C                   ENDIF
+     C*   <<振替区分と明細入力件数チェック>>
+     C                   IF        T#FRKK = '0' AND                             振替区分
+     C                             #WM2CNT >= 2                                 明細入力件数
+     C  N30              MOVEL     'RCE200-002'  #WMSID
+     C  N30              SETON                                        30
+     C                   ENDIF
+     C                   IF        T#FRKK = '1' AND                             振替区分
+     C                             #WM1CNT >= 2                                 明細入力件数
+     C  N30              MOVEL     'RCE200-002'  #WMSID
+     C  N30              SETON                                        30
+     C                   ENDIF
+     C*<<明細間チェック２>>
+     C                   IF        #WREPT = '1'
+     C                   EXSR      SB1210
+     C                   ENDIF
+     C*<<明細間チェック３>>
+     C*** ITA-000554 EDIT START K.FUKAYA 2007/07/17
+     C*                  IF        #WTRRTA  <> 100                              振替率合計WK
+     C                   IF        #WTRRTT  <> 100                              振替率合計WK
+     C*** ITA-000554 EDIT END   K.FUKAYA 2007/07/17
+     C                   EXSR      SB1220
+     C                   ENDIF
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB1210       明細間チェック２エラー設定
+     C*====================================================================*
+     C     SB1210        BEGSR
+     C*
+00S  C                   DO        #WM1MAX       K
+     C*<<明細１入力確認>>
+01S  C                   IF        M1SHBC(K) <> *BLANK
+     C*
+     C                   Z-ADD     1             I
+     C     M1SHBC(K)     LOOKUP    ATSHBCE(I)                             50
+     C                   IF        *IN50 = *ON
+     C                   MOVEL     '2'           M1SHBCE(K)
+     C  N30              MOVEL     'RCE200-003'  #WMSID
+     C  N30              SETON                                        30
+     C                   ENDIF
+     C*
+01E  C                   ENDIF
+     C*<<明細２入力確認>>
+01S  C                   IF        M2SHBC(K) <> *BLANK
+     C*
+     C                   Z-ADD     1             I
+     C     M2SHBC(K)     LOOKUP    ATSHBCE(I)                             50
+     C                   IF        *IN50 = *ON
+     C                   MOVEL     '2'           M2SHBCE(K)
+     C  N30              MOVEL     'RCE200-003'  #WMSID
+     C  N30              SETON                                        30
+     C                   ENDIF
+     C*
+01E  C                   ENDIF
+     C*
+     C                   ENDDO
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB1220       明細間チェック３エラー設定
+     C*====================================================================*
+     C     SB1220        BEGSR
+     C*
+00S  C                   DO        #WM2MAX       K
+     C*
+01S  C                   IF        M2TRRT(K) <> *BLANK
+     C                   MOVEL     '2'           M2TRRTE(K)                     振替率エラー区分
+     C  N30              MOVEL     'RCE200-004'  #WMSID
+     C  N30              SETON                                        30
+01X  C                   ENDIF
+     C*
+     C                   ENDDO
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB4000       更新処理
+     C*====================================================================*
+     C     SB4000        BEGSR
+     C*<<処理区分＝'1' の場合>>
+     C                   IF        R#SORK = '1'
+     C                   MOVEL     R#KDOD        #WKDOD                         起動日
+     C*
+     C                   EXSR      SB1000                                       見出チェック
+     C* <<新規>>
+     C  N30              EXSR      SB4100                                       新規処理
+     C  N30              MOVEL     'COMMON-021'  #WMSID
+     C*
+     C*<<コミット>>
+     C  N30              COMMIT
+     C*<<画面項目クリア処理>>
+     C  N30              EXSR      SBCLAR
+     C                   ENDIF
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB4100       新規
+     C*====================================================================*
+     C     SB4100        BEGSR
+     C*<<元番号の採番>>
+     C                   EXSR      SB4110
+     C*<<入出庫ファイル追加　明細１>>
+     C                   EXSR      SB4120
+     C*<<入出庫ファイル追加　明細２>>
+     C                   EXSR      SB4130
+     C*<<商品部材在庫ファイル更新>>
+     C                   EXSR      SB4140
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB4110       番号採番処理
+     C*====================================================================*
+     C     SB4110        BEGSR
+     C*<<番号採番処理>>
+     C                   MOVEL     '22'          P#DMSK                         伝票種別
+     C*****CHG-STR ITB-000252
+     C***                MOVEL     R#LGBC        P#BMNC                         部門コード
+     C                   MOVEL     *BLANK        P#BMNC                         部門コード
+     C*****CHG-STR ITB-000252
+     C                   MOVEL     *BLANK        P#THIC                         取引先コード
+     C*** UT2-2626 EDIT START K.FUKAYA 2007/06/04
+     C*                  Z-ADD     #WKDOD        P#YMYM                         年月
+     C                   MOVEL     #WKDOD        P#YMYM                         年月
+     C*** UT2-2626 EDIT END   K.FUKAYA 2007/06/04
+     C                   MOVEL     *BLANK        P#SBAT                         採番値
+     C                   CALL      'RSS040'      PSS040
+     C                   MOVEL     P#SBAT        #WSBAT                         採番値WK
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB4120       入出庫ファイル追加 明細１
+     C*====================================================================*
+     C     SB4120        BEGSR
+     C*
+     C                   Z-ADD     *ZERO         J                              指標
+     C                   DO        #WM1MAX       K
+     C*
+     C                   IF        M1SHBC(K) <> *BLANK
+     C                   ADD       1             J
+     C*
+     C                   CLEAR                   RFC08R
+     C*
+     C                   MOVEL     '2'           C08NSKK                        入出庫区分
+     C                   MOVEL     '56'          C08NKBA                        入出庫分類
+     C*
+     C*<<受信電文・商品部材区分により分岐>>
+     C                   IF        M1SBZK(K) = '1'
+     C                   MOVEL     '2'           C08PRPK                        資産区分
+     C                   ELSE
+     C                   MOVEL     '3'           C08PRPK                        資産区分
+     C                   ENDIF
+     C*
+     C                   MOVEL     M1SHBC(K)     C08HINC                        品コード
+     C****               MOVEL     M1HNNM(K)     C08HNNM1                       品名１
+     C****               MOVEL     M1SIYO(K)     C08HNNM2                       品名２
+     C*
+     C                   Z-ADD     *ZERO         #WSRSU1           3 0          数値１ワーク
+     C                   MOVEL(P)  M1SRSU(K)     P#CHAR                         文字
+     C                   Z-ADD     3             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'S1'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG1
+     C                   Z-ADD     P#DEC         C08SRSU                        数量
+     C*<<共通処理>>
+     C                   EXSR      SB4121
+     C*
+     C*                  -------------------
+     C                   WRITE     RFC08R                                       入出庫ファイル
+     C*                  -------------------
+     C*
+     C                   ENDIF
+     C                   ENDDO
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB4121       入出庫ファイル共通処理
+     C*====================================================================*
+     C     SB4121        BEGSR
+     C*
+     C                   MOVEL     *BLANK        C08JYTK                        状態区分
+     C                   Z-ADD     1             C08RERN                        履歴番号
+     C                   MOVEL     '1'           C08AKKK                        赤黒区分
+     C                   MOVEL     R#LGBC        C08HBMC                        保有部門コード
+     C                   MOVEL     #WSBAT        C08MBNN                        元番号
+     C                   Z-ADD     J             C08MGNN                        元行番号
+     C                   Z-ADD     *ZERO         C08MMBN                        元孫番号
+     C                   MOVEL     *BLANK        C08YSON                        予算書番号
+     C*
+     C                   MOVEL     R#LGBC        C08HCOC                        保有会社コード
+     C                   Z-ADD     #WKDOD        C08NYSD                        入出庫日
+     C                   MOVEL     R#LGBC        C08NRBC                        入力部門コード
+     C                   MOVEL     R#LGSN        C08NTNN                        入力担当者番号
+     C                   MOVEL     T#FRKK        C08FRKK                        振替区分
+     C                   Z-ADD     #WKDOD        C08KJOD                        計上日
+     C*
+     C                   MOVEL     R#LGSN        C08TUID                        登録ユーザーＩＤ
+     C                   MOVEL     WPGM          C08TPID                        登録ＰＧＭＩＤ
+     C                   Z-ADD     *DATE         C08TRKD                        登録日
+     C                   TIME                    C08TRTM                        登録時刻
+     C                   MOVEL     *BLANK        C08KUID                        更新ユーザーＩＤ
+     C                   MOVEL     *BLANK        C08KPID                        更新ＰＧＭＩＤ
+     C                   Z-ADD     *ZERO         C08KSND                        更新日
+     C                   Z-ADD     *ZERO         C08KNTM                        更新時刻
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB4130       入出庫ファイル追加 明細２
+     C*====================================================================*
+     C     SB4130        BEGSR
+     C*
+     C                   Z-ADD     *ZERO         J                              指標
+     C                   DO        #WM1MAX       K
+     C*
+     C                   IF        M2SHBC(K) <> *BLANK
+     C                   ADD       1             J
+     C*
+     C                   CLEAR                   RFC08R
+     C*
+     C                   MOVEL     '1'           C08NSKK                        入出庫区分
+     C                   MOVEL     '17'          C08NKBA                        入出庫分類
+     C*
+     C*<<受信電文・商品部材区分により分岐>>
+     C                   IF        M2SBZK(K) = '1'
+     C                   MOVEL     '2'           C08PRPK                        資産区分
+     C                   ELSE
+     C                   MOVEL     '3'           C08PRPK                        資産区分
+     C                   ENDIF
+     C*
+     C                   MOVEL     M2SHBC(K)     C08HINC                        品コード
+     C****               MOVEL     M2HNNM(K)     C08HNNM1                       品名１
+     C****               MOVEL     M2SIYO(K)     C08HNNM2                       品名２
+     C*
+     C                   Z-ADD     *ZERO         #WSRSU1           3 0          数値１ワーク
+     C                   MOVEL(P)  M2SRSU(K)     P#CHAR                         文字
+     C                   Z-ADD     3             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'S1'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG1
+     C                   Z-ADD     P#DEC         C08SRSU                        数量
+     C*
+     C                   MOVEL(P)  M2TRRT(K)     P#CHAR                         文字
+     C                   Z-ADD     3             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'S1'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG1
+     C                   Z-ADD     P#DEC         C08TRRT                        振替率
+     C*<<共通処理>>
+     C                   EXSR      SB4121
+     C*
+     C*                  -------------------
+     C                   WRITE     RFC08R                                       入出庫ファイル
+     C*                  -------------------
+     C*
+     C                   ENDIF
+     C                   ENDDO
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB4140       商品部材在庫ファイルの更新処理呼出し
+     C*====================================================================*
+     C     SB4140        BEGSR
+     C*
+     C                   MOVEL     '1'           P#SYKB                         処理区分
+     C                   MOVEL     #WSBAT        P#SBAT1                        採番値
+     C                   MOVEL     *BLANK        P#BMNC                         部門コード
+     C                   MOVEL     *BLANK        P#IDKB                         移動区分
+     C                   MOVEL(P)  R#LGSN        P#USID                         ユーザＩＤ
+     C                   MOVEL(P)  WPGM          P#PGID                         プログラムＩＤ
+     C                   CALL      'RCS490'      PCS490
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBCLAR       画面項目クリア処理
+     C*====================================================================*
+     C     SBCLAR        BEGSR
+     C*<<初期値セット>>
+     C                   EXSR      SB0000
+     C*<<エラー有無区分セット>>
+     C                   MOVEL     '4'           S#ERUK                         エラー有無区分
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBCHG1       数値文字変換処理呼出（文字→数値）
+     C*====================================================================*
+     C     SBCHG1        BEGSR
+     C*
+     C                   Z-ADD     *ZERO         P#DEC                          数値
+     C                   MOVEL(P)  '1'           P#CHGK                         数値文字変換区分
+     C                   MOVEL(P)  '1'           P#ENDK                         終了区分
+     C                   MOVEL     *BLANK        P#EMID                         エラーメッセージ
+     C                   CALL      'RSS160'      PSS160
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBCHG2       数値文字変換処理呼出（数値→文字）
+     C*====================================================================*
+     C     SBCHG2        BEGSR
+     C*
+     C                   MOVEL(P)  *BLANK        P#CHAR                         文字
+     C                   MOVEL(P)  '2'           P#CHGK                         数値文字変換区分
+     C                   MOVEL(P)  '1'           P#ENDK                         終了区分
+     C                   MOVEL     *BLANK        P#EMID                         エラーメッセージ
+     C                   CALL      'RSS160'      PSS160
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBSCOM       送信電文展開前の共通処理
+     C*====================================================================*
+     C     SBSCOM        BEGSR
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBERMS       エラー／メッセージ処理
+     C*====================================================================*
+     C     SBERMS        BEGSR
+     C*
+     C   30              MOVEL     '2'           S#ERUK                         エラー有無区分
+     C                   MOVEL     #WMSID        S#MSID                         メッセージＩＤ
+     C*<<メッセージマスター>>
+     C                   IF        #WMSID <> *BLANK
+     C     #WMSID        CHAIN     RMR42R                             90
+     C                   IF        *IN90  =  *OFF
+     C                   EVAL      S#MSGO = %TRIMR(R42MSGO)                     メッセージ
+     C                   ENDIF
+     C                   ENDIF
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBSEND       送信電文展開
+     C*====================================================================*
+     C     SBSEND        BEGSR
+     C*
+     C/COPY QRPGLESRC,RCE200D
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBEND        終了処理
+     C*====================================================================*
+     C     SBEND         BEGSR
+     C*<<終了前処理>>
+     C  N10              EXSR      SBEND1                                       終了前処理
+     C*
+     C                   SETON                                        LR
+     C                   RETURN
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBEND1       終了前処理
+     C*====================================================================*
+     C     SBEND1        BEGSR
+     C*  <<数値文字変換処理ダミーＣＡＬＬ>>
+     C                   MOVEL(P)  *BLANK        P#CHAR                         文字
+     C                   Z-ADD     *ZERO         P#DEC                          数値
+     C                   Z-ADD     *ZERO         P#KETA1                        整数部桁数
+     C                   Z-ADD     *ZERO         P#KETA2                        小数部桁数
+     C                   MOVEL(P)  *BLANK        P#CHGK                         数値文字変換区分
+     C                   MOVEL(P)  *BLANK        P#CHKK                         チェック区分
+     C                   MOVEL(P)  '0'           P#ENDK                         終了区分
+     C                   MOVEL(P)  *BLANK        P#EMID                         エラーメッセージ
+     C                   CALL      'RSS160'      PSS160
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    *PSSR        例外エラー処理
+     C*====================================================================*
+     C     *PSSR         BEGSR
+     C*<<初回／２回目の標識コントロール>>
+     C   11              SETON                                            10
+     C                   SETON                                            11
+     C*
+     C                   MOVEL     'E'           S#ERUK                         エラー有無区分
+     C                   MOVEL     WREID         S#MSID                         メッセージＩＤ
+     C                   MOVEL     WREMG         S#MSGO                         メッセージ
+     C*<<ロールバック>>
+     C                   ROLBK
+     C*<<送信電文展開>>
+     C                   EXSR      SBSEND
+     C*<<終了処理>>
+     C                   EXSR      SBEND
+     C*
+     C                   ENDSR

@@ -1,0 +1,1564 @@
+      *****************************************************************         
+      * USER-NAME    :  ハピネット                                    *         
+      * PGM-NAME     :  送り状明細照会　　　　　　　　　　　　　　　 ?*         
+      * PGM-ID       :  ＴＢＤ１８００Ｒ                              *         
+      * SOFT-HOUSE   :  ㈱ＩＣＲ                                      *         
+      * AUTHOR       :  D.ARAKI                                       *         
+      * CREATE       :  97/03/14                                      *         
+      * ｺﾝﾊﾟｲﾙ  回数 :    1 回                                        *         
+      * AUTHOR       :  X.XXXXXX                                      *         
+      * UPDATE       :    /  /                                        *         
+      *****************************************************************         
+     H            Y/                                    1                       
+      *===============================================================*         
+      *                    ＦＩＬＥ                                             
+      *===============================================================*         
+      * ( 画面 )                                                                
+     FTBD1800SCF  E                    WORKSTN                                  
+     F                                        RRN   KSFILE SFREC                
+     F                                              KINFDS WSINF                
+      * ( 送り状明細 ﾃﾞｰﾀ )                                                     
+.....FMXML09  IF  E           K        DISK                                     
+.....F            OMREC                             KRENAMEOMREC09              
+.....F            OMRECA                            KRENAMEOMREC09A             
+     FMXML15  IF  E           K        DISK                                     
+     F            OMREC                             KRENAMEOMREC15              
+.....F            OMRECA                            KRENAMEOMREC15A             
+     FMXML16  IF  E           K        DISK                                     
+     F            OMREC                             KRENAMEOMREC16              
+.....F            OMRECA                            KRENAMEOMREC16A             
+     FMXML17  IF  E           K        DISK                                     
+     F            OMREC                             KRENAMEOMREC17              
+.....F            OMRECA                            KRENAMEOMREC17A             
+     FMXML18  IF  E           K        DISK                                     
+     F            OMREC                             KRENAMEOMREC18              
+.....F            OMRECA                            KRENAMEOMREC18A             
+     FMXML19  IF  E           K        DISK                                     
+     F            OMREC                             KRENAMEOMREC19              
+.....F            OMRECA                            KRENAMEOMREC19A             
+     FMXML20  IF  E           K        DISK                                     
+     F            OMREC                             KRENAMEOMREC20              
+.....F            OMRECA                            KRENAMEOMREC20A             
+      * ( 送り状 ﾃﾞｰﾀ )                                                         
+01/16F*********MXJL00  IF  E           K        DISK                            
+01/16FMXJL01  IF  E           K        DISK                                     
+      * ( 取引先 ﾏｽﾀ )                                                          
+     FMTRL01  IF  E           K        DISK                                     
+      * ( 組織 ﾏｽﾀ )                                                            
+     FMSKL01  IF  E           K        DISK                                     
+      * ( 業者別営業店 ﾏｽﾀ )                                                    
+     FMGEP00  IF  E           K        DISK                                     
+      *** ADD STR 2001.01.25 A980 ***                                           
+      * 検品実績データ                                                          
+     FDH5L15  IF  E           K        DISK                                     
+      *** ADD END 2001.01.25 A980 ***                                           
+      *==============================================================*          
+      *                    配列                                                 
+      *==============================================================*          
+     E                    @INF    1   2 78                                      
+      *==============================================================*          
+      *                    ＤＳ                                                 
+      *==============================================================*          
+      * ( PROGRAM-ID )                                                          
+     I           SDS                                                            
+     I                                        1  10 @PGID                       
+      *  ･-------------------------------------------------                     
+      *  |  コントロールフラグの定義                                            
+      *  |        WEND     画面終了 ﾌﾗｸﾞ                                        
+      *  |        WDSP     画面制御                                             
+      *  |        WLOP     画面処理 ﾄﾘｶﾞｰ                                       
+      *  |        WERR     画面 ERROR  制御                                     
+      *  |        WWRN     画面 ﾜｰﾆﾝｸﾞ 制御                                     
+      *  |        WINP     画面入力 ﾌﾗｸﾞ                                        
+      *  |        WCHG     画面変更                                             
+      *  ･-------------------------------------------------                     
+     ICTLFLG      DS                                                            
+     I                                        1   1 WEND                        
+     I                                        2   2 WDSP                        
+     I                                        3   3 WLOP                        
+     I                                        4   4 WLOP1                       
+     I                                        5   5 WLOP2                       
+     I                                        6   6 WLOP3                       
+     I                                        7   7 WLOP4                       
+     I                                        8   8 WEXT                        
+     I                                        9   9 WINP                        
+     I                                       10  10 WFST                        
+     I                                       11  11 WWRN                        
+     I                                       12  12 WERR                        
+     I                                       13  13 WERR1                       
+     I                                       14  14 WERR2                       
+     I                                       15  15 WERR3                       
+     I                                       16  16 WFST1                       
+     I                                       17  17 WFST2                       
+     I                                       18  18 WFST3                       
+     I                                       19  19 WFST4                       
+     I                                       20  20 WFST5                       
+     I                                       21  21 WCAL                        
+     I                                       22  22 WCHG                        
+     I                                       23  23 WCHG1                       
+     I                                       24  24 WCHG2                       
+     I                                       25  25 WCHG3                       
+     I                                       26  26 WCHG4                       
+     I                                       27  27 WCHG5                       
+      * < WRKSTN DATA STRUCTURE >                                               
+     IWSINF       DS                                                            
+     I                                      370 370 WSLIN1                      
+     I                                      371 371 WSCOL1                      
+     I                                    B 378 3790WTPRRN                      
+     I            DS                                                            
+     I                                    B   1   20WSLINE                      
+     I                                        1   1 WSB1                        
+     I                                        2   2 WSLIN2                      
+     I                                    B   3   40WSCOLM                      
+     I                                        3   3 WSB2                        
+     I                                        4   4 WSCOL2                      
+      * < ｼｽﾃﾑ 日付 >                                                           
+     I            DS                                                            
+     I                                        1  140@TIME                       
+     I                                        1   60WTIME                       
+     I                                        7  140WDATE                       
+     I                                        1   40W@TIM                       
+      * < 日付 ﾜｰｸ >                                                            
+     I            DS                                                            
+     I                                        1   80W@DAT8                      
+     I                                        3   80W@DAT6                      
+     I                                        1   40W@DATY                      
+     I                                        5   60W@DATM                      
+     I                                        7   80W@DATD                      
+      * < 画面 ﾜｰｸ >                                                            
+     IG1TRL       DS                                                            
+     I                                        1   7 G1TRCL                      
+     I                                        8  11 G1TRSL                      
+      *                                                                         
+     IG1TRY       DS                                                            
+     I                                        1   1 G1TRKY                      
+     I                                        2   8 G1TRCY                      
+     I                                        9  12 G1TRSY                      
+     I                                       13  13 G1TRUY                      
+     I                                        2  13 G1TRY@                      
+      *                                                                         
+     ISFTRY       DS                                                            
+     I                                        1   7 SFTRCY                      
+     I                                        8   8 SFHIF1                      
+     I                                        9  12 SFTRSY                      
+     I                                       13  13 SFHIF2                      
+     I                                       14  14 SFTRUY                      
+      *                                                                         
+     I            DS                                                            
+     I                                        1  24 SFTRYY                      
+     I                                        1  12 SFTR1Y                      
+     I                                       13  24 SFTR2Y                      
+      *                                                                         
+     ISFTRL       DS                                                            
+     I                                        1   7 SFTRCL                      
+     I                                        8   8 SFHIF3                      
+     I                                        9  12 SFTRSL                      
+      *                                                                         
+     I            DS                                                            
+     I                                        1  24 SFTRLL                      
+     I                                        1  12 SFTR1L                      
+     I                                       13  24 SFTR2L                      
+      *                                                                         
+     I            DS                                                            
+     I                                        1  13 OJTRL@                      
+     I                                        1   1 OJTRKL                      
+     I                                        2   8 OJTRCL                      
+     I                                        9  12 OJTRSL                      
+     I                                       13  13 OJTRUL                      
+      *                                                                         
+     I            DS                                                            
+     I                                        1  13 GETR                        
+     I                                        1   1 GETRK                       
+     I                                        2   8 GETRC                       
+     I                                        9  12 GETRS                       
+     I                                       13  13 GETRU                       
+      * 法人                                                                    
+     I            DS                                                            
+     I                                        1  13 TRTRH@                      
+     I                                        1   1 TRTRKH                      
+     I                                        2   8 TRTRCH                      
+     I                                        9  12 TRTRSH                      
+     I                                       13  13 TRTRUH                      
+      * 請求・精算先                                                            
+     I            DS                                                            
+     I                                        1  13 TRTRQ@                      
+     I                                        1   1 TRTRKQ                      
+     I                                        2   8 TRTRCQ                      
+     I                                        9  12 TRTRSQ                      
+     I                                       13  13 TRTRUQ                      
+      *--------------------------------------------------------------*          
+      *   ﾃﾞｰﾀQ                                                                 
+      /COPY QCPYSRC,@DTAQ                                                       
+      *   LDA                                                                   
+      /COPY QCPYSRC,@LDA                                                        
+     I                                      900 900 L@01                        
+     I                                      901 915 L@02                        
+     I                                      916 922 L@03                        
+     I                                      923 926 L@04                        
+      ** ADD STR 2001.01.25 A980 *                                              
+     I                                      927 927 L@05                        
+     I                                      928 934 L@06                        
+     I                                      935 938 L@07                        
+     I                                      939 939 L@08                        
+     I                                      940 940 L@09                        
+     I                                      941 947 L@10                        
+     I                                      948 951 L@11                        
+     I                                      952 952 L@12                        
+     I                                      953 9600L@13                        
+     I                                      961 9680L@14                        
+      ** ADD END 2001.01.25 A980 *                                              
+      *   暦日変換                                                              
+      /COPY QCPYSRC,@0010P                                                      
+      *   ﾒｯｾｰｼﾞ 取得                                                           
+      /COPY QCPYSRC,@0040P                                                      
+      *   ｾｷｭﾘﾃｨ & 業務 ﾛｯｸ ﾁｪｯｸ                                                
+      /COPY QCPYSRC,@2010P                                                      
+      *   №採番                                                                
+      /COPY QCPYSRC,@0120P                                                      
+      *   ﾓｰﾄﾞ 切替                                                             
+      /COPY QCPYSRC,ZZ0010P                                                     
+      *  ﾎﾟｯﾌﾟ 照会                                                             
+      /COPY QCPYSRC,@POP                                                        
+      *  ﾍﾙﾌﾟ  照会                                                             
+      /COPY QCPYSRC,ZZ0020P                                                     
+      *==============================================================*          
+      *                    ＰＬＩＳＴ                                           
+      *==============================================================*          
+     C           *ENTRY    PLIST                                                
+     C                     PARM           P@ADN   8         相手伝票№          
+.....C                     PARM           P@SOK   3                             
+      *==============================================================*          
+      *                    ＫＬＩＳＴ                                           
+      *==============================================================*          
+      * < 送り状明細 ﾃﾞｰﾀ >                                                     
+..... * <L15>                                                                   
+.....C           OMK09     KLIST                                                
+.....C                     KFLD           OMTRKL            取引先区分   出荷   
+.....C                     KFLD           OMTRCL            法人   出荷業者     
+.....C                     KFLD           OMTRSL            支店   出荷業者     
+.....C                     KFLD           OMTRUL            売場   出荷業者     
+.....C                     KFLD           OMTNO2            問合№親   出荷業   
+..... *                                                                         
+.....C           OMK09R    KLIST                                                
+.....C                     KFLD           OMTRKL            取引先区分   出荷   
+.....C                     KFLD           OMTRCL            法人   出荷業者     
+.....C                     KFLD           OMTRSL            支店   出荷業者     
+.....C                     KFLD           OMTRUL            売場   出荷業者     
+      * <L15>                                                                   
+     C           OMK15     KLIST                                                
+     C                     KFLD           OMTRKL            取引先区分   出荷   
+     C                     KFLD           OMTRCL            法人   出荷業者     
+     C                     KFLD           OMTRSL            支店   出荷業者     
+     C                     KFLD           OMTRUL            売場   出荷業者     
+     C                     KFLD           OMADN             相手伝票№          
+     C                     KFLD           OMTNO2            問合№親   出荷業   
+     C                     KFLD           OMHSD             発送日              
+      *                                                                         
+     C           OMK15R    KLIST                                                
+     C                     KFLD           OMTRKL            取引先区分   出荷   
+     C                     KFLD           OMTRCL            法人   出荷業者     
+     C                     KFLD           OMTRSL            支店   出荷業者     
+     C                     KFLD           OMTRUL            売場   出荷業者     
+      * <L16>                                                                   
+     C           OMK16     KLIST                                                
+     C                     KFLD           OMTRKC            取引先区分   出荷   
+     C                     KFLD           OMTRCC            法人   出荷先       
+     C                     KFLD           OMTRSC            支店   出荷先       
+     C                     KFLD           OMTRUC            売場   出荷先       
+     C                     KFLD           OMADN             相手伝票№          
+     C                     KFLD           OMTNO2            問合№親   出荷業   
+     C                     KFLD           OMHSD             発送日              
+      *                                                                         
+     C           OMK16A    KLIST                                                
+     C                     KFLD           OMTRKC            取引先区分   出荷   
+      *                                                                         
+     C           OMK16B    KLIST                                                
+     C                     KFLD           OMTRKC            取引先区分   出荷   
+     C                     KFLD           OMTRCC            法人   出荷先       
+      *                                                                         
+     C           OMK16R    KLIST                                                
+     C                     KFLD           OMTRKC            取引先区分   出荷   
+     C                     KFLD           OMTRCC            法人   出荷先       
+     C                     KFLD           OMTRSC            支店   出荷先       
+     C                     KFLD           OMTRUC            売場   出荷先       
+      * <L17>                                                                   
+     C           OMK17     KLIST                                                
+     C                     KFLD           OMSOK             倉庫                
+     C                     KFLD           OMADN             相手伝票№          
+     C                     KFLD           OMTNO2            問合№親   出荷業   
+     C                     KFLD           OMHSD             発送日              
+      *                                                                         
+     C           OMK17R    KLIST                                                
+     C                     KFLD           OMSOK             倉庫                
+      * <L18>                                                                   
+     C           OMK18     KLIST                                                
+     C                     KFLD           OMTNO2            問合№親   出荷業   
+     C                     KFLD           OMADN             相手伝票№          
+     C                     KFLD           OMHSD             発送日              
+      * <L19>                                                                   
+     C           OMK19     KLIST                                                
+     C                     KFLD           OMHSD             発送日              
+     C                     KFLD           OMADN             相手伝票№          
+     C                     KFLD           OMTNO2            問合№親   出荷業   
+      * <L20>                                                                   
+     C           OMK20     KLIST                                                
+     C                     KFLD           OMADN             相手伝票№          
+     C                     KFLD           OMTNO2            問合№親   出荷業   
+     C                     KFLD           OMHSD             発送日              
+      * <L20>                                                                   
+     C           OMK20A    KLIST                                                
+     C                     KFLD           OMADN             相手伝票№          
+      * < 送り状 ﾃﾞｰﾀ >                                                         
+     C           OJKEY     KLIST                                                
+     C                     KFLD           OJJNO             送状№              
+     C                     KFLD           OJJGY             送状行№            
+01/16C                     KFLD           OJTNO2            問合せ№            
+      * < 取引先 ﾏｽﾀ >                                                          
+     C           TRKEY     KLIST                                                
+     C                     KFLD           TRTRK             取引先区分          
+     C                     KFLD           TRTRC             法人                
+     C                     KFLD           TRTRS             支店                
+     C                     KFLD           TRTRU             売場                
+      * < 組織 ﾏｽﾀ >                                                            
+     C           SKKEY     KLIST                                                
+     C                     KFLD           SKNEND            年度                
+     C                     KFLD           SKSSK             組織区分            
+     C                     KFLD           SKSSC             組織 ｺｰﾄﾞ           
+      * < 業者営業店 ﾏｽﾀ >                                                      
+     C           GEKEY     KLIST                                                
+     C                     KFLD           GETRK             取引区分            
+     C                     KFLD           GETRC             法人                
+     C                     KFLD           GETRS             支店                
+     C                     KFLD           GETRU             売場                
+     C                     KFLD           GETN              発店業者            
+      *** ADD STR 2001.01.25 A980 ***                                           
+      *< 検品実績データ                                                         
+     C           H5KEY     KLIST                                                
+     C                     KFLD           H5KB03                                
+     C                     KFLD           H5SOK                                 
+     C                     KFLD           H5SGD                                 
+     C                     KFLD           H5SGNO                                
+      *** ADD END 2001.01.25 A980 ***                                           
+      *==============================================================*          
+      *                    ＤＥＦＮ　                                           
+      *==============================================================*          
+      * 画面 ﾜｰｸ                                                                
+     C           *LIKE     DEFN RRN       @RRN              最終 RRN            
+      *==============================================================*          
+      *                    ＭＡＩＮ　ＲＯＵＴＩＮＥ                             
+      *==============================================================*          
+      * < 初期処理 >                                                            
+     C                     EXSR #INIT                                           
+      * < 中心処理 >                                                            
+     C                     EXSR #MAIN                                           
+      * < 終了処理 >                                                            
+     C                     EXSR #END                                            
+      *==============================================================*          
+      *   ＃ＩＮＩＴ       初期処理                                             
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | PROCESS :   初期設定                                                 
+      *  ･-------------------------------------------------                     
+     C           #INIT     BEGSR                                                
+      * < ｶｰｿﾙ 制御 16 進 ｾｯﾄ >                                                 
+     C                     BITOF'01234567'WSB1                                  
+     C                     BITOF'01234567'WSB2                                  
+      * < 制御 ﾌﾗｸﾞ 初期設定 >                                                  
+     C                     MOVE *ALL'0'   CTLFLG            ｺﾝﾄﾛｰﾙ FLG          
+     C                     MOVE '1'       WLOP              画面制御            
+     C                     MOVE '1'       WDSP              画面制御            
+      * < ﾜｰｸ 初期設定 >                                                        
+     C                     MOVEA*ALL'0'   *IN                                   
+     C                     MOVE *ALL'0'   SETOF1 10         FLG OFF ﾖｳ          
+     C                     MOVE *ALL'0'   SETOF2 50         FLG OFF ﾖｳ          
+     C                     MOVE *ZERO     RRN     40        SFL NO              
+     C**                   Z-ADD07        @PAG    20        SFLPAGｽｳ            
+     C                     Z-ADD04        @PAG    20        SFLPAGｽｳ            
+      * < 画面初期設定 >                                                        
+     C                     MOVELLDCPUJ    CPU               CPU 名              
+     C                     MOVEL@PGID     PID               ﾌﾟﾛｸﾞﾗﾑID           
+     C                     MOVE ' 照会 '  MOD               ﾓｰﾄﾞ                
+     C                     MOVELLDWID     WID               ﾜｰｸｽﾃｰｼｮﾝID         
+     C                     MOVELLDOPCJ    OPCJ              OPCJ                
+      * < ｾｷｭﾘﾃｨ & 業務 ﾛｯｸ ﾁｪｯｸ >                                              
+     C                     EXSR #SCHK                                           
+      *                                                                         
+     C                     EXSR #M1000                                          
+      *                                                                         
+     C           \INIT     ENDSR                                                
+      *==============================================================*          
+      *   ＃ＭＡＩＮ       メイン処理                                           
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | PROCESS :  画面処理                                                  
+      *  ･-------------------------------------------------                     
+     C           #MAIN     BEGSR                                                
+      * < 画面処理 >                                                            
+     C           WEND      DOWEQ'0'                        >DOWEQ               
+      *                                                                         
+     C           WDSP      CASEQ'1'       #C1000           ･>CASEQ              
+     C           WDSP      CASEQ'2'       #C2000            画面制御 2          
+     C                     END                             ･<CASEQ              
+      *                                                                         
+     C                     END                             <DOWEQ               
+      *                                                                         
+     C           \MAIN     ENDSR                                                
+      *===============================================================*         
+      *   ＃ＥＮＤ         プログラム終了                                       
+      *===============================================================*         
+      *  ･-------------------------------------------------                     
+      *  | PROCESS : プログラム終了                                             
+      *  ･-------------------------------------------------                     
+     C           #END      BEGSR                                                
+      * < ﾌｧｲﾙ CLOSE >                                                          
+     C                     MOVE *ALL'/'   @00401                                
+     C                     CALL 'ZZZ0040R'             95   ﾒｯｾｰｼﾞ 取得         
+     C                     PARM           @0040                                 
+      *                                                                         
+     C                     MOVE *ALL'/'   @20101                                
+     C                     CALL 'ZZZ2010R'             95   ｾｷｭﾘﾃｨ& 業務 ﾛｯｸCHK 
+     C                     PARM           @2010                                 
+      *                                                                         
+     C                     MOVE *ALL'/'   @01201                                
+     C                     CALL 'ZZZ0120R'             95   №採番              
+     C                     PARM           @0120                                 
+      *                                                                         
+     C                     MOVE *ALL'/'   @POCD1                                
+     C                     CALL 'KYD0010R'             95   取引先 POP          
+     C                     PARM           @POP                                  
+      *                                                                         
+     C                     MOVE *ALL'/'   @POCD1                                
+     C                     CALL 'KYD0020R'             95   組織 POP            
+     C                     PARM           @POP                                  
+      *                                                                         
+     C                     MOVE *ALL'/'   @POCD1                                
+     C                     CALL 'TBD1810R'             95   業者 ﾎﾟｯﾌﾟ          
+     C                     PARM           @POP                                  
+      * < PROGRAM END >                                                         
+     C                     SETON                     LR                         
+     C                     RETRN                                                
+      *                                                                         
+     C           \END      ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｃ１０００     画面処理   ( G1 )                                    
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | PROCESS :  第１画面の処理を行う                                      
+      *  ･-------------------------------------------------                     
+     C           #C1000    BEGSR                                                
+      *                                                                         
+     C                     EXSR #I1000                      G1 初期 ｾｯﾄ         
+      *** 画面 ﾙｰﾌﾟ 処理 ***                                                    
+     C           WLOP      DOWEQ'1'                        >DOWEQ               
+      *                                                                         
+     C                     WRITEG9                                              
+     C           L@01      IFEQ '2'                        ･>IFEQ               
+     C           WFST1     ANDEQ'0'                                             
+     C           WERR      ANDEQ'0'                                             
+     C           P@ADN     ORNE *BLANK                                          
+     C           WFST1     ANDEQ'0'                                             
+     C           WERR      ANDEQ'0'                                             
+     C                     ELSE                            -+                   
+     C                     EXFMTG1                                              
+     C                     END                             ･<IFEQ               
+     C                     MOVE '1'       WFST1                                 
+      * < PF1: HELP >                                                           
+     C           *INKA     IFEQ '1'                        ･>IFEQ               
+     C                     EXSR #H1000                      HELP 処理           
+     C                     END                             ･<IFEQ               
+      * < PF3: 終了 >                                                           
+     C           *INKC     IFEQ '1'                        ･>IFEQ               
+     C                     MOVE '1'       WEND              終了                
+     C                     MOVE '0'       WLOP              LOOP END            
+     C                     MOVE '0'       WDSP              画面制御 END        
+     C                     MOVE 'E'       L@01                                  
+     C                     END                             ･<IFEQ               
+      * < PF4: 検索 >                                                           
+     C           *INKD     IFEQ '1'                        ･>IFEQ               
+     C                     EXSR #P1000                      POP 処理            
+     C                     END                             ･<IFEQ               
+      * < ENTER >                                                               
+     C           *INKA     IFEQ '0'                        ･>IFEQ               
+     C           *INKB     ANDEQ'0'                                             
+     C           *INKC     ANDEQ'0'                                             
+     C           *INKD     ANDEQ'0'                                             
+      * < 画面 ﾁｪｯｸ >                                                           
+     C                     EXSR #G1000                                          
+      * < NOT ERR -> 次画面 ﾍ >                                                 
+     C           WERR      IFEQ '0'                        ･･>IFEQ              
+     C                     MOVE '0'       WLOP              LOOP END            
+     C                     MOVE '2'       WDSP              画面制御 2 ﾍ        
+     C                     END                             ･･<IFEQ              
+      *                                                                         
+     C                     END                             ･<IFEQ               
+     C                     END                             <DOWEQ               
+      *                                                                         
+     C           \C1000    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｉ１０００     画面初期処理   ( G1 )                                
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | PROCESS :   画面 (G1) 初期設定を行なう                               
+      *  ･-------------------------------------------------                     
+     C           #I1000    BEGSR                                                
+      * < ｶｰｿﾙ SET >                                                            
+     C                     Z-ADD02        D1LINE                                
+     C                     Z-ADD19        D1COLM                                
+      * < ｼｽﾃﾑ 時刻 >                                                           
+     C                     TIME           @TIME                                 
+     C                     Z-ADDW@TIM     TIM                                   
+     C                     MOVEL@INF,1    INF               CMD 説明            
+      *                                                                         
+     C           LDTST     IFEQ '1'                        >IFEQ                
+     C                     SETON                     98                         
+     C                     ELSE                            +                    
+     C                     SETOF                     98                         
+     C                     END                             <IFEQ                
+      *                                                                         
+     C           WERR      IFEQ '0'                        >IFEQ                
+     C                     MOVE *BLANK    MCD               ﾒｯｾｰｼﾞID            
+     C                     MOVE *BLANK    MSG               ﾒｯｾｰｼﾞ              
+     C                     MOVEA'00'      *IN,88                                
+     C                     END                             <IFEQ                
+      *                                                                         
+     C                     MOVE '1'       WLOP              LOOP                
+      *                                                                         
+     C           \I1000    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｍ１０００     画面クリア処理   ( G1 )                              
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | PROCESS :   画面 (G1) ｸﾘｱ 処理を行なう                               
+      *  ･-------------------------------------------------                     
+     C           #M1000    BEGSR                                                
+      * < 第１画面初期化 >                                                      
+     C                     MOVEL*BLANK    G1TNOF            問合せ№ FROM       
+     C                     MOVEL*BLANK    G1TNOT            問合せ№ TO         
+     C                     MOVEL*BLANK    G1TRCL            法人・出荷業者      
+     C                     MOVEL*BLANK    G1TRSL            支店・出荷業者      
+     C                     MOVEL*BLANK    G1TR1             法人・出荷業者      
+     C                     MOVEL*BLANK    G1TR2             支店・出荷業者      
+     C                     Z-ADD*ZERO     G1YM1F            発送日 FROM         
+     C                     Z-ADD*ZERO     G1YM1T            発送日 TO           
+     C                     MOVEL*BLANK    G1SOK             出荷倉庫            
+     C                     MOVEL*BLANK    G1TRKY            取引先区分・出荷先  
+     C                     MOVEL*BLANK    G1TRCY            法人・出荷先        
+     C                     MOVEL*BLANK    G1TRSY            支店・出荷先        
+     C                     MOVEL*BLANK    G1TRUY            売場・出荷先        
+     C                     MOVEL*BLANK    G1KB34            出荷種別            
+     C                     MOVEL*BLANK    G1DNOF            伝票№ FROM         
+     C                     MOVEL*BLANK    G1DNOT            伝票№ TO           
+      *                                                                         
+     C           L@01      IFEQ '2'                        >IFEQ                
+     C                     MOVELL@02      G1TNOF            問合せ№ FROM       
+     C                     MOVELL@02      G1TNOT            問合せ№ TO         
+     C                     MOVELL@03      G1TRCL            法人・出荷業者      
+     C                     MOVELL@04      G1TRSL            支店・出荷業者      
+      *** ADD STR 2001.01.25 ***                                                
+     C                     MOVELL@05      G1TRKY            取引先区分・出荷先  
+     C                     MOVELL@06      G1TRCY            法人・出荷先        
+     C                     MOVELL@07      G1TRSY            支店・出荷先        
+     C                     MOVELL@08      G1TRUY            売場・出荷先        
+     C                     Z-ADDL@13      G1YM1F                                
+     C                     Z-ADDL@14      G1YM1T                                
+      *** ADD END 2001.01.25 ***                                                
+     C                     END                             <IFEQ                
+      *                                                                         
+     C                     MOVELP@ADN     G1DNOF            伝票№ FROM         
+     C                     MOVELP@ADN     G1DNOT            伝票№ TO           
+.....C                     MOVELP@SOK     G1SOK             倉庫 ｺｰﾄﾞ           
+      *                                                                         
+     C           \M1000    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｇ１０００     画面チェック処理   ( G1 )                            
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | PROCESS :  入力値のチェックを行う                                    
+      *  ･-------------------------------------------------                     
+     C           #G1000    BEGSR                                                
+      * < ERROR FLG & 画面標識  OFF >                                           
+     C                     MOVE '0'       WERR                                  
+     C                     MOVE '0'       WWRN                                  
+     C                     MOVEASETOF2    *IN,11                                
+     C                     MOVEA'00'      *IN,88                                
+      * < ﾒｯｾｰｼﾞｸﾘｱ >                                                           
+     C                     MOVE *BLANK    @0040                                 
+     C                     MOVE *BLANK    MCD               ﾒｯｾｰｼﾞID            
+     C                     MOVE *BLANK    MSG               ﾒｯｾｰｼﾞ              
+      * << 個別項目 >>                                                          
+      * < 問合せ№ >                                                            
+     C           G1TNOT    IFEQ *BLANK                      問合せ№ TO         
+     C                     MOVEL*ALL'9'   G1TNOT            問合せ№ TO         
+     C                     END                             <IFEQ                
+      *                                                                         
+     C           G1TNOF    IFGT G1TNOT                      問合せ№ TO         
+     C                     MOVEL'KYE0025' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     1112                       
+     C                     END                             <IFGT                
+      * < 出荷業者 >                                                            
+     C                     MOVE *BLANK    G1TR1             法人・出荷業者      
+     C                     MOVE *BLANK    G1TR2             支店・出荷業者      
+      *                                                                         
+     C           G1TRCL    IFEQ *ALL'0'                     法人・出荷業者      
+     C           G1TRSL    ANDEQ*ALL'0'                     支店・出荷業者      
+     C                     MOVE *BLANK    G1TRCL            法人・出荷業者      
+     C                     MOVE *BLANK    G1TRSL            支店・出荷業者      
+     C                     END                             <IFEQ                
+      *                                                                         
+     C           G1TRL     IFNE *BLANK                     >IFNE                
+      * ( 取引先 ﾏｽﾀ )                                                          
+     C                     MOVEL'4'       TRTRK             取引先区分          
+     C                     MOVELG1TRCL    TRTRC             法人                
+     C                     MOVELG1TRSL    TRTRS             支店                
+     C                     MOVEL*BLANK    TRTRU             売場                
+     C           TRKEY     CHAINTRREC                90                         
+     C           *IN90     IFEQ '0'                        ･>IFEQ               
+     C                     MOVELTRTR1     G1TR1             法人・出荷業者      
+     C                     MOVELTRTR2     G1TR2             支店・出荷業者      
+     C                     ELSE                            -+                   
+     C                     MOVE 'MME0072' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     1314                       
+     C                     END                             ･<IFEQ               
+      *                                                                         
+     C                     END                             <IFNE                
+      * < 発送日 >                                                              
+     C                     Z-ADD*ZERO     WKYM1F  80                            
+     C                     Z-ADD*ZERO     WKYM1T  80                            
+      * (FROM)                                                                  
+     C           G1YM1F    IFNE *ZERO                       発送日 FROM         
+     C                     MOVE '5'       @00101            CHECK 区分          
+     C                     MOVE G1YM1F    @00102            発送日 FROM         
+     C                     MOVE *ZERO     @00103            日付２              
+     C                     MOVE *BLANK    @00104            元号１              
+     C                     MOVE *BLANK    @00105            元号２              
+     C                     MOVE *ZERO     @00106            結果日付            
+     C                     MOVE *BLANK    @00107            結果元号            
+      * ( 日付 ﾁｪｯｸ )                                                           
+     C                     CALL 'ZZZ0010R'                                      
+     C                     PARM           @0010                                 
+      * ( ﾘﾀｰﾝ )                                                                
+     C                     MOVEL@00106    WKYM1F                                
+     C           @00108    IFNE '00'                       ･>IFNE               
+     C                     MOVEL'KYE0014' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     15                         
+     C                     END                             ･<IFNE               
+     C                     END                             <IFNE                
+      * (TO)                                                                    
+     C           G1YM1T    IFEQ *ZERO                       発送日 TO           
+     C           G1YM1T    OREQ *ALL'9'                     発送日 TO           
+     C                     MOVE *ALL'9'   G1YM1T            発送日 TO           
+     C                     MOVE *ALL'9'   WKYM1T                                
+     C                     ELSE                            +                    
+      *                                                                         
+     C                     MOVE '5'       @00101            CHECK 区分          
+     C                     MOVE G1YM1T    @00102            発送日 TO           
+     C                     MOVE *ZERO     @00103            日付２              
+     C                     MOVE *BLANK    @00104            元号１              
+     C                     MOVE *BLANK    @00105            元号２              
+     C                     MOVE *ZERO     @00106            結果日付            
+     C                     MOVE *BLANK    @00107            結果元号            
+      * ( 日付 ﾁｪｯｸ )                                                           
+     C                     CALL 'ZZZ0010R'                                      
+     C                     PARM           @0010                                 
+      * ( ﾘﾀｰﾝ )                                                                
+     C                     MOVEL@00106    WKYM1T                                
+     C           @00108    IFNE '00'                       ･>IFNE               
+     C                     MOVEL'KYE0014' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     16                         
+     C                     END                             ･<IFNE               
+     C                     END                             <IFEQ                
+      * ( 大小 ﾁｪｯｸ )                                                           
+     C  N15N16   WKYM1F    IFGT WKYM1T                     >IFGT                
+     C                     MOVEL'KYE0025' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     1516                       
+     C                     END                             <IFGT                
+      * < 倉庫 >                                                                
+     C           G1SOK     IFNE *BLANK                      出荷倉庫            
+      * ( 組織 ﾏｽﾀ )                                                            
+     C                     Z-ADDLDNEND    SKNEND            年度                
+     C                     MOVEL'SK'      SKSSK             組織区分            
+     C                     MOVELG1SOK     SKSSC     P       組織 ｺｰﾄﾞ           
+     C           SKKEY     CHAINSKREC                90                         
+     C           *IN90     IFEQ '1'                        ･>IFEQ               
+     C                     MOVE 'KYE0012' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     17                         
+     C                     END                             ･<IFEQ               
+      *                                                                         
+     C                     END                             <IFNE                
+      * < 出荷先 >                                                              
+     C           G1TRCY    IFEQ *ALL'0'                     法人・出荷先        
+     C           G1TRSY    ANDEQ*ALL'0'                     支店・出荷先        
+     C                     MOVE *BLANK    G1TRCL            法人・出荷業者      
+     C                     MOVE *BLANK    G1TRSL            支店・出荷業者      
+     C                     END                             <IFEQ                
+      *                                                                         
+     C           G1TRKY    IFNE '9'                         取引先区分・出荷先  
+     C           G1TRCY    IFNE *BLANK                      法人・出荷先        
+     C           G1TRSY    ORNE *BLANK                      支店・出荷先        
+     C           G1TRUY    ORNE *BLANK                      売場・出荷先        
+      * ( 取引先 ﾏｽﾀ )                                                          
+     C                     MOVELG1TRKY    TRTRK             取引先区分          
+     C                     MOVELG1TRCY    TRTRC             法人                
+     C                     MOVELG1TRSY    TRTRS             支店                
+     C                     MOVELG1TRUY    TRTRU             売場                
+     C           TRKEY     CHAINTRREC                90                         
+     C           *IN90     IFEQ '1'                        ･･>IFEQ              
+     C                     MOVE 'KYE0040' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     181920                     
+     C                     SETON                     21                         
+     C                     END                             ･･<IFEQ              
+      *                                                                         
+     C                     END                             ･<IFNE               
+     C                     END                             <IFNE                
+      *                                                                         
+     C           G1TRKY    IFEQ '9'                         取引先区分・出荷先  
+     C                     MOVEL*BLANK    G1TRUY            売場・出荷先        
+      *                                                                         
+     C           G1TRCY    IFNE *BLANK                      法人・出荷先        
+     C                     Z-ADDLDNEND    SKNEND            年度                
+     C                     MOVEL'SK'      SKSSK             組織区分            
+     C                     MOVELG1TRCY    SKSSC     P       組織 ｺｰﾄﾞ           
+     C           SKKEY     CHAINSKREC                90                         
+     C           *IN90     IFEQ '1'                        ･･>IFEQ              
+     C                     MOVE 'KYE0012' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     19                         
+     C                     END                             ･･<IFEQ              
+     C                     END                             ･<IFNE               
+      *                                                                         
+     C           G1TRSY    IFNE *BLANK                      支店・出荷先        
+     C                     Z-ADDLDNEND    SKNEND            年度                
+     C                     MOVEL'KA'      SKSSK             組織区分            
+     C                     MOVELG1TRSY    SKSSC     P       組織 ｺｰﾄﾞ           
+     C           SKKEY     CHAINSKREC                90                         
+     C           *IN90     IFEQ '1'                        ･･>IFEQ              
+     C                     MOVE 'KYE0018' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     20                         
+     C                     END                             ･･<IFEQ              
+     C                     END                             ･<IFNE               
+      *                                                                         
+     C                     END                             <IFEQ                
+      * < 出荷種別 >                                                            
+     C           G1KB34    IFNE *BLANK                      倉庫                
+     C           G1KB34    ANDNE'1'                                             
+     C           G1KB34    ANDNE'2'                                             
+     C           G1KB34    ANDNE'3'                                             
+     C           G1KB34    ANDNE'4'                                             
+     C           G1KB34    ANDNE'9'                                             
+     C                     MOVE 'KYE0098' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     24                         
+     C                     END                             <IFNE                
+      * < 伝票№ >                                                              
+     C           G1DNOT    IFEQ *BLANK                      伝票№ TO           
+     C                     MOVEL*ALL'9'   G1DNOT            伝票№ TO           
+     C                     END                             <IFEQ                
+      *                                                                         
+     C           G1DNOF    IFGT G1DNOT                      伝票№ TO           
+     C                     MOVEL'KYE0025' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     2223                       
+     C                     END                             <IFGT                
+      * << ＫＥＹ設定 >>                                                        
+     C                     MOVEASETOF1    *IN,55                                
+.....C                     MOVE '0'       *IN65                                 
+     C           @00401    IFEQ *BLANK                     >IFEQ                
+      *                                                                         
+     C                     SELEC                           ･>SELEC              
+     C           G1TRL     WHNE *BLANK                                          
+     C                     MOVEA'100000'  *IN,55                                
+.....C           G1TNOF    IFNE *BLANK                                          
+     C                     MOVEA'000000'  *IN,55                                
+.....C                     MOVE '1'       *IN65                                 
+.....C                     END                                                  
+     C           G1TRY     WHNE *BLANK                                          
+     C                     MOVEA'010000'  *IN,55                                
+     C                     MOVEA'001'     *IN,61                                
+     C           G1TRSY    IFEQ *BLANK                      支店・出荷先        
+     C                     MOVEA'010'     *IN,61                                
+     C                     END                             ･･<IFEQ              
+     C           G1TRCY    IFEQ *BLANK                      法人・出荷先        
+     C                     MOVEA'100'     *IN,61                                
+     C                     END                             ･･<IFEQ              
+     C           G1SOK     WHNE *BLANK                      出荷倉庫            
+     C                     MOVEA'001000'  *IN,55                                
+     C           G1TNOF    WHNE *BLANK                      問合せ№ FROM       
+     C                     MOVEA'000100'  *IN,55                                
+     C           G1YM1F    WHNE *ZERO                       発送日 FROM         
+     C                     MOVEA'000010'  *IN,55                                
+     C                     OTHER                                                
+     C                     MOVEA'000001'  *IN,55                                
+     C                     ENDSL                           ･<SELEC              
+      *                                                                         
+     C                     END                             <IFEQ                
+      * << 対象データ有？ >>                                                    
+     C           @00401    IFEQ *BLANK                     >IFEQ                
+     C                     MOVE '0'       W@SW    1                             
+     C                     EXSR #S1000                                          
+     C                     EXSR #R1000                                          
+      *                                                                         
+     C           *IN99     DOWEQ'0'                        ･>DOWEQ              
+     C                     EXSR #E1000                                          
+     C           WEXT      IFEQ '1'                        ･･>IFEQ              
+     C                     MOVE '1'       W@SW                                  
+     C                     LEAVE                                                
+     C                     END                             ･･<IFEQ              
+     C                     EXSR #R1000                                          
+     C                     ENDDO                           ･<DOWEQ              
+      *                                                                         
+     C           W@SW      IFNE '1'                        ･>IFNE               
+     C                     MOVE 'KYE0067' @00401                                
+     C                     EXSR #MSG                                            
+     C                     MOVEA'11111111'*IN,11                                
+     C                     MOVEA'111111'  *IN,19                                
+     C                     END                             ･<IFNE               
+     C                     END                             <IFEQ                
+      * < ERROR ? >                                                             
+     C                     MOVEL@00404    MCD               ﾒｯｾｰｼﾞID            
+     C                     MOVEL@00402    MSG               ﾒｯｾｰｼﾞ              
+      *                                                                         
+     C           @00403    COMP '1'                      88:WRN                 
+     C           @00403    COMP '2'                      89:ERROR               
+     C   88                MOVE '1'       WWRN              WRN  FLG            
+     C   89                MOVE '1'       WERR              ERR  FLG            
+      *                                                                         
+     C           \G1000    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｓ１０００     キーセット処理                                       
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | PROCESS :   送り状明細データ位置付け                                 
+      *  ･-------------------------------------------------                     
+     C           #S1000    BEGSR                                                
+      *                                                                         
+     C                     MOVE '0'       *IN99                                 
+      *                                                                         
+     C                     MOVELG1TNOF    OMTNO2            問合№親   出荷業   
+     C                     MOVEL'4'       OMTRKL            取引先区分   出荷   
+     C                     MOVELG1TRCL    OMTRCL            法人   出荷業者     
+     C                     MOVELG1TRSL    OMTRSL            支店   出荷業者     
+     C                     MOVEL*BLANK    OMTRUL            売場   出荷業者     
+     C                     Z-ADDWKYM1F    OMHSD             発送日              
+     C                     MOVELG1SOK     OMSOK             倉庫                
+     C                     MOVELG1TRKY    OMTRKC            取引先区分   出荷   
+     C                     MOVELG1TRCY    OMTRCC            法人   出荷先       
+     C                     MOVELG1TRSY    OMTRSC            支店   出荷先       
+     C                     MOVELG1TRUY    OMTRUC            売場   出荷先       
+     C                     MOVELG1DNOF    OMADN     P       相手伝票№          
+      *                                                                         
+     C   55      OMK15     SETLLMXML15                                          
+     C   56      OMK16     SETLLMXML16                                          
+     C   57      OMK17     SETLLMXML17                                          
+     C   58      OMK18     SETLLMXML18                                          
+     C   59      OMK19     SETLLMXML19                                          
+     C   60      OMK20     SETLLMXML20                                          
+.....C   65      OMK09     SETLLMXML09                                          
+      *                                                                         
+     C           \S1000    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｒ１０００     読込処理                                             
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | INPUT   :   送り状明細データ読込                                     
+      *  | PROCESS :   読込処理をする。                                         
+      *  ･-------------------------------------------------                     
+     C           #R1000    BEGSR                                                
+      *                                                                         
+     C   55      OMK15R    READEMXML15                   99                     
+     C   56 61   OMK16A    READEMXML16                   99                     
+     C   56 62   OMK16B    READEMXML16                   99                     
+     C   56 63   OMK16R    READEMXML16                   99                     
+     C   57      OMK17R    READEMXML17                   99                     
+     C   58                READ MXML18                   99                     
+     C   59                READ MXML19                   99                     
+     C   60                READ MXML20                   99                     
+     C   65      OMK09R    READEMXML09                   99                     
+      *                                                                         
+     C                     MOVELOMADN     WKADN   8         相手伝票№          
+      *                                                                         
+     C  N58N59N65WKADN     IFGT G1DNOT                      伝票№ TO           
+     C           WKADN     OREQ G1DNOT                      伝票№ TO           
+     C           OMTNO2    ANDGTG1TNOT                      問合せ№ TO         
+     C           WKADN     OREQ G1DNOT                      伝票№ TO           
+     C           OMTNO2    ANDEQG1TNOT                      問合せ№ TO         
+     C           OMHSD     ANDGTWKYM1T                      発送日              
+     C                     MOVE '1'       *IN99                                 
+     C                     END                             <IFGT                
+      *                                                                         
+     C   58      OMTNO2    IFGT G1TNOT                      問合せ№ TO         
+     C           OMTNO2    OREQ G1TNOT                      問合せ№ TO         
+     C           WKADN     ANDGTG1DNOT                      伝票№ TO           
+     C           OMTNO2    OREQ G1TNOT                      問合せ№ TO         
+     C           WKADN     ANDEQG1DNOT                      伝票№ TO           
+     C           OMHSD     ANDGTWKYM1T                      発送日              
+     C                     MOVE '1'       *IN99                                 
+     C                     END                             <IFGT                
+      *                                                                         
+     C   59      OMHSD     IFGT WKYM1T                      発送日              
+     C           OMHSD     OREQ WKYM1T                      発送日              
+     C           WKADN     ANDGTG1DNOT                      伝票№ TO           
+     C           OMHSD     OREQ WKYM1T                      発送日              
+     C           WKADN     ANDEQG1DNOT                      伝票№ TO           
+     C           OMTNO2    ANDGTG1TNOT                      問合せ№ TO         
+     C                     MOVE '1'       *IN99                                 
+     C                     END                             <IFGT                
+..... *                                                                         
+.....C   65      OMTNO2    IFGT G1TNOT                                          
+.....C                     MOVE '1'       *IN99                                 
+.....C                     END                             <IFGT                
+      *                                                                         
+     C           \R1000    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｅ１０００     抽出処理                                             
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | INPUT   :   送り状明細データ                                         
+      *  | PROCESS :   データ抽出処理をする。                                   
+      *  ･-------------------------------------------------                     
+     C           #E1000    BEGSR                                                
+      * < 抽出 ON >                                                             
+     C                     MOVE '1'       WEXT                                  
+      * < 削除 >                                                                
+     C           OMDEL     IFNE *BLANK                      削除区分            
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             <IFNE                
+      * < 問合せ№ >                                                            
+     C           OMTNO2    IFLT G1TNOF                      問合せ№ FROM       
+     C           OMTNO2    ORGT G1TNOT                      問合せ№ TO         
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             <IFLT                
+      * < 出荷業者 >                                                            
+     C           G1TRL     IFNE *BLANK                     >IFNE                
+     C           OMTRCL    IFNE G1TRCL                      法人・出荷業者      
+     C           OMTRSL    ORNE G1TRSL                      支店・出荷業者      
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             ･<IFNE               
+     C                     END                             <IFNE                
+      * < 発送日 >                                                              
+     C           OMHSD     IFLT WKYM1F                      発送日              
+     C           OMHSD     ORGT WKYM1T                      発送日              
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             <IFLT                
+      * < 倉庫 >                                                                
+     C           G1SOK     IFNE *BLANK                      出荷倉庫            
+     C           OMSOK     ANDNEG1SOK                       出荷倉庫            
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             <IFNE                
+      * < 出荷先 >                                                              
+     C           G1TRKY    IFNE *BLANK                      取引先区分・出荷先  
+     C           OMTRKC    ANDNEG1TRKY                      取引先区分・出荷先  
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             <IFNE                
+      *                                                                         
+     C           G1TRCY    IFNE *BLANK                      法人・出荷先        
+     C           OMTRCC    ANDNEG1TRCY                      法人・出荷先        
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             <IFNE                
+      *                                                                         
+     C           G1TRSY    IFNE *BLANK                      支店・出荷先        
+     C           OMTRSC    ANDNEG1TRSY                      支店・出荷先        
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             <IFNE                
+      *                                                                         
+     C           G1TRUY    IFNE *BLANK                      売場・出荷先        
+     C           OMTRUC    ANDNEG1TRUY                      売場・出荷先        
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             <IFNE                
+      *** ADD STR 2001.01.26 A980 ***                                           
+     C           L@01      IFEQ '2'                                             
+     C           L@09      IFNE *BLANK                                          
+     C           OMTRKT    ANDNEL@09                                            
+     C           L@10      ORNE *BLANK                                          
+     C           OMTRCT    ANDNEL@10                                            
+     C           L@11      ORNE *BLANK                                          
+     C           OMTRST    ANDNEL@11                                            
+     C           L@12      ORNE *BLANK                                          
+     C           OMTRUT    ANDNEL@12                                            
+     C                     MOVE '0'       WEXT                                  
+     C                     END                                                  
+     C                     END                                                  
+      *** ADD END 2001.01.26 A980 ***                                           
+      * < 伝票№ >                                                              
+     C           WKADN     IFLT G1DNOF                      伝票№ FROM         
+     C           WKADN     ORGT G1DNOT                      伝票№ TO           
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             <IFLT                
+      * < 伝票№ >                                                              
+     C           OMTEK     IFNE ' '                                             
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             <IFLT                
+      *                                                                         
+     C           WEXT      IFEQ '1'                                             
+      * < 出荷種別 >                                                            
+     C                     Z-ADD*ZERO     OJKSU                                 
+     C                     MOVELOMNO9     OJJNO             送状№              
+     C                     MOVELOMGY9     OJJGY             送状行№            
+01/16C                     MOVELOMTNO2    OJTNO2    P       問合せ№            
+  |  C           OJKEY     CHAINMXJL01               90                         
+01/16C*:*:*      OJKEY     CHAINMXJL00               90                         
+     C           *IN90     IFEQ '0'                                             
+     C           G1KB34    ANDNE' '                                             
+     C           OJKB34    ANDNEG1KB34                                          
+     C                     MOVE '0'       WEXT                                  
+     C                     END                                                  
+      *                                                                         
+     C                     END                                                  
+      *                                                                         
+     C           \E1000    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｈ１０００     ＨＥＬＰ処理   ( G1 )                                
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | PROCESS :   詳細説明　表示                                           
+      *  ･-------------------------------------------------                     
+     C           #H1000    BEGSR                                                
+      *                                                                         
+     C                     MOVE WSLIN1    WSLIN2            カーソル制御        
+     C                     MOVE WSCOL1    WSCOL2                                
+      *                                                                         
+     C                     MOVE WSLINE    D1LINE            カーソル制御        
+     C                     MOVE WSCOLM    D1COLM                                
+      *                                                                         
+     C           \H1000    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｐ１０００     ＰＯＰ処理   ( G1 )                                  
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | PROCESS :   コード検索画面　表示                                     
+      *  ･-------------------------------------------------                     
+     C           #P1000    BEGSR                                                
+      *                                                                         
+     C                     MOVE WSLIN1    WSLIN2            カーソル制御        
+     C                     MOVE WSCOL1    WSCOL2                                
+      ** 出荷業者                                                               
+     C           WSLINE    IFEQ 03                         >IFEQ                
+     C           WSCOLM    ANDGE19                                              
+     C           WSCOLM    ANDLE32                                              
+     C                     MOVEL'1'       @POCD1           : 未払先             
+     C                     MOVELG1TRL     @POCD2                                
+     C                     MOVE G1SOK     @POCD2            出荷倉庫            
+     C                     MOVELG1TR1     @POJR1            法人・出荷業者      
+     C                     MOVELG1TR2     @POJR2            支店・出荷業者      
+     C                     CALL 'TBD1810R'                 ( 業者 )             
+     C                     PARM           @POP                                  
+     C           @POCD2    IFNE *BLANK                     ･>IFNE               
+     C                     MOVEL@POCD2    G1TRL                                 
+     C                     MOVEL@POJR1    G1TR1             法人・出荷業者      
+     C                     MOVEL@POJR2    G1TR2             支店・出荷業者      
+     C                     END                             ･<IFNE               
+     C                     END                             <IFEQ                
+      ** 出荷先                                                                 
+     C           WSLINE    IFEQ 05                         >IFEQ                
+     C           WSCOLM    ANDGE19                                              
+     C           WSCOLM    ANDLE40                                              
+     C                     MOVELG1TRKY    @POCD1            取引先区分・出荷先  
+     C                     MOVELG1TRY@    @POCD2                                
+     C                     CALL 'KYD0010R'                 ( 出荷先 )           
+     C                     PARM           @POP                                  
+     C           @POCD2    IFNE *BLANK                     ･>IFNE               
+     C                     MOVEL@POCD1    G1TRKY                                
+     C                     MOVEL@POCD2    G1TRY@                                
+     C                     END                             ･<IFNE               
+     C                     END                             <IFEQ                
+      ** 倉庫                                                                   
+     C           WSLINE    IFEQ 05                         >IFEQ                
+     C           WSCOLM    ANDGE56                                              
+     C           WSCOLM    ANDLE58                                              
+     C                     MOVEL'SK'      @POCD1           : 区分               
+     C                     MOVELG1SOK     @POCD2    P       出荷倉庫            
+     C                     CALL 'KYD0020R'                 ( 組織 )             
+     C                     PARM           @POP                                  
+     C           @POCD2    IFNE *BLANK                     ･>IFNE               
+     C                     MOVEL@POCD2    G1SOK             出荷倉庫            
+     C                     END                             ･<IFNE               
+     C                     END                             <IFEQ                
+      *                                                                         
+     C                     MOVE WSLINE    D1LINE            カーソル制御        
+     C                     MOVE WSCOLM    D1COLM                                
+      *                                                                         
+     C           \P1000    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｃ２０００     画面処理   ( SFL )                                   
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | PROCESS :  第２画面の処理を行う  ( SFL )                             
+      *  ･-------------------------------------------------                     
+     C           #C2000    BEGSR                                                
+      *                                                                         
+     C                     EXSR #I2000                      SFL 初期 ｾｯﾄ        
+     C                     EXSR #M2000                      SFL 編集            
+      *** 画面 ﾙｰﾌﾟ 処理 ***                                                    
+     C           WLOP      DOWEQ'1'                        >DOWEQ               
+      *                                                                         
+     C                     WRITEG9                                              
+     C                     MOVE '1'       *IN82                                 
+     C                     EXFMTSFCTL                                           
+     C                     MOVE '0'       *IN82                                 
+      * < PF1: HELP >                                                           
+     C           *INKA     IFEQ '1'                        ･>IFEQ               
+     C                     EXSR #H2000                      HELP 処理           
+     C                     END                             ･<IFEQ               
+      * < PF3: 終了 >                                                           
+     C           *INKC     IFEQ '1'                        ･>IFEQ               
+     C                     MOVE '1'       WEND              終了                
+     C                     MOVE '0'       WLOP              LOOP END            
+     C                     MOVE '0'       WDSP              画面制御 END        
+     C                     MOVE 'E'       L@01                                  
+     C                     END                             ･<IFEQ               
+      * < PF4: 検索 >                                                           
+     C           *INKD     IFEQ '1'                        ･>IFEQ               
+     C                     EXSR #P1000                      POP 処理            
+     C                     END                             ･<IFEQ               
+      * < PF5: 明細照会 >                                                       
+     C           *INKE     IFEQ '1'                        ･>IFEQ               
+     C                     EXSR #L2000                                          
+     C           STLDA     IFEQ '1'                        ･･>IFEQ              
+     C                     MOVE '1'       WEND              終了                
+     C                     MOVE '0'       WLOP              LOOP END            
+     C                     MOVE '0'       WDSP              画面制御 1 ﾍ        
+     C                     MOVE '1'       L@01                                  
+     C                     END                             ･･<IFEQ              
+     C                     END                             ･<IFEQ               
+      * < PF12: 前画面 >                                                        
+     C***        *INKL     IFEQ '1'                                             
+     C***                  MOVE '0'       WLOP              LOOP END            
+     C***                  MOVE '1'       WDSP              画面制御 1 ﾍ        
+     C***                  END                                                  
+      * < ROLL UP >                                                             
+     C           *IN85     IFEQ '1'                        ･>IFEQ               
+     C                     EXSR #N2000                      ROLL 処理           
+     C                     END                             ･<IFEQ               
+      * < ENTER >                                                               
+     C           *INKA     IFEQ '0'                        ･>IFEQ               
+     C           *INKC     ANDEQ'0'                                             
+     C           *INKD     ANDEQ'0'                                             
+     C           *INKE     ANDEQ'0'                                             
+     C           *INKL     ANDEQ'0'                                             
+     C           *IN85     ANDEQ'0'                                             
+     C                     EXSR #G1000                                          
+     C           WERR      IFEQ '0'                        ･･>IFEQ              
+     C                     EXSR #I2000                                          
+     C                     EXSR #M2000                                          
+     C                     ELSE                            --+                  
+     C                     MOVE '0'       WLOP              LOOP END            
+     C                     MOVE '1'       WDSP              画面制御 1 ﾍ        
+     C                     END                             ･･<IFEQ              
+     C                     END                             ･<IFEQ               
+      *                                                                         
+     C                     ENDDO                           <DOWEQ               
+      *                                                                         
+     C           \C2000    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｉ２０００     画面初期処理   ( SFL )                               
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | PROCESS :   画面 (SFL) 初期設定を行なう                              
+      *  ･-------------------------------------------------                     
+     C           #I2000    BEGSR                                                
+      * < ｶｰｿﾙ SET >                                                            
+     C                     Z-ADD00        D1LINE                                
+     C                     Z-ADD00        D1COLM                                
+      * < ｼｽﾃﾑ 時刻 >                                                           
+     C                     TIME           @TIME                                 
+     C                     Z-ADDW@TIM     TIM                                   
+     C                     MOVEL@INF,2    INF               CMD 説明            
+      *                                                                         
+     C           LDTST     IFEQ '1'                        >IFEQ                
+     C                     SETON                     98                         
+     C                     ELSE                            +                    
+     C                     SETOF                     98                         
+     C                     END                             <IFEQ                
+      *                                                                         
+     C                     MOVE *BLANK    MCD               ﾒｯｾｰｼﾞID            
+     C                     MOVE *BLANK    MSG               ﾒｯｾｰｼﾞ              
+     C                     MOVEA'00'      *IN,88                                
+     C                     MOVE '0'       *IN86             ROLL UP             
+      *                                                                         
+     C                     MOVE '1'       WLOP              LOOP                
+      *                                                                         
+     C           \I2000    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｍ２０００     画面セット処理   ( SFL )                             
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | PROCESS :   画面 (SFL) ｾｯﾄ 処理を行なう                              
+      *  ･-------------------------------------------------                     
+     C           #M2000    BEGSR                                                
+      *                                                                         
+     C                     EXSR #M2010                      SFLCTL ｸﾘｱ          
+     C                     EXSR #M2020                      SFLREC ｸﾘｱ          
+     C                     EXSR #M2030                      SFLｾｯﾄ              
+      *                                                                         
+     C           \M2000    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｍ２０１０     画面クリア処理   ( SFCTL )                           
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | PROCESS :   画面 (SFL) ｸﾘｱ 処理を行なう                              
+      *  ･-------------------------------------------------                     
+     C           #M2010    BEGSR                                                
+      * < SFL CLR >                                                             
+     C                     MOVE '1'       *IN81                                 
+     C                     WRITESFCTL                                           
+     C                     MOVE '0'       *IN81                                 
+      *                                                                         
+     C           \M2010    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｍ２０２０     画面クリア処理   ( SFREC )                           
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | PROCESS :   画面 (SFREC) ｸﾘｱ 処理を行なう                            
+      *  ･-------------------------------------------------                     
+     C           #M2020    BEGSR                                                
+      * < 項目 ｸﾘｱ >                                                            
+     C                     MOVEL*BLANK    SFADN             相手伝票№          
+     C                     MOVEL*BLANK    SFTNO2            問合せ№            
+     C                     Z-ADD*ZERO     SFHSD             発送日              
+     C                     MOVEL*BLANK    SFTRY             出荷先              
+     C                     MOVEL*BLANK    SFTRYY            出荷先法人略称      
+     C                     MOVEL*BLANK    SFTR1Y            出荷先法人略称      
+     C                     MOVEL*BLANK    SFTR2Y            出荷先支店略称      
+     C                     Z-ADD*ZERO     SFKSU             個口数              
+     C                     MOVEL*BLANK    SFTRL             業者                
+     C                     MOVEL*BLANK    SFTRLL            出荷先法人略称      
+     C                     MOVEL*BLANK    SFTR1L            業者法人略称        
+     C                     MOVEL*BLANK    SFTR2L            業者支店略称        
+     C                     MOVEL*BLANK    SFTEL             出荷先法人略称      
+      *                                                                         
+     C           \M2020    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｍ２０３０     サブファイル出力処理                                 
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | PROCESS :   サブファイル出力を行なう                                 
+      *  ･-------------------------------------------------                     
+     C           #M2030    BEGSR                                                
+      *                                                                         
+     C                     Z-ADD1         RCDNBR           SFLRCDNBR            
+     C                     Z-ADD*ZERO     RRN                                   
+     C                     Z-ADD*ZERO     @RRN                                  
+      *                                                                         
+     C                     EXSR #S1000                                          
+     C                     EXSR #N2000                                          
+      *                                                                         
+     C           \M2030    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｍ２０４０     サブファイル編集処理                                 
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | INPUT   :   送り状明細データ                                         
+      *  | PROCESS :   サブファイル編集                                         
+      *  ･-------------------------------------------------                     
+     C           #M2040    BEGSR                                                
+      *                                                                         
+     C                     MOVELOMADN     SFADN             相手伝票№          
+     C                     MOVELOMTNO2    SFTNO2            問合せ№            
+     C                     Z-ADDOMHSD     SFHSD             発送日              
+      * 出荷先                                                                  
+     C                     MOVE *BLANK    SFTRY             出荷先              
+     C                     MOVELOMTRCC    SFTRCY            法人   出荷先       
+     C                     MOVEL'-'       SFHIF1                                
+     C                     MOVELOMTRSC    SFTRSY            支店   出荷先       
+     C                     MOVEL'-'       SFHIF2                                
+     C                     MOVELOMTRUC    SFTRUY            売場   出荷先       
+     C                     MOVEL*BLANK    SFTRYY            出荷先法人略称      
+     C                     MOVEL*BLANK    SFTR1Y            出荷先法人略称      
+     C                     MOVEL*BLANK    SFTR2Y            出荷先支店略称      
+..... * 行数                                                                    
+.....C                     Z-ADDOMITM     SFGYO             行数                
+      *                                                                         
+     C           OMTRKC    IFNE '9'                         取引先区分   出荷   
+     C                     MOVELOMTRKC    TRTRK             取引先区分          
+     C                     MOVELOMTRCC    TRTRC             法人                
+     C                     MOVELOMTRSC    TRTRS             支店                
+     C                     MOVELOMTRUC    TRTRU             売場                
+     C           TRKEY     CHAINTRREC                90                         
+     C           *IN90     IFEQ '0'                        ･>IFEQ               
+     C                     MOVELTRTR1     SFTR1Y            出荷先法人略称      
+     C                     MOVELTRTR2     SFTR2Y            出荷先支店略称      
+     C                     END                             ･<IFEQ               
+     C                     END                             <IFNE                
+      *                                                                         
+     C           OMTRKC    IFEQ '9'                         取引先区分   出荷   
+     C                     Z-ADDLDNEND    SKNEND            年度                
+     C                     MOVEL'SK'      SKSSK             組織区分            
+     C                     MOVELOMTRCC    SKSSC     P       組織 ｺｰﾄﾞ           
+     C           SKKEY     CHAINSKREC                90                         
+     C           *IN90     IFEQ '0'                        ･>IFEQ               
+     C                     MOVELSKSSJR    SFTR1Y            出荷先法人略称      
+     C                     END                             ･<IFEQ               
+     C                     Z-ADDLDNEND    SKNEND            年度                
+     C                     MOVEL'KA'      SKSSK             組織区分            
+     C                     MOVELOMTRSC    SKSSC     P       組織 ｺｰﾄﾞ           
+     C           SKKEY     CHAINSKREC                90                         
+     C           *IN90     IFEQ '0'                        ･>IFEQ               
+     C                     MOVELSKSSJR    SFTR2Y            出荷先支店略称      
+     C                     END                             ･<IFEQ               
+     C                     END                             <IFEQ                
+      * 個口数                                                                  
+     C***                  Z-ADD*ZERO     SFKSU             個口数              
+     C***                  MOVELOMNO9     OJJNO             送状№              
+     C***                  MOVELOMGY9     OJJGY             送状行№            
+     C***        OJKEY     CHAINOJREC                90                         
+     C**N90                Z-ADDOJKSU     SFKSU             個口数              
+     C                     Z-ADDOJKSU     SFKSU             個口数              
+      * 出荷業者                                                                
+     C                     MOVE *BLANK    SFTRL             業者                
+     C                     MOVELOMTRCL    SFTRCL            法人   出荷業者     
+     C                     MOVEL'-'       SFHIF3                                
+     C                     MOVELOMTRSL    SFTRSL            支店   出荷業者     
+      *                                                                         
+     C                     MOVEL*BLANK    SFTRLL            出荷先法人略称      
+     C                     MOVEL*BLANK    SFTR1L            業者法人略称        
+     C                     MOVEL*BLANK    SFTR2L            業者支店略称        
+      *                                                                         
+     C                     MOVELOMTRKL    TRTRK             取引先区分          
+     C                     MOVELOMTRCL    TRTRC             法人                
+     C                     MOVELOMTRSL    TRTRS             支店                
+     C                     MOVELOMTRUL    TRTRU             売場                
+     C           TRKEY     CHAINTRREC                90                         
+     C           *IN90     IFEQ '0'                        >IFEQ                
+     C                     MOVELTRTR1     SFTR1L            業者法人略称        
+     C                     MOVELTRTR2     SFTR2L            業者支店略称        
+     C                     END                             <IFEQ                
+      * 営業店                                                                  
+     C                     MOVEL*BLANK    SFTEL             出荷先法人略称      
+      *                                                                         
+     C                     MOVELOJSTNL    GETN              売場区分            
+     C                     EXSR #GE                                             
+     C                     MOVELGETEL     SFTEL             電話番号            
+      *** ADD STR 2001.01.25 A980 @MO ***                                       
+     C                     MOVELOMPNO     SFPDN                                 
+     C                     MOVELOMGJDN    SFSGNO                                
+      *                                                                         
+     C                     MOVEL'ﾅｼ  '    SFKNPN    P                           
+      *                                                                         
+     C                     MOVEL'S'       H5KB03                                
+     C                     MOVELOMSOK     H5SOK                                 
+     C                     Z-ADDOMSGD     H5SGD                                 
+     C                     MOVELOMGJDN    H5SGNO                                
+     C           H5KEY     CHAINH5REC                90                         
+     C           *IN90     DOWEQ*OFF                                            
+     C           H5KZF     IFEQ '1'                                             
+     C                     SELEC                                                
+     C           H5KB04    WHEQ 'H'                                             
+     C                     MOVE 'H/T'     SFKNPN    P                           
+     C           H5KB04    WHEQ 'P'                                             
+     C                     MOVE 'POS'     SFKNPN    P                           
+     C                     OTHER                                                
+     C                     MOVELH5KB04    SFKNPN    P                           
+     C                     ENDSL                                                
+     C                     LEAVE                                                
+     C                     ENDIF                                                
+     C           H5KEY     READEH5REC                    90                     
+     C                     ENDDO                                                
+      *** ADD STR 2001.01.25 A980 @MO ***                                       
+      *                                                                         
+     C           \M2040    ENDSR                                                
+      *===============================================================*         
+      *  ＃ＧＥ　　　　　　取引先マスター読込処理                               
+      *===============================================================*         
+     C           #GE       BEGSR                                                
+      *                                                                         
+     C           1         DO   3         IZ      10       >DO                  
+     C                     SELEC                           ･>SELEC              
+     C           IZ        WHEQ 1                                               
+     C                     MOVELOJTRL@    GETR                                  
+     C           IZ        WHEQ 2                                               
+     C                     MOVELTRTRQ@    GETR                                  
+     C           IZ        WHEQ 3                                               
+     C                     MOVELTRTRH@    GETR                                  
+     C                     ENDSL                           ･<SELEC              
+     C           GEKEY     CHAINGEREC                90                         
+     C   90                MOVEL*BLANK    GETEL             電話番号            
+     C  N90                LEAVE                                                
+     C                     END                             <DO                  
+      *                                                                         
+     C           \GE       ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｎ２０００     次頁処理                                             
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | PROCESS :   サブファイル次画面編集を行う。                           
+      *  | OUTPUT  :   SFREC                                                    
+      *  ･-------------------------------------------------                     
+     C           #N2000    BEGSR                                                
+      *                                                                         
+     C                     Z-ADD@RRN      RRN                                   
+     C                     Z-ADD*ZERO     @CNT    40                            
+      *                                                                         
+     C           *IN99     DOWEQ'0'                        >DOWEQ               
+     C           @CNT      ANDLT@PAG                                            
+      *                                                                         
+     C                     EXSR #R1000                                          
+     C           *IN99     IFEQ '0'                        ･>IFEQ               
+     C                     EXSR #E1000                                          
+     C           WEXT      IFEQ '0'                        ･･>IFEQ              
+     C                     ITER                                                 
+     C                     END                             ･･<IFEQ              
+     C           RRN       IFLT 9999                       ･･>IFLT              
+     C                     ADD  1         RRN                                   
+     C                     EXSR #M2020                                          
+     C                     EXSR #M2040                                          
+     C                     WRITESFREC                                           
+     C                     END                             ･･<IFLT              
+      *                                                                         
+     C                     ADD  1         @CNT                                  
+     C           @CNT      IFEQ 1                          ･･>IFEQ              
+     C                     Z-ADDRRN       RCDNBR                                
+     C                     END                             ･･<IFEQ              
+     C                     END                             ･<IFEQ               
+      *                                                                         
+     C                     ENDDO                           <DOWEQ               
+      *                                                                         
+     C                     Z-ADDRRN       @RRN                                  
+      *                                                                         
+     C           *IN99     IFEQ '1'                        >IFEQ                
+     C           RRN       ORGE 9999                                            
+     C                     MOVE '1'       *IN86            ROLL UP              
+     C                     END                             <IFEQ                
+      *                                                                         
+     C           \N2000    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｌ２０００     ＬＤＡセット処理                                     
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | PROCESS :   ＬＤＡセット                                             
+      *  ･-------------------------------------------------                     
+     C           #L2000    BEGSR                                                
+      *                                                                         
+     C                     MOVEL*BLANK    STLDA   1                             
+      *                                                                         
+     C                     MOVE WSLIN1    WSLIN2            カーソル制御        
+     C                     MOVE WSCOL1    WSCOL2                                
+      *                                                                         
+     C                     Z-ADDRRN       WKRRN1  40                            
+     C                     Z-ADDWTPRRN    WKRRN2  40                            
+      *                                                                         
+     C                     Z-ADDWTPRRN    RRN                                   
+     C           WSLINE    SUB  9         W@WW    50                            
+     C           W@WW      DIV  3         W@WW1   50                            
+      *                                                                         
+     C           WSLINE    IFGE 09                         >IFGE                
+     C           WSLINE    ANDLE22                                              
+      *                                                                         
+     C                     ADD  W@WW1     RRN                                   
+     C           RRN       CHAINSFREC                90                         
+     C  N90                DO                              ･>DO                 
+     C                     MOVELSFTNO2    L@02              問合せ№            
+     C                     MOVELSFTRCL    L@03                                  
+     C                     MOVELSFTRSL    L@04                                  
+     C                     UPDATSFREC                                           
+     C                     MOVEL'1'       STLDA                                 
+     C                     END                             ･<DO                 
+      *                                                                         
+     C                     END                             <IFGE                
+      *                                                                         
+     C                     Z-ADDWKRRN1    RRN                                   
+     C                     Z-ADDWKRRN2    RCDNBR                                
+      *                                                                         
+     C                     MOVE WSLINE    D1LINE            カーソル制御        
+     C                     MOVE WSCOLM    D1COLM                                
+      *                                                                         
+     C           \L2000    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｈ２０００     ＨＥＬＰ処理   ( SFL )                               
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | PROCESS :   詳細説明　表示                                           
+      *  ･-------------------------------------------------                     
+     C           #H2000    BEGSR                                                
+     C           \H2000    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｐ２０００     ＰＯＰ処理   ( SFL )                                 
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | PROCESS :   コード検索画面　表示                                     
+      *  ･-------------------------------------------------                     
+     C           #P2000    BEGSR                                                
+      * ( ｸﾘｱ )                                                                 
+     C                     MOVEL*BLANK    @POP                                  
+      * ( カーソル制御 )                                                        
+     C                     MOVE WSLIN1    WSLIN2            カーソル制御        
+     C                     MOVE WSCOL1    WSCOL2                                
+      *                                                                         
+     C                     MOVE WSLINE    D1LINE            カーソル制御        
+     C                     MOVE WSCOLM    D1COLM                                
+      *                                                                         
+     C           \P2000    ENDSR                                                
+      *==============================================================*          
+      *   ＃ＳＣＨＫ　     セキュリティ＆業務ロックチェック                     
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | INPUT   :                                                            
+      *  | PROCESS :  ｾｷｭﾘﾃｨ & 業務 ﾛｯｸ ﾁｪｯｸ を行なう                           
+      *  | OUTPUT  :                                                            
+      *  ･-------------------------------------------------                     
+     C           #SCHK     BEGSR                                                
+      *                                                                         
+     C                     EXSR #I1000                      G1 初期 ｾｯﾄ         
+     C                     MOVE '0'       WLOP              LOOP END            
+      ***  ｾｷｭﾘﾃｨ & 業務 ﾛｯｸ ﾁｪｯｸ  ***                                          
+     C                     MOVE *BLANK    @2010                                 
+     C                     MOVE '1'       @20101                                
+     C                     MOVEL@PGID     @20102                                
+      *                                                                         
+     C                     CALL 'ZZZ2010R'                                      
+     C                     PARM           @2010                                 
+      * ( ﾘﾀｰﾝ 結果 )                                                           
+     C           @20103    IFNE '0'                        >IFNE                
+     C                     MOVE '1'       WLOP              LOOP                
+     C                     MOVEL@20104    @00401                                
+     C                     EXSR #MSG                                            
+     C                     MOVEL@00404    MCD               ﾒｯｾｰｼﾞID            
+     C                     MOVEL@00402    MSG               ﾒｯｾｰｼﾞ              
+     C           @00403    COMP '1'                      88:WRN                 
+     C           @00403    COMP '2'                      89:ERROR               
+     C                     END                             <IFNE                
+      *** 画面 ﾙｰﾌﾟ 処理 ***                                                    
+     C           WLOP      DOWEQ'1'                        >DOWEQ               
+      *                                                                         
+     C           WDSP      IFEQ '3'                        ･>IFEQ               
+     C                     MOVE '0'       WLOP                                  
+     C                     MOVE '1'       WERR                                  
+     C                     LEAVE                                                
+     C                     END                             ･<IFEQ               
+      *                                                                         
+     C                     WRITEG9                                              
+     C                     EXFMTG1                                              
+      * < PF1: HELP >                                                           
+     C           *INKA     IFEQ '1'                        ･>IFEQ               
+     C                     EXSR #H1000                      HELP 処理           
+     C                     END                             ･<IFEQ               
+      * < PF3: 終了 >                                                           
+     C           *INKC     IFEQ '1'                        ･>IFEQ               
+     C                     MOVE '1'       WEND              終了                
+     C                     MOVE '0'       WLOP              LOOP END            
+     C                     MOVE '0'       WDSP              画面制御 END        
+     C                     END                             ･<IFEQ               
+     C                     END                             <DOWEQ               
+      *                                                                         
+     C           \SCHK     ENDSR                                                
+      *===============================================================*         
+      *   ＃ＭＳＧ         メッセージ取得                                       
+      *===============================================================*         
+     C           #MSG      BEGSR                                                
+      * < ﾒｯｾｰｼﾞ 取得 >                                                         
+     C                     CALL 'ZZZ0040R'                                      
+     C                     PARM           @0040                                 
+      *                                                                         
+     C           \MSG      ENDSR                                                
+      *==============================================================*          
+      *                    テーブル                                             
+      *==============================================================*          
+**  @INF *  ｺﾏﾝﾄﾞｷｰ 情報                                                        
+PF1: 操作説明  PF3: 終了  PF4: 検索                                             
+PF1: 操作説明  PF3: 終了  PF4: 検索  PF5: 送り状照会                            

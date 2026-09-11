@@ -1,0 +1,230 @@
+      *****************************************************************         
+      * USER-NAME    :  ハピネット                                    *         
+      * FILE-NAME    :  生産計画ファイル　　　　　　　　　　　　　　 ?*         
+      * FILE-ID      :  ＦＳＥＰ００                                  *         
+      * SOFT-HOUSE   :  ㈱ＩＣＲ                                      *         
+      * AUTHOR       :  Y.H                                           *         
+      * CREATE       :  94/08/02                                      *         
+      * AUTHOR       :  M.MATSUMOTO                                   *         
+      * UPDATE       :  95/03/02  ( ﾊｯﾁｭｳ ｲﾗｲ ﾀｲｵｳ )                  *         
+      *****************************************************************         
+     A***                                   UNIQUE                              
+     A          R SEREC                     TEXT(' 生産計画ファイル ')          
+      *                                                                         
+     A            SEDEL          1A         COLHDG(' 削除区分 ')                
+     A            SEFID          2A         COLHDG(' 識別 "SE" ')               
+      * KEY                                                                     
+     A            SERCD          1A         COLHDG(' ﾚｺｰﾄﾞ 区分 ')              
+     A            SESTYM         6A         COLHDG(' 開始年月　　 ' ' 計画№ ') 
+     A            SETBS          2A         COLHDG(' 対象部門識別 ' ' 計画№ ') 
+     A            SERNB          1A         COLHDG(' 連番　　　　 ' ' 計画№ ') 
+     A            SECTG1         2A         COLHDG(' 大 ｶﾃｺﾞﾘｰ ')               
+     A            SECTG2         2A         COLHDG(' 中 ｶﾃｺﾞﾘｰ ')               
+     A            SECTG3         2A         COLHDG(' 小 ｶﾃｺﾞﾘｰ ')               
+     A            SEDSP          5S 0       COLHDG(' 表示順 ')                  
+     A            SEHNC         13A         COLHDG(' 商品 ｺｰﾄﾞ ')               
+     A            SETSM          2A         COLHDG(' 対象月 ')                  
+      *                                                                         
+     A            SETHK          4A         COLHDG(' 取引区分 ')                
+     A            SEKHK          1A         COLHDG(' 仮商品区分 ')              
+     A            SETRKS         1A         COLHDG(' 取引先区分 ' ' 仕入先 ')   
+     A            SETRCS         7A         COLHDG(' 法人　　　 ' ' 仕入先 ')   
+     A            SETRSS         4A         COLHDG(' 支店　　　 ' ' 仕入先 ')   
+     A            SETRUS         1A         COLHDG(' 売場　　　 ' ' 仕入先 ')   
+     A            SEKKD1         6S 0       COLHDG(' 年月 ' ' 計画日 ')         
+     A            SEKKD2         2S 0       COLHDG(' 日　 ' ' 計画日 ')         
+     A            SESKD1         6S 0       COLHDG(' 年月 ' ' 申告日 ')         
+     A            SESKD2         2S 0       COLHDG(' 日　 ' ' 申告日 ')         
+     A            SEKTD1         6S 0       COLHDG(' 年月 ' ' 回答日 ')         
+     A            SEKTD2         2S 0       COLHDG(' 日　 ' ' 回答日 ')         
+     A            SESOK          3A         COLHDG(' 倉庫 ')                    
+     A            SEWPT          2A         COLHDG(' 割振 ﾊﾟﾀｰﾝ ')              
+     A            SEFIL          1A         COLHDG(' FIL ')                     
+     A            SEHDNF         8A         COLHDG(' 伝№ FROM' ' 発注№範囲 ') 
+     A            SEHGYF         2A         COLHDG(' 行№ FROM' ' 発注№範囲 ') 
+     A            SEHDNT         8A         COLHDG(' 伝№ TO  ' ' 発注№範囲 ') 
+     A            SEHGYT         2A         COLHDG(' 行№ TO  ' ' 発注№範囲 ') 
+     A            SEBTR          5P 4       COLHDG(' 分担率  ')                 
+     A            SETNIN         1A         COLHDG(' 入力単位 ')                
+      *                                                                         
+     A            SEKY01         7P 0       COLHDG(' (1) 生産数　 ' +           
+     A                                             ' (1) 日付 ')                
+     A            SEKY02         7P 0       COLHDG(' (1) 計画数　 ' +           
+     A                                             ' (1) 割振数 ')              
+03.02A            SEKY25         7P 0       COLHDG(' (1) 計画数 TD' +           
+  .  A                                             ' ＦＩＬ     ')              
+  .  A            SEKY26         7P 0       COLHDG(' (1) 計画数 BU' +           
+03.02A                                             ' ＦＩＬ     ')              
+     A            SEKY03         7P 0       COLHDG(' (1) 申告数　 ' +           
+     A                                             ' (1) 入荷実績 ')            
+     A            SEKY04         7P 0       COLHDG(' (1) 回答数　 ' +           
+     A                                             ' (2) 日付 ')                
+     A            SEKY05         7P 0       COLHDG(' (1) 入荷実績 ' +           
+     A                                             ' (2) 割振数 ')              
+     A            SEKY06         7P 0       COLHDG(' (1) ＦＩＬ　 ' +           
+     A                                             ' (2) 入荷実績 ')            
+     A            SEKY07         7P 0       COLHDG(' (2) 生産数　 ' +           
+     A                                             ' (3) 日付 ')                
+     A            SEKY08         7P 0       COLHDG(' (2) 計画数　 ' +           
+     A                                             ' (3) 割振数 ')              
+03.02A            SEKY27         7P 0       COLHDG(' (2) 計画数 TD' +           
+  .  A                                             ' ＦＩＬ     ')              
+  .  A            SEKY28         7P 0       COLHDG(' (2) 計画数 BU' +           
+03.02A                                             ' ＦＩＬ     ')              
+     A            SEKY09         7P 0       COLHDG(' (2) 申告数　 ' +           
+     A                                             ' (3) 入荷実績 ')            
+     A            SEKY10         7P 0       COLHDG(' (2) 回答数　 ' +           
+     A                                             ' (4) 日付 ')                
+     A            SEKY11         7P 0       COLHDG(' (2) 入荷実績 ' +           
+     A                                             ' (4) 割振数 ')              
+     A            SEKY12         7P 0       COLHDG(' (2) ＦＩＬ　 ' +           
+     A                                             ' (4) 入荷実績 ')            
+     A            SEKY13         7P 0       COLHDG(' (3) 生産数　 ' +           
+     A                                             ' (5) 日付 ')                
+     A            SEKY14         7P 0       COLHDG(' (3) 計画数　 ' +           
+     A                                             ' (5) 割振数 ')              
+03.02A            SEKY29         7P 0       COLHDG(' (3) 計画数 TD' +           
+  .  A                                             ' ＦＩＬ     ')              
+  .  A            SEKY30         7P 0       COLHDG(' (3) 計画数 BU' +           
+03.02A                                             ' ＦＩＬ     ')              
+     A            SEKY15         7P 0       COLHDG(' (3) 申告数　 ' +           
+     A                                             ' (5) 入荷実績 ')            
+     A            SEKY16         7P 0       COLHDG(' (3) 回答数　 ' +           
+     A                                             ' (6) 日付 ')                
+     A            SEKY17         7P 0       COLHDG(' (3) 入荷実績 ' +           
+     A                                             ' (6) 割振数 ')              
+     A            SEKY18         7P 0       COLHDG(' (3) ＦＩＬ　 ' +           
+     A                                             ' (6) 入荷実績 ')            
+     A            SEKY19         7P 0       COLHDG(' ＦＩＬ　　　 ' +           
+     A                                             ' (7) 日付 ')                
+     A            SEKY20         7P 0       COLHDG(' ＦＩＬ　　　 ' +           
+     A                                             ' (7) 割振数 ')              
+03.02A            SEKY31         7P 0       COLHDG(' ＦＩＬ　　　 ' +           
+  .  A                                             ' ＦＩＬ     ')              
+  .  A            SEKY32         7P 0       COLHDG(' ＦＩＬ　　　 ' +           
+03.02A                                             ' ＦＩＬ     ')              
+     A            SEKY21         7P 0       COLHDG(' ＦＩＬ　　　 ' +           
+     A                                             ' (7) 入荷実績 ')            
+     A            SEKY22         7P 0       COLHDG(' ＦＩＬ　　　 ' +           
+     A                                             ' (8) 日付 ')                
+     A            SEKY23         7P 0       COLHDG(' ＦＩＬ　　　 ' +           
+     A                                             ' (8) 割振数 ')              
+     A            SEKY24         7P 0       COLHDG(' ＦＩＬ　　　 ' +           
+     A                                             ' (8) 入荷実績 ')            
+      *                                                                         
+     A            SEKRK          1A         COLHDG(' 完了区分 ')                
+     A            SEKRD1         6S 0       COLHDG(' 年月 ' ' 完了日 ')         
+     A            SEKRD2         2S 0       COLHDG(' 日　 ' ' 完了日 ')         
+     A            SEADN         15A         COLHDG(' 相手№ ' +                 
+     A                                            '(ﾒｰｶ 生産計画№ )')          
+     A            SEHNCK        13A         COLHDG(' 仮商品 ｺｰﾄﾞ ')             
+     A            SEJAN         13A         COLHDG(' JANｺｰﾄﾞ ')                 
+     A            SETRKM         1A         COLHDG(' 取引先区分 ' ' メーカ ')   
+     A            SETRCM         7A         COLHDG(' 法人　　　 ' ' メーカ ')   
+     A            SETRSM         4A         COLHDG(' 支店　　　 ' ' メーカ ')   
+     A            SETRUM         1A         COLHDG(' 売場　　　 ' ' メーカ ')   
+     A            SETR1S        12O         COLHDG(' 仕入先略名 ')              
+     A            SETR2S        12O         COLHDG(' 支店略名 ')                
+     A            SEHNJ         22O         COLHDG(' 商品名 ')                  
+     A            SEHNA         25A         COLHDG(' 商品名 (ｶﾅ) ')             
+      *                                                                         
+     A            SETNIB         1A         COLHDG(' ﾍﾞｰｽ  単位　 ' ' 商品 ')   
+     A            SEHZK          1A         COLHDG(' 非在庫区分　 ' ' 商品 ')   
+     A            SEZHK          1A         COLHDG(' 在庫評価　　 ' ' 商品 ')   
+     A            SECAR          3A         COLHDG(' ｷｬﾗｸﾀｰ       ' ' 商品 ')   
+     A            SEJANT         8A         COLHDG(' JAN 短縮 ｺｰﾄﾞ' ' 商品 ')   
+     A            SECOL          4A         COLHDG(' 色 ｺｰﾄﾞ      ' ' 商品 ')   
+     A            SEAST          1A         COLHDG(' アソート区分 ' ' 商品 ')   
+     A            SESAS          5P 2       COLHDG(' 載数　　　　 ' ' 商品 ')   
+     A            SEMKTK         7P 0       COLHDG(' ﾒｰｶ 希望小売単価 ' +       
+     A                                             ' 商品 ')                    
+     A            SESCL1         1A         COLHDG(' 集約 ｸﾗｽ 計画 ' ' 商品 ')  
+     A            SESCL2         1A         COLHDG(' 集約 ｸﾗｽ 実績 ' ' 商品 ')  
+     A            SEJTN          1A         COLHDG(' 重点度　　　 ' ' 商品 ')   
+     A            SEKKC1         2A         COLHDG(' 簡易検索 ｺｰﾄﾞ' ' 商品 ')   
+     A            SEPKG          2A         COLHDG(' ﾊﾟｯｹｰｼﾞ 形態 ' ' 商品 ')   
+     A            SETBH          1A         COLHDG(' 定番商品　　 ' ' 商品 ')   
+     A            SERNKS         1A         COLHDG(' ランク　　　 ' ' 商品 ')   
+     A            SESSB          2A         COLHDG(' 商品種別　　 ' ' 商品 ')   
+     A            SETNI1         1A         COLHDG(' 単位１　　　 ' ' 商品 ')   
+     A            SETNI2         1A         COLHDG(' 単位２　　　 ' ' 商品 ')   
+     A            SETNI3         1A         COLHDG(' 単位３　　　 ' ' 商品 ')   
+     A            SEKNS1         9P 3       COLHDG(' 換算値１　　 ' ' 商品 ')   
+     A            SEKNS2         9P 3       COLHDG(' 換算値２　　 ' ' 商品 ')   
+     A            SEKNS3         9P 3       COLHDG(' 換算値３　　 ' ' 商品 ')   
+     A            SEHBD1         6S 0       COLHDG(' 年月　発売日 ' ' 商品 ')   
+     A            SEHBD2         2S 0       COLHDG(' 日　　発売日 ' ' 商品 ')   
+     A            SEKKRS         5P 4       COLHDG(' 標準仕入掛率 ' ' 商品 ')   
+     A            SEMMTS         1A         COLHDG(' 丸め区分 ' ' 仕入単価 ' +  
+                                                   ' 商品 ')                    
+     A            SEMMKS         1A         COLHDG(' 丸め桁数 ' ' 仕入単価 ' +  
+                                                   ' 商品 ')                    
+     A            SETBNF         9P 0       COLHDG(' 定番期間 FROM' ' 商品 ')   
+     A            SETBNT         9P 0       COLHDG(' 定番期間 TO  ' ' 商品 ')   
+     A            SETSIF         9P 0       COLHDG(' 停止期間 FROM' ' 商品 ')   
+     A            SETSIT         9P 0       COLHDG(' 停止期間 TO  ' ' 商品 ')   
+     A            SETSK          1A         COLHDG(' 停止区分　　 ' ' 商品 ')   
+      *                                                                         
+     A            SEPC01         1A         COLHDG(' ﾁｪｯｸﾘｽﾄ  ' ' ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ') 
+     A            SEPC02         1A         COLHDG(' FIL      ' ' ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ') 
+     A            SEPC03         1A         COLHDG(' FIL      ' ' ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ') 
+     A            SEPC04         1A         COLHDG(' FIL      ' ' ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ') 
+     A            SEPC05         1A         COLHDG(' FIL      ' ' ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ') 
+     A            SEPC06         1A         COLHDG(' FIL      ' ' ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ') 
+     A            SEPC07         1A         COLHDG(' FIL      ' ' ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ') 
+     A            SEPC08         1A         COLHDG(' FIL      ' ' ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ') 
+      *                                                                         
+     A            SEKB01         1A         COLHDG(' 進捗区分 ' ' 区分 ')       
+     A            SEKB02         1A         COLHDG(' 単品管理 ' ' 区分 ')       
+     A            SEKB03         1A         COLHDG(' ＦＩＬ　 ' ' 区分 ')       
+     A            SEKB04         1A         COLHDG(' ＦＩＬ　 ' ' 区分 ')       
+     A            SEKB05         1A         COLHDG(' ＦＩＬ　 ' ' 区分 ')       
+     A            SEKB06         1A         COLHDG(' ＦＩＬ　 ' ' 区分 ')       
+     A            SEKB07         1A         COLHDG(' ＦＩＬ　 ' ' 区分 ')       
+     A            SEKB08         1A         COLHDG(' ＦＩＬ　 ' ' 区分 ')       
+     A            SEKB09         1A         COLHDG(' ＦＩＬ　 ' ' 区分 ')       
+     A            SEKB10         1A         COLHDG(' ＦＩＬ　 ' ' 区分 ')       
+      *                                                                         
+     A            SECP01         1A         COLHDG(' 設定　 ' ' CPU 区分 ')     
+     A            SECP02         1A         COLHDG(' 処理　 ' ' CPU 区分 ')     
+     A            SECP03         1A         COLHDG(' 配信１ ' ' CPU 区分 ')     
+     A            SECP04         1A         COLHDG(' 配信２ ' ' CPU 区分 ')     
+     A            SECP05         1A         COLHDG(' 配信３ ' ' CPU 区分 ')     
+     A            SECP06         1A         COLHDG(' 配信４ ' ' CPU 区分 ')     
+     A            SECP07         1A         COLHDG(' 配信５ ' ' CPU 区分 ')     
+     A            SECP08         1A         COLHDG(' ＦＩＬ ' ' CPU 区分 ')     
+     A            SECP09         1A         COLHDG(' ＦＩＬ ' ' CPU 区分 ')     
+     A            SECP10         1A         COLHDG(' ＦＩＬ ' ' CPU 区分 ')     
+      *                                                                         
+     A            SEHK01         1A         COLHDG(' (1)' ' 配信 ｺﾝﾄﾛｰﾙ ')      
+     A            SEHK02         1A         COLHDG(' (2)' ' 配信 ｺﾝﾄﾛｰﾙ ')      
+     A            SEHK03         1A         COLHDG(' (3)' ' 配信 ｺﾝﾄﾛｰﾙ ')      
+     A            SEHK04         1A         COLHDG(' (4)' ' 配信 ｺﾝﾄﾛｰﾙ ')      
+     A            SEHK05         1A         COLHDG(' (5)' ' 配信 ｺﾝﾄﾛｰﾙ ')      
+      *                                                                         
+     A            SEUP01         1A         COLHDG(' FIL 更新済 ')              
+     A            SEUP02         1A         COLHDG(' FIL 更新済 ')              
+     A            SEUP03         1A         COLHDG(' FIL 更新済 ')              
+     A            SEUP04         1A         COLHDG(' FIL 更新済 ')              
+     A            SEUP05         1A         COLHDG(' FIL 更新済 ')              
+      * ( ｼｽﾃﾑ 管理 )                                                           
+     A            SECDT          9P 0       COLHDG(' 作成日 ')                  
+     A            SECTM          7P 0       COLHDG(' 作成時刻 ')                
+     A            SEUDT          9P 0       COLHDG(' 更新日 ')                  
+     A            SEUTM          7P 0       COLHDG(' 更新時刻 ')                
+     A            SEWID         10A         COLHDG(' ﾜｰｸｽﾃｰｼｮﾝID ')             
+     A            SEOPC          5A         COLHDG(' ｵﾍﾟﾚｰﾀｺｰﾄﾞ ')              
+     A            SEDST1         2A         COLHDG(' ﾃﾞｰﾀ 設定 ')               
+     A            SEDST2         2A         COLHDG(' ﾃﾞｰﾀ 更新 ')               
+     A            SETRN         11P 0       COLHDG(' ﾄﾗﾝｻﾞｸｼｮﾝ № ')            
+      * <KEY>                                                                   
+     A          K SERCD                                                         
+     A          K SESTYM                                                        
+     A          K SETBS                                                         
+     A          K SERNB                                                         
+     A          K SECTG1                                                        
+     A          K SECTG2                                                        
+     A          K SECTG3                                                        
+     A          K SEDSP                                                         
+     A          K SEHNC                                                         
+     A          K SETSM                                                         

@@ -1,0 +1,493 @@
+      *****************************************************************         
+      * USER-NAME    :  ハピネット                                    *         
+      * FILE-NAME    :  受注データ　　　　　　　　　　　　　　　　　 ?*         
+      * FILE-ID      :  ＤＪＵＰ００                                  *         
+      * SOFT-HOUSE   :  ㈱ＩＣＲ                                      *         
+      * AUTHOR       :  S.T                                           *         
+      * CREATE       :  94/08/02                                      *         
+      * AUTHOR       :  K.ITOU                                        *         
+      * UPDATE       :  96/04/20                                      *         
+      *****************************************************************         
+     A***                                   UNIQUE                              
+     A          R JUREC                     TEXT(' 受注データ ')                
+      *                                                                         
+     A            JUDEL          1A         COLHDG(' 削除区分 ')                
+     A            JUFID          2A         COLHDG(' 識別 "JU" ')               
+      * KEY                                                                     
+     A            JUJDN          8A         COLHDG(' 受注№ ')                  
+     A            JUJGY          2A         COLHDG(' 受注行№ ')                
+      *                                                                         
+     A            JUTHK          4A         COLHDG(' 取引区分 ')                
+     A            JUKJD1         6S 0       COLHDG(' 年月 ' ' 受注日 ')         
+     A            JUKJD2         2S 0       COLHDG(' 日　 ' ' 受注日 ')         
+     A            JUAAK          1A         COLHDG(' 預け預り区分 ')            
+     A            JURKK          1A         COLHDG(' 来勘区分 ')                
+     A            JUNOK          1A         COLHDG(' 納期区分 ')                
+     A            JUJHP          4A         COLHDG(' 受発注 ﾊﾟﾀｰﾝ ')            
+     A            JUDST          2A         COLHDG(' 会社 ')                    
+     A            JUGIB          2A         COLHDG(' 事業部 ')                  
+     A            JUBUM          3A         COLHDG(' 部門 ')                    
+     A            JUBUK          3A         COLHDG(' 部課 ')                    
+     A            JUBUKG         3A         COLHDG(' 部課ＧＲ ')                
+     A            JUTAN          5A         COLHDG(' 担当 ')                    
+      *                                                                         
+     A            JUTRKT         1A         COLHDG(' 取引先区分 ' ' 得意先 ')   
+     A            JUTRCT         7A         COLHDG(' 法人　　　 ' ' 得意先 ')   
+     A            JUTRST         4A         COLHDG(' 支店　　　 ' ' 得意先 ')   
+     A            JUTRUT         1A         COLHDG(' 売場　　　 ' ' 得意先 ')   
+      *                                                                         
+     A            JUTRKY         1A         COLHDG(' 取引先区分 ' ' 出荷先 ')   
+     A            JUTRCY         7A         COLHDG(' 法人　　　 ' ' 出荷先 ')   
+     A            JUTRSY         4A         COLHDG(' 支店　　　 ' ' 出荷先 ')   
+     A            JUTRUY         1A         COLHDG(' 売場　　　 ' ' 出荷先 ')   
+      *                                                                         
+     A            JUSOK          3A         COLHDG(' 倉庫 ')                    
+     A            JUZBK          3A         COLHDG(' 在庫部課 ')                
+      *                                                                         
+     A            JUDSTA         2A         COLHDG(' 会社　　 ' ' 社内相手先 ') 
+BVBB A            JUGIBA         2A         COLHDG(' BV 伝票区分 ')             
+     A            JUBUMA         3A         COLHDG(' 部門　　 ' ' 社内相手先 ') 
+     A            JUBUKA         3A         COLHDG(' 部課　　 ' ' 社内相手先 ') 
+     A            JUBUGA         3A         COLHDG(' 部課ＧＲ ' ' 社内相手先 ') 
+     A            JUTANA         5A         COLHDG(' 担当　　 ' ' 社内相手先 ') 
+     A            JUSOKA         3A         COLHDG(' 倉庫　　 ' ' 社内相手先 ') 
+     A            JUZBKA         3A         COLHDG(' 在庫部課 ' ' 社内相手先 ') 
+      *                                                                         
+     A            JUNOD1         6S 0       COLHDG(' 年月 ' ' 納期 ')           
+     A            JUNOD2         2S 0       COLHDG(' 日　 ' ' 納期 ')           
+     A            JUSGD1         6S 0       COLHDG(' 年月 ' ' 作業日 ')         
+     A            JUSGD2         2S 0       COLHDG(' 日　 ' ' 作業日 ')         
+     A            JUGKD1         6S 0       COLHDG(' 年月 ' ' 出荷限界日 ')     
+     A            JUGKD2         2S 0       COLHDG(' 日　 ' ' 出荷限界日 ')     
+      *                                                                         
+     A            JUTDN          8A         COLHDG(' 伝№ ' ' 取置№ ')         
+     A            JUTGY          2A         COLHDG(' 行№ ' ' 取置№ ')         
+     A            JUHDN          8A         COLHDG(' 伝№ ' ' 発注№ ')         
+     A            JUHGY          2A         COLHDG(' 行№ ' ' 発注№ ')         
+     A            JUUDN          8A         COLHDG(' 伝№ ' ' 売上№ ')         
+     A            JUUGY          2A         COLHDG(' 行№ ' ' 売上№ ')         
+      *                                                                         
+     A            JUCTG1         2A         COLHDG(' 大 ｶﾃｺﾞﾘｰ ')               
+     A            JUCTG2         2A         COLHDG(' 中 ｶﾃｺﾞﾘｰ ')               
+     A            JUCTG3         2A         COLHDG(' 小 ｶﾃｺﾞﾘｰ ')               
+      *                                                                         
+     A            JUHNC         13A         COLHDG(' 商品 ｺｰﾄﾞ ')               
+     A            JUTNIN         1A         COLHDG(' 入力単位 ')                
+     A            JUKNS          9P 3       COLHDG(' 換算値 ')                  
+     A            JUJUS          7P 0       COLHDG(' 受注数 ')                  
+     A            JUJUT         11P 2       COLHDG(' 受注単価 ')                
+     A            JUTKK          1A         COLHDG(' 単価決定区分 ')            
+     A            JUKIN         11P 0       COLHDG(' 金額 ')                    
+     A            JUZEI         11P 0       COLHDG(' 消費税 ')                  
+     A            JUHISZ         7P 0       COLHDG(' 在庫引当数 ')              
+     A            JUHIST         7P 0       COLHDG(' 取置引当数 ')              
+     A            JUSKS          7P 0       COLHDG(' 出荷数 ')                  
+     A            JUCNS          7P 0       COLHDG(' ｷｬﾝｾﾙ 数 ')                
+     A            JUKPS          7P 0       COLHDG(' 欠品数 ')                  
+     A            JUSJS          7P 0       COLHDG(' 出荷指示数 ')              
+     A            JUSU1          7P 0       COLHDG(' 一括補充合計数 ')          
+     A            JUGHGZ        11P 2       COLHDG(' 月次標準原価 ' +           
+     A                                             '( 全社 )')                  
+     A            JUIHG         11P 2       COLHDG(' 移動平均原価 ')            
+     A            JUTNG         11P 2       COLHDG(' 手入力原価 ')              
+     A            JUGHGT        11P 2       COLHDG(' 月次標準原価 ' +           
+     A                                             '( 部課 )')                  
+     A            JUARR1        11P 0       COLHDG(' 粗利 ( 暫定 )')            
+     A            JUARR2        11P 0       COLHDG(' 粗利 ( 確定 )')            
+     A            JUSYG          1A         COLHDG(' 採用原価 ')                
+      *                                                                         
+     A            JUKRK          1A         COLHDG(' 完了区分 ')                
+     A            JUKRS          1A         COLHDG(' 完了手段 ')                
+     A            JUSKD1         6S 0       COLHDG(' 年月 ' ' 出荷日 ')         
+     A            JUSKD2         2S 0       COLHDG(' 日　 ' ' 出荷日 ')         
+     A            JUJUD1         6S 0       COLHDG(' 年月 ' ' 伝票日付 ')       
+     A            JUJUD2         2S 0       COLHDG(' 日　 ' ' 伝票日付 ')       
+     A            JUKKN         10A         COLHDG(' 計画№／一括№ ')          
+     A            JUACN         15A         COLHDG(' 相手注文№ ')              
+     A            JUADN         15A         COLHDG(' 相手伝票№ ')              
+     A            JUBIK1        22O         COLHDG(' 備考１ ')                  
+     A            JUBIK2        22O         COLHDG(' 備考２ ')                  
+     A            JUHAJM         5P 0       COLHDG(' EOS 法人内店 ' ' 引当順  ')
+     A            JUHAJH         5P 0       COLHDG(' EOS 法人　　 ' ' 引当順  ')
+     A            JUJAN         13A         COLHDG(' JANｺｰﾄﾞ ')                 
+      *                                                                         
+     A            JUTRKS         1A         COLHDG(' 取引先区分 ' ' 仕入先 ')   
+     A            JUTRCS         7A         COLHDG(' 法人　　　 ' ' 仕入先 ')   
+     A            JUTRSS         4A         COLHDG(' 支店　　　 ' ' 仕入先 ')   
+     A            JUTRUS         1A         COLHDG(' 売場　　　 ' ' 仕入先 ')   
+      *                                                                         
+     A            JUHSR          4A         COLHDG(' 配送 ﾙｰﾄ ')                
+     A            JUTKR          5P 4       COLHDG(' 単価掛率 ')                
+     A            JUTDS          1A         COLHDG(' 都度請求 ')                
+     A            JUTMT          1A         COLHDG(' 単価未定 ')                
+     A            JUKKJ          1A         COLHDG(' 仮計上 ')                  
+     A            JUJHB          1A         COLHDG(' 受発注媒体 ')              
+     A            JUAAKA         1A         COLHDG(' 相手預け預り区分 ')        
+      *                                                                         
+     A            JUSMKM         1A         COLHDG(' 締処理区分　　 ' +         
+     A                                             ' 締処理 ﾏｽﾀ 情報 ')         
+     A            JUSMBM         2S 0       COLHDG(' 締日　　　　　 ' +         
+     A                                             ' 締処理 ﾏｽﾀ 情報 ')         
+     A            JUSKDM         9P 0       COLHDG(' 締切日　　　　 ' +         
+     A                                             ' 締処理 ﾏｽﾀ 情報 ')         
+      *                                                                         
+     A            JUUPT          1A         COLHDG(' 更新 ｴﾘｱ       ' +         
+     A                                             ' 締処理 ﾄﾗﾝ 情報 ')         
+     A            JUSMBT         2S 0       COLHDG(' 締日　　　　　 ' +         
+     A                                             ' 締処理 ﾄﾗﾝ 情報 ')         
+     A            JUSQD1         6S 0       COLHDG(' 年月　請求日　 ' +         
+     A                                             ' 締処理 ﾄﾗﾝ 情報 ')         
+     A            JUSQD2         2S 0       COLHDG(' 日　　請求日　 ' +         
+     A                                             ' 締処理 ﾄﾗﾝ 情報 ')         
+      *                                                                         
+     A            JUTRKQ         1A         COLHDG(' 取引先区分 ' ' 請求先 ')   
+     A            JUTRCQ         7A         COLHDG(' 法人　　　 ' ' 請求先 ')   
+     A            JUTRSQ         4A         COLHDG(' 支店　　　 ' ' 請求先 ')   
+     A            JUTRUQ         1A         COLHDG(' 売場　　　 ' ' 請求先 ')   
+      *                                                                         
+     A            JUTRKH         1A         COLHDG(' 取引先区分 ' ' 法人 ')     
+     A            JUTRCH         7A         COLHDG(' 法人　　　 ' ' 法人 ')     
+     A            JUTRSH         4A         COLHDG(' 支店　　　 ' ' 法人 ')     
+     A            JUTRUH         1A         COLHDG(' 売場　　　 ' ' 法人 ')     
+      *                                                                         
+     A            JUSZKT         1A         COLHDG(' 消費税区分 ' +             
+     A                                             ' 取引先情報 ')              
+     A            JUZRKT         1A         COLHDG(' 税率区分　 ' +             
+     A                                             ' 取引先情報 ')              
+     A            JUZSKT         1A         COLHDG(' 税算出区分 ' +             
+     A                                             ' 取引先情報 ')              
+      *                                                                         
+     A            JUMMK          1A         COLHDG(' 金額　　 ' ' 丸め区分 ' +  
+     A                                             ' 　取引先情報 ')            
+     A            JUMMS          1A         COLHDG(' 消費税　 ' ' 丸め区分 ' +  
+     A                                             ' 　取引先情報 ')            
+     A            JUMMT          1A         COLHDG(' 単価　　 ' ' 丸め区分 ' +  
+     A                                             ' 　取引先情報 ')            
+     A            JUMMST         1A         COLHDG(' 先方単価 ' ' 丸め区分 ' +  
+     A                                             ' 　取引先情報 ')            
+      *                                                                         
+     A            JUMKK          1A         COLHDG(' 金額　　 ' ' 丸め桁数 ' +  
+     A                                             ' 　取引先情報 ')            
+     A            JUMKS          1A         COLHDG(' 消費税　 ' ' 丸め桁数 ' +  
+     A                                             ' 　取引先情報 ')            
+     A            JUMKT          1A         COLHDG(' 単価　　 ' ' 丸め桁数 ' +  
+     A                                             ' 　取引先情報 ')            
+     A            JUMKST         1A         COLHDG(' 先方単価 ' ' 丸め桁数 ' +  
+     A                                             ' 　取引先情報 ')            
+      *                                                                         
+     A            JUASH          1A         COLHDG(' ｱｿｰﾄ  表示　　 ' +         
+     A                                             ' 取引先情報 ')              
+      *                                                                         
+     A            JUDSB          2A         COLHDG(' 伝票種別　　　 ' +         
+     A                                             ' 取引先情報 ')              
+     A            JUNHK          1A         COLHDG(' 年表示区分　　 ' +         
+     A                                             ' 取引先情報 ')              
+     A            JUDMS          2S 0       COLHDG(' 伝票明細数　　 ' +         
+     A                                             ' 取引先情報 ')              
+     A            JUTK01         1A         COLHDG(' 配送業者　　　 ' +         
+     A                                             ' 取引先情報 ')              
+     A            JUTK04         1A         COLHDG(' 諸口　　　　　 ' +         
+     A                                             ' 取引先情報 ')              
+     A            JUTK23         1A         COLHDG(' ＴＲＣ区分　　 ' +         
+     A                                             ' 取引先情報 ')              
+      *                                                                         
+     A            JUSPHC        13A         COLHDG(' 先方商品 ｺｰﾄﾞ    ' +       
+     A                                             ' 取引条件情報 ')            
+     A            JUBRH         10A         COLHDG(' 分類／品別　　　 ' +       
+     A                                             ' 取引条件情報 ')            
+     A            JUJCA          2A         COLHDG(' ＪＣＡ区分　　　 ' +       
+     A                                             ' 取引条件情報 ')            
+     A            JUSPKT         9P 0       COLHDG(' 先方小売単価　　 ' +       
+     A                                             ' 取引条件情報 ')            
+      *                                                                         
+     A            JUSAS          5P 2       COLHDG(' 載数　　　　 ' +           
+     A                                             ' 商品情報 ')                
+     A            JUTNI1         1A         COLHDG(' 単位 (1)     ' +           
+     A                                             ' 商品情報 ')                
+     A            JUTNI2         1A         COLHDG(' 単位 (2)     ' +           
+     A                                             ' 商品情報 ')                
+     A            JUTNI3         1A         COLHDG(' 単位 (3)     ' +           
+     A                                             ' 商品情報 ')                
+     A            JUKNS1         9P 3       COLHDG(' 換算値 (1)   ' +           
+     A                                             ' 商品情報 ')                
+     A            JUKNS2         9P 3       COLHDG(' 換算値 (2)   ' +           
+     A                                             ' 商品情報 ')                
+     A            JUKNS3         9P 3       COLHDG(' 換算値 (3)   ' +           
+     A                                             ' 商品情報 ')                
+     A            JUMKTK         9P 0       COLHDG(' ﾒｰｶ 希望小売単価 ' +       
+     A                                             ' 税抜 ' ' 商品情報 ')       
+     A            JUMKTZ         9P 0       COLHDG(' ﾒｰｶ 希望小売単価 ' +       
+     A                                             ' 税額 ' ' 商品情報 ')       
+     A            JUTNIB         1A         COLHDG(' ベース単位　 ' +           
+     A                                             ' 商品情報 ')                
+     A            JUHZK          1A         COLHDG(' 非在庫区分　 ' +           
+     A                                             ' 商品情報 ')                
+     A            JUSZKU         1A         COLHDG(' 消費税区分（売） ' +       
+     A                                             ' 商品情報 ')                
+     A            JUSZKK         1A         COLHDG(' 消費税区分（買） ' +       
+     A                                             ' 商品情報 ')                
+     A            JUZRKS         1A         COLHDG(' 税率区分　　 ' +           
+     A                                             ' 商品情報 ')                
+     A            JUAST          1A         COLHDG(' アソート区分 ' +           
+     A                                             ' 商品情報 ')                
+     A            JUKHI          1A         COLHDG(' 経費　　　　 ' +           
+     A                                             ' 商品情報 ')                
+     A            JUS004         1A         COLHDG(' 商品区分　　 ' +           
+     A                                             ' 商品情報 ')                
+     A            JUHNTP         3A         COLHDG(' 品 ﾀｲﾌﾟ      ' +           
+     A                                             ' 商品情報 ')                
+     A            JUSET         13A         COLHDG(' ｾｯﾄ 品親 ｺｰﾄﾞ ' +          
+     A                                             ' 商品情報 ')                
+      *                                                                         
+     A            JUBJDT         9P 0       COLHDG(' 物流指示日 ')              
+     A            JUBJTM         7P 0       COLHDG(' 物流指示時刻 ')            
+     A            JUGJDN         8A         COLHDG(' 伝№ ' ' 作業指示№ ')     
+     A            JUGJGY         2A         COLHDG(' 行№ ' ' 作業指示№ ')     
+      *                                                                         
+     A            JUTDP          5P 0       COLHDG(' 手書伝票 ﾍﾟｰｼﾞ ')          
+     A            JUMTDN         8A         COLHDG(' 伝№　　 ' ' 元伝情報 ')   
+     A            JUMTGY         2A         COLHDG(' 伝№　　 ' ' 元伝情報 ')   
+     A            JUTEK          1A         COLHDG(' 訂正区分 ' ' 元伝情報 ')   
+05/24A            JUMTD          9P 0       COLHDG(' 消費税 ' ' 出荷指示情報 ') 
+      *                                                                         
+     A            JUSB11         2A         COLHDG(' 大 ' ' 商品分類 (1) ')     
+     A            JUSB12         2A         COLHDG(' 中 ' ' 商品分類 (1) ')     
+     A            JUSB13         2A         COLHDG(' 小 ' ' 商品分類 (1) ')     
+     A            JUSB21         2A         COLHDG(' 大 ' ' 商品分類 (2) ')     
+     A            JUSB22         2A         COLHDG(' 中 ' ' 商品分類 (2) ')     
+     A            JUSB23         2A         COLHDG(' 小 ' ' 商品分類 (2) ')     
+     A            JUSB31         2A         COLHDG(' 大 ' ' 商品分類 (3) ')     
+     A            JUSB32         2A         COLHDG(' 中 ' ' 商品分類 (3) ')     
+     A            JUSB33         2A         COLHDG(' 小 ' ' 商品分類 (3) ')     
+     A            JUSB41         2A         COLHDG(' 大 ' ' 商品分類 (4) ')     
+     A            JUSB42         2A         COLHDG(' 中 ' ' 商品分類 (4) ')     
+     A            JUSB43         2A         COLHDG(' 小 ' ' 商品分類 (4) ')     
+     A            JUSBA1         2A         COLHDG(' 大 ' ' 商品分類 (10)')     
+     A            JUSBA2         2A         COLHDG(' 中 ' ' 商品分類 (10)')     
+     A            JUSBA3         2A         COLHDG(' 小 ' ' 商品分類 (10)')     
+      *                                                                         
+     A            JUHNJ         22O         COLHDG(' 商品名 ')                  
+     A            JUHNA         25A         COLHDG(' 商品名 (ｶﾅ) ')             
+      *                                                                         
+     A            JUKGT          3P 0       COLHDG(' 一括行№ ')                
+     A            JUSKNO        10A         COLHDG(' 配置 ')                    
+     A            JUMND1         6S 0       COLHDG(' 年月 ' ' 店納期 ')         
+     A            JUMND2         2S 0       COLHDG(' 日　 ' ' 店納期 ')         
+     A            JUSASG         5P 2       COLHDG(' 載数 ')                    
+     A            JUDPGS         3P 0       COLHDG(' 伝票行数 ')                
+     A            JUDPKN        11P 0       COLHDG(' 伝票合計金額 ')            
+     A            JUDPSZ        11P 0       COLHDG(' 伝票合計消費税 ')          
+     A            JUTNIP         1A         COLHDG(' ﾊﾟｯｷﾝｸﾞ 単位 ')            
+     A            JUPAS         11P 2       COLHDG(' ﾊﾟｯｷﾝｸﾞ 数 ')              
+      *                                                                         
+     A            JUTRKE         1A         COLHDG(' 取引先区分 ' ' EOS 法人 ') 
+     A            JUTRCE         7A         COLHDG(' 法人　　　 ' ' EOS 法人 ') 
+     A            JUTRSE         4A         COLHDG(' 支店　　　 ' ' EOS 法人 ') 
+     A            JUTRUE         1A         COLHDG(' 売場　　　 ' ' EOS 法人 ') 
+      *                                                                         
+     A            JUHTS          7P 0       COLHDG(' 発注数 / ' +               
+     A                                             ' 発注取置数 ')              
+     A            JUTNIS         1A         COLHDG(' 載数単位 ')                
+     A            JUEOSD         9P 0       COLHDG(' EOS 集信日 ')              
+     A            JUHAKD         9P 0       COLHDG(' 引当開始日 ')              
+     A            JUJBKD         9P 0       COLHDG(' 自動物流指示開始日 ')      
+      *                                                                         
+     A            JUSYD1         6S 0       COLHDG(' 年月 ' ' 本日日付 ')       
+     A            JUSYD2         2S 0       COLHDG(' 日　 ' ' 本日日付 ')       
+      *                                                                         
+     A            JUPC01         1A         COLHDG(' ﾁｪｯｸﾘｽﾄ    ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            JUPC02         1A         COLHDG(' 伝票　　　 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            JUPC03         1A         COLHDG(' 日報　　　 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            JUPC04         1A         COLHDG(' 月報　　　 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            JUPC05         1A         COLHDG(' ｴﾗｰﾘｽﾄ     ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            JUPC06         1A         COLHDG(' ﾋﾟｯｷﾝｸﾞﾘｽﾄ.' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            JUPC07         1A         COLHDG(' ｱｿｰﾄﾘｽﾄ    ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            JUPC08         1A         COLHDG(' 発注要求　 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            JUPC09         1A         COLHDG(' FIL        ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            JUPC10         1A         COLHDG(' 特価区分　 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+      *                                                                         
+     A            JUKB01         1A         COLHDG(' 受払　　　　 ' ' 区分 ')   
+     A            JUKB02         1A         COLHDG(' 計上　　　　 ' ' 区分 ')   
+     A            JUKB03         1A         COLHDG(' 経費　　　　 ' ' 区分 ')   
+     A            JUKB04         1A         COLHDG(' 訂正不可　　 ' ' 区分 ')   
+     A            JUKB05         1A         COLHDG(' 指示済　　　 ' ' 区分 ')   
+     A            JUKB06         1A         COLHDG(' 伝送済　　　 ' ' 区分 ')   
+     A            JUKB07         1A         COLHDG(' 請求書　　　 ' ' 区分 ')   
+     A            JUKB08         1A         COLHDG(' 確定　　　　 ' ' 区分 ')   
+     A            JUKB09         1A         COLHDG(' 取置　　　　 ' ' 区分 ')   
+     A            JUKB10         1A         COLHDG(' ﾌﾟﾛﾄｺﾙ  変換 ' ' 区分 ')   
+     A            JUKB11         1A         COLHDG(' 引当　　　　 ' ' 区分 ')   
+     A            JUKB12         1A         COLHDG(' 積送中　　　 ' ' 区分 ')   
+     A            JUKB13         1A         COLHDG(' 良／不良　　 ' ' 区分 ')   
+     A            JUKB14         1A         COLHDG(' 欠品　　　　 ' ' 区分 ')   
+     A            JUKB15         1A         COLHDG(' 在庫反映　　 ' ' 区分 ')   
+     A            JUKB16         1A         COLHDG(' コメント　　 ' ' 区分 ')   
+     A            JUKB17         1A         COLHDG(' 調整　　　　 ' ' 区分 ')   
+     A            JUKB18         1A         COLHDG(' 単伝区分　　 ' ' 区分 ')   
+     A            JUKB19         1A         COLHDG(' 行分納　　　 ' ' 区分 ')   
+     A            JUKB20         1A         COLHDG(' 赤黒　　　　 ' ' 区分 ')   
+     A            JUKB21         1A         COLHDG(' 出荷停止　　 ' ' 区分 ')   
+     A            JUKB22         1A         COLHDG(' 口座貸　　　 ' ' 区分 ')   
+     A            JUKB23         1A         COLHDG(' 直送　　　　 ' ' 区分 ')   
+     A            JUKB24         1A         COLHDG(' №摘要有　　 ' ' 区分 ')   
+     A            JUKB25         1A         COLHDG(' 手配区分　　 ' ' 区分 ')   
+     A            JUKB26         1A         COLHDG(' 手配要　　　 ' ' 区分 ')   
+     A            JUKB27         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            JUKB28         1A         COLHDG(' 作業区分　　 ' ' 区分 ')   
+     A            JUKB29         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            JUKB30         1A         COLHDG(' 本支店　　　 ' ' 区分 ')   
+     A            JUKB31         1A         COLHDG(' 変換 ｴﾗｰ(1)  ' ' 区分 ')   
+     A            JUKB32         1A         COLHDG(' ﾋﾟｯｷﾝｸﾞ 方法 ' ' 区分 ')   
+     A            JUKB33         1A         COLHDG(' 買取／委託　 ' ' 区分 ')   
+     A            JUKB34         1A         COLHDG(' 出荷サブ　　 ' ' 区分 ')   
+     A            JUKB35         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            JUKB36         1A         COLHDG(' 受注分納　　 ' ' 区分 ')   
+     A            JUKB37         1A         COLHDG(' 入力便区分　 ' ' 区分 ')   
+ 9.04A            JUKB38         1A         COLHDG(' 受注区分     ' ' 区分 ')   
+     A            JUKB39         1A         COLHDG(' EOS ｱｿｰﾄ     ' ' 区分 ')   
+     A            JUKB40         1A         COLHDG(' 入力配送業者 ' ' 区分 ')   
+     A            JUKB41         1A         COLHDG(' 伝票種別１　 ' ' 区分 ')   
+     A            JUKB42         1A         COLHDG(' HCC 送信済Ｆ ')            
+     A            JUKB43         1A         COLHDG(' 一括区分　　 ' ' 区分 ')   
+     A            JUKB44         1A         COLHDG(' ＭＭ商材　　 ' ' 区分 ')   
+     A            JUKB45         1A         COLHDG(' ＥＯＳ　　　 ' ' 区分 ')   
+     A            JUKB46         1A         COLHDG(' BM 新・旧譜  ' ' 区分 ')   
+     A            JUKB47         1A         COLHDG(' 客注         ' ' 区分 ')   
+     A            JUKB48         1A         COLHDG(' 分類決定　　 ' ' 区分 ')   
+     A            JUKB49         1A         COLHDG(' ＡＭ区分　　 ' ' 区分 ')   
+     A            JUKB50         1A         COLHDG(' 非売上　　　 ' ' 区分 ')   
+      * ( CPU 情報 )                                                            
+     A            JUCP01         1A         COLHDG(' 設定　　　　 ' 'CPU')      
+     A            JUCP02         1A         COLHDG(' 倉庫物理　　 ' 'CPU')      
+     A            JUCP03         1A         COLHDG(' 部課物理　　 ' 'CPU')      
+     A            JUCP04         1A         COLHDG(' 相手倉庫物理 ' 'CPU')      
+     A            JUCP05         1A         COLHDG(' 相手部課物理 ' 'CPU')      
+     A            JUCP06         1A         COLHDG(' 請求物理　　 ' 'CPU')      
+     A            JUCP07         1A         COLHDG(' 倉庫親　　　 ' 'CPU')      
+     A            JUCP08         1A         COLHDG(' 相手倉庫親　 ' 'CPU')      
+     A            JUCP09         1A         COLHDG(' 部課処理　　 ' 'CPU')      
+     A            JUCP10         1A         COLHDG(' 相手部課処理 ' 'CPU')      
+      * ( 配信 ｺﾝﾄﾛｰﾙ )                                                         
+     A            JUHK01         1A         COLHDG(' 東京　　 ' ' 配信 CTL')    
+     A            JUHK02         1A         COLHDG(' 大阪　　 ' ' 配信 CTL')    
+     A            JUHK03         1A         COLHDG(' 船橋　　 ' ' 配信 CTL')    
+     A            JUHK04         1A         COLHDG(' ﾋﾗﾅｶ     ' ' 配信 CTL')    
+     A            JUHK05         1A         COLHDG(' FIL      ' ' 配信 CTL')    
+     A            JUHK06         1A         COLHDG(' FIL      ' ' 配信 CTL')    
+     A            JUHK07         1A         COLHDG(' FIL      ' ' 配信 CTL')    
+     A            JUHK08         1A         COLHDG(' FIL      ' ' 配信 CTL')    
+     A            JUHK09         1A         COLHDG(' FIL      ' ' 配信 CTL')    
+     A            JUHK10         1A         COLHDG(' FIL      ' ' 配信 CTL')    
+      *                                                                         
+     A            JUUP01         1A         COLHDG(' ｵﾝﾗｲﾝ    ' ' 更新 CTL')    
+     A            JUUP02         1A         COLHDG(' 日次　　 ' ' 更新 CTL')    
+     A            JUUP03         1A         COLHDG(' 締時　　 ' ' 更新 CTL')    
+     A            JUUP04         1A         COLHDG(' 月次　　 ' ' 更新 CTL')    
+     A            JUUP05         1A         COLHDG(' 年次　　 ' ' 更新 CTL')    
+     A            JUUP06         1A         COLHDG(' 会計　　 ' ' 更新 CTL')    
+     A            JUUP07         1A         COLHDG(' FIL      ' ' 更新 CTL')    
+     A            JUUP08         1A         COLHDG(' 物流指示 ' ' 更新 CTL')    
+     A            JUUP09         1A         COLHDG(' 作業指示 ' ' 更新 CTL')    
+     A            JUUP10         1A         COLHDG(' 出荷確定 ' ' 更新 CTL')    
+     A            JUUP11         1A         COLHDG(' 伝送 FLG ' ' 更新 CTL')    
+     A            JUUP12         1A         COLHDG(' EOS 引当 ' ' 更新 CTL')    
+      * ( ｼｽﾃﾑ 管理 )                                                           
+     A            JUCDT          9P 0       COLHDG(' 作成日 ')                  
+     A            JUCTM          7P 0       COLHDG(' 作成時刻 ')                
+     A            JUUDT          9P 0       COLHDG(' 更新日 ')                  
+     A            JUUTM          7P 0       COLHDG(' 更新時刻 ')                
+     A            JUWID         10A         COLHDG(' ﾜｰｸｽﾃｰｼｮﾝID ')             
+     A            JUOPC          5A         COLHDG(' ｵﾍﾟﾚｰﾀｺｰﾄﾞ ')              
+     A            JUDST1         2A         COLHDG(' ﾃﾞｰﾀ 設定 ')               
+     A            JUDST2         2A         COLHDG(' ﾃﾞｰﾀ 更新 ')               
+     A            JUTRN         11P 0       COLHDG(' ﾄﾗﾝｻﾞｸｼｮﾝ № ')            
+      *                                                                         
+     A            JURSS          3P 0       COLHDG(' 累積週数 ')                
+      *                                                                         
+     A            JUTRKD         1A         COLHDG(' 取区 ' ' 計上得意先 ')     
+     A            JUTRCD         7A         COLHDG(' 法人 ' ' 計上得意先 ')     
+     A            JUTRSD         4A         COLHDG(' 支店 ' ' 計上得意先 ')     
+     A            JUTRUD         1A         COLHDG(' 売場 ' ' 計上得意先 ')     
+     A            JUBUKK         3A         COLHDG(' 管理会計部課 ')            
+     A            JUKB51         1A         COLHDG(' 自他社       ' ' 区分 ')   
+     A            JUKB52         1A         COLHDG(' 値札 ﾃﾞｰﾀ    ' ' 区分 ')   
+     A            JUKB53         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            JUKB54         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            JUKB55         1A         COLHDG(' 分類決定     ' ' 区分 ')   
+     A            JUKB56         1A         COLHDG(' 入力 CTL 有  ' ' 区分 ')   
+     A            JUKB57         1A         COLHDG(' 割振引当対象 ' ' 区分 ')   
+     A            JUKB58         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            JUKB59         1A         COLHDG(' 販促物       ' ' 区分 ')   
+     A            JUKB60         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            JUKB61         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            JUKB62         1A         COLHDG(' ｱｿｰﾄ  親子　 ' ' 区分 ')   
+     A            JUKB63         1A         COLHDG(' 親入力単位　 ' ' 区分 ')   
+     A            JUKB64         1A         COLHDG(' 自動物流指示 ' ' 区分 ')   
+ 6.19A            JUKB65         1A         COLHDG(' BLP ｱｿｰﾄ     ' ' 区分 ')   
+ 6.19A            JUKB66         1A         COLHDG(' ﾛｹｰｼｮﾝ 管理  ' ' 区分 ')   
+     A            JUKB67         1A         COLHDG(' 代表商品子   ' ' 区分 ')   
+     A            JUKB68         1A         COLHDG(' 伝票種類     ' ' 区分 ')   
+     A            JUKB69         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            JUKB70         1A         COLHDG(' 移行データ   ' ' 区分 ')   
+      *                                                                         
+     A            JUPDN          8A         COLHDG(' ﾋﾟｯｷﾝｸﾞ № ')              
+     A            JUAKN          6A         COLHDG(' 赤黒№ ')                  
+     A            JUMAKN         6A         COLHDG(' 元赤黒№ ')                
+      *                                                                         
+     A            JULOK          1A         COLHDG(' ﾛｹｰｼｮﾝ 区分 ')             
+     A            JULO1          1A         COLHDG(' ﾛｹｰｼｮﾝ 1 ')                
+     A            JULO2          1A         COLHDG(' ﾛｹｰｼｮﾝ 2 ')                
+     A            JUGJKS         3P 0       COLHDG(' 作業指示回数 ')            
+     A            JUOSYS         7P 0       COLHDG(' 親出荷数 ')                
+      *                                                                         
+     A            JUSP02         1A         COLHDG(' 案内伝票　 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            JUSP03         1A         COLHDG(' 案内入力　 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            JUSP04         1A         COLHDG(' 指示区分　 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            JUSP05         1A         COLHDG(' テープ色　 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            JUSP06         1A         COLHDG(' ﾋﾟｯｷﾝｸﾞﾘｽﾄ.' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            JUSP07         1A         COLHDG(' ｱｿｰﾄﾘｽﾄ    ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            JUSP08         1A         COLHDG(' ｱｿｰﾄ 管理 .' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            JUSP09         1A         COLHDG(' ﾊﾟｯｷﾝｸﾞﾘｽﾄ.' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+      *                                                                         
+     A            JUSU06         1A         COLHDG(' ＰＣ取込 ' ' 更新 CTL')    
+     A            JUSU07         1A         COLHDG(' 伝採番済 ' ' 更新 CTL')    
+     A            JUCOL          4A         COLHDG(' 色 ｺｰﾄﾞ ')                 
+      *                                                                         
+     A            JUSSJS         7P 0       COLHDG(' 出荷指示数 ')              
+     A            JUSHSZ         7P 0       COLHDG(' 在庫引当数 ')              
+     A            JUSHST         7P 0       COLHDG(' 取置／不良引当数 ')        
+     A            JUSSKS         7P 0       COLHDG(' 出荷数 ')                  
+     A            JUSSU1         7P 0       COLHDG(' ｷｬﾝｾﾙ 数 ')                
+     A            JUSSU2         7P 0       COLHDG(' 欠品数 ')                  
+     A            JUSSU3         7P 0       COLHDG(' 出荷指示数 ')              
+     A            JUSSU4         7P 0       COLHDG(' 受注数 ')                  
+     A            JUSKIN        11P 0       COLHDG(' 出荷金額 ')                
+     A            JUKB71         1A         COLHDG(' FIL ' ' 区分 ')            
+..... *  ADD 97.08.18                                                           
+.....A            JUNKB          1A         COLHDG(' 納品先区分 ')              
+.....A            JUTRKN         1A         COLHDG(' 取引先区分 ' ' 納品先 ')   
+.....A            JUTRCN         7A         COLHDG(' 法人 ' ' 納品先 ')         
+.....A            JUTRSN         4A         COLHDG(' 支店 ' ' 納品先 ')         
+.....A            JUTRUN         1A         COLHDG(' 売場 ' ' 納品先 ')         
+.....A            JUKB80         1A         COLHDG('  先方売価税区分 ')         
+.....A            JUKB81         1A         COLHDG(' 受注入力ＰＣ版 ')          
+.....A            JUKB82         1A         COLHDG(' EXCEL 受注 ')              
+BVBB A            JUKB83         1A         COLHDG(' BV 受注区分 ')             
+BVBB A                                      TEXT('1:BV 出荷指示 2:BV 受注入力 + 
+BVBB A                                      3:BVEOS ')                          
+.....A            JUKB84         1A         COLHDG(' 商品扱い会社 ' ' １桁 ')   
+.....A            JUKB85         1A         COLHDG(' 商品扱い会社 ' ' ２桁 ')   
+.....A            JUKB86         1A         COLHDG(' 発注区分 AEON  ')          
+.....A            JUKB87         1A         COLHDG(' BTOC 受注 ')               
+     A                                      TEXT('1:BTOC 受注 ')                
+.....A            JUKB88         1A         COLHDG(' FIL88 ' ' 区分 ')          
+.....A            JUKB89         1A         COLHDG('ﾍﾟﾘｶﾝ,ｼﾞｮｳｼﾝ ')             
+     A*                                     TEXT('1:ﾍﾟﾘｶﾝEOS 2:ｼﾞｮｳｼﾝEOS')      
+     A*                                     TEXT('3:BM EOS 4:ﾗｸﾗｸﾈｯﾄEOS')       
+     A*                                     TEXT('A:BV 出荷指示  6: 秋葉原 ')   
+     A*                                     TEXT('8:ﾄｲｻﾞﾗｽ 9:BTOC ')            
+     A*                                     TEXT('7:ﾄｲｽﾞ 受注残  5:CCC 受注 ')  
+      * <KEY>                                                                   
+     A          K JUJDN                                                         
+     A          K JUAKN                                                         
+     A          K JUJGY                                                         

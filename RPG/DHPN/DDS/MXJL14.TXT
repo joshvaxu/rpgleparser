@@ -1,0 +1,27 @@
+      *****************************************************************         
+      * USER-NAME    :  ÉnÉsÉlÉbÉg                                    *         
+      * FILE-NAME    :  ëóÇËèÛÉfÅ[É^Å@ÇkÇeÇPÇSÅ@Å@Å@Å@Å@Å@Å@Å@Å@Å@Å@ ?*         
+      * FILE-ID      :  ÇcÇnÇiÇkÇPÇS                                  *         
+      * SOFT-HOUSE   :  áäÇhÇbÇq                                      *         
+      * AUTHOR       :  M.M                                           *         
+      * CREATE       :  97/03/05                                      *         
+      * AUTHOR       :  X.XXXXX                                       *         
+      * UPDATE       :  XX/XX/XX                                      *         
+      *****************************************************************         
+     A          R OJREC                     PFILE(DOJP00)                       
+      * <KEY>                                                                   
+     A          K OJTRKL                                                        
+     A          K OJTRCL                                                        
+     A          K OJTRSL                                                        
+     A          K OJTRUL                                                        
+     A          K OJHSD                                                         
+     A          K OJTNO2                                                        
+      *****************************************************************         
+     A          R OJRECA                    PFILE(DOJPADD)                      
+      * <KEY>                                                                   
+     A          K OJTRKL                                                        
+     A          K OJTRCL                                                        
+     A          K OJTRSL                                                        
+     A          K OJTRUL                                                        
+     A          K OJHSD                                                         
+     A          K OJTNO2                                                        

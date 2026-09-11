@@ -1,0 +1,27 @@
+      *****************************************************************         
+      * USER-NAME    :  ÉnÉsÉlÉbÉg                                    *         
+      * FILE-NAME    :  ëóÇËèÛÉfÅ[É^Å@ÇkÇeÇQÇRÅ@Å@Å@Å@Å@Å@Å@Å@Å@Å@Å@ ?*         
+      * FILE-ID      :  ÇcÇnÇiÇkÇQÇR                                  *         
+      * SOFT-HOUSE   :  áäÇhÇbÇq                                      *         
+      * AUTHOR       :  D.A                                           *         
+      * CREATE       :  97/03/13                                      *         
+      *****************************************************************         
+     A          R OJREC                     PFILE(DOJP00)                       
+      * <KEY>                                                                   
+     A          K OJSOK                                                         
+     A          K OJHSD                                                         
+     A          K OJTNO2                                                        
+     A          K OJTRKY                                                        
+     A          K OJTRCY                                                        
+     A          K OJTRSY                                                        
+     A          K OJTRUY                                                        
+      *****************************************************************         
+     A          R OJRECA                    PFILE(DOJPADD)                      
+      * <KEY>                                                                   
+     A          K OJSOK                                                         
+     A          K OJHSD                                                         
+     A          K OJTNO2                                                        
+     A          K OJTRKY                                                        
+     A          K OJTRCY                                                        
+     A          K OJTRSY                                                        
+     A          K OJTRUY                                                        

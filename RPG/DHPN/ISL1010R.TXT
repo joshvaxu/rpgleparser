@@ -1,0 +1,656 @@
+     H*****************************************************************         
+     H* USER-NAME    :  （株）ハピネット経理システム                  *         
+     H* PROGRAM-NAME :  請求先別違算集計表　　　　　　　　　　　　　 ?*         
+     H* PROGRAM-ID   :  ＩＳＬ１０２０Ｒ                              *         
+     H* SOFT-HOUSE   :  ㈱　ＩＣＲ                                    *         
+     H* AUTHOR       :  D.A                                           *         
+     H* CREATE       :  96/05/27                                      *         
+     H* AUTHOR       :  X.XXXXXX                                      *         
+     H*****************************************************************         
+      *  変更内容                                                               
+      *****************************************************************         
+ZEEI  *  04/03/19  税総額対応                                         *         
+      *****************************************************************         
+     H            Y/                                    1                       
+     F****************************************************************          
+      *  違算データ                                                             
+     FDISL02  IF  E           K        DISK                                     
+     FDISL08  IF  E           K        DISK                                     
+     F            ISREC                             KRENAMEISREC2               
+     FDETL16  IF  E           K        DISK                                     
+      *  取引先マスタ                                                           
+     FMTRL01  IF  E           K        DISK                                     
+      *  組織マスタ                                                             
+     FMSKL01  IF  E           K        DISK                                     
+      *  各種名称マスタ                                                         
+     FMKML01  IF  E           K        DISK                                     
+      * ( 売上 ﾃﾞｰﾀ )                                                           
+     FDURL34  IF  E           K        DISK                                     
+      * ( 送状明細 ﾃﾞｰﾀ )                                                       
+     FMXML35  IF  E           K        DISK                                     
+      *  帳票ファイル                                                           
+     FISL1010PO   E             74     PRINTER                                  
+     E****************************************************************          
+     E*                    配列定義                                  *          
+     E****************************************************************          
+///  E                    TAB1    1   3  1   TAB2   14    営業確認              
+     I****************************************************************          
+     I*                    ＤＳ定義                                  *          
+     I****************************************************************          
+      * ﾛｰｶﾙ ﾃﾞｰﾀｴﾘｱ GET                                                        
+      /COPY QCPYSRC,@LDA                                                        
+      *   暦日変換                                                              
+      /COPY QCPYSRC,@0010P                                                      
+      *   ﾒｯｾｰｼﾞ 取得                                                           
+      /COPY QCPYSRC,@0040P                                                      
+      *   漢字切断                                                              
+      /COPY QCPYSRC,@0050P                                                      
+      *   漢字統合                                                              
+      /COPY QCPYSRC,@0060P                                                      
+      *   ｾｷｭﾘﾃｨ & 業務 ﾛｯｸ ﾁｪｯｸ                                                
+      /COPY QCPYSRC,@2010P                                                      
+      *                                                                         
+     I* PARM =====================================================              
+      *  ･-------------------------------------------------                     
+      *  |  パラメータの定義                                                    
+      *  |        P@01     請求日    (FROM)                                     
+      *  |        P@02     請求日    (TO  )                                     
+      *  |        P@03     請求先    (FROM)                                     
+      *  |        P@04     請求先    (TO  )                                     
+      *  |        P@05     売上部課  (FROM)                                     
+      *  |        P@06     売上部課  (TO  )                                     
+      *  |        P@07     出力順                                               
+      *  |        P@08     担当  (FROM)                                         
+      *  |        P@09     担当  (TO  )                                         
+      *  |        P@10     倉庫                                                 
+      *  |        P@11     入力日  (FROM)                                       
+      *  |        P@12     入力日  (TO  )                                       
+      *  |        P@13     違算区分（ＦＲＯＭ）                                 
+      *  |        P@14     違算区分（ＴＯ）                                     
+///   *  |        P@17     営業確認                                             
+      *  ･-------------------------------------------------                     
+     I            DS                                                            
+     I                                        1 100 W@PARM                      
+     I                                        1   80P@01                        
+     I                                        9  160P@02                        
+     I                                       17  23 P@03                        
+     I                                       24  30 P@04                        
+     I                                       31  33 P@05                        
+     I                                       34  36 P@06                        
+     I                                       37  37 P@07                        
+     I                                       38  42 P@08                        
+     I                                       43  47 P@09                        
+     I                                       48  50 P@10                        
+     I                                       51  580P@11                        
+     I                                       59  660P@12                        
+     I                                       67  67 P@13                        
+     I                                       68  68 P@14                        
+     I                                       69  760P@15                        
+     I                                       77  840P@16                        
+///  I                                       85  85 P@17                        
+      * ===========================================================             
+     I           SDS                                                            
+     I                                        1  10 @PGID                       
+     I                                      244 253 @WSID                       
+      * ｸﾞﾙｰﾌﾟｲﾝｼﾞ                                                              
+     I            DS                                                            
+     I                                        1  12 ISTR                        
+     I                                        1   7 ISTRCT                      
+     I                                        8  11 ISTRST                      
+     I                                       12  12 ISTRUT                      
+      *                                                                         
+     I            DS                                                            
+     I                                        1  12 W@TR                        
+     I                                        1   7 W@TRC                       
+     I                                        8  11 W@TRS                       
+     I                                       12  12 W@TRU                       
+ZEEI  *                                                                         
+  |  I            DS                                                            
+  |  I                                        1  12 H1ZEI                       
+  |  I                                        1   3 @@ZE1                       
+  |  I                                        4   9 @@ZE2                       
+  |  I                                       10  12 @@ZE3                       
+  |  I            DS                                                            
+  |  I                                        1   8 \\ZEI                       
+  |  I                                        1   1 \\ZE1                       
+  |  I                                        2   7 \\ZE2                       
+ZEEI I                                        8   8 \\ZE3                       
+     C****************************************************************          
+     C*  パラメータリスト記述　                                      *          
+     C****************************************************************          
+     C           *ENTRY    PLIST                                                
+     C                     PARM           P@PARM100         ＰＡＲＭ            
+     C                     PARM           P@OUT   1         ＰＡＲＭ            
+     C****************************************************************          
+     C*  キーリスト記述　　　                                        *          
+     C****************************************************************          
+      *  違算データ                                                             
+     C           ISKEYS    KLIST                                                
+     C                     KFLD           ISKAI                                 
+     C                     KFLD           ISTRCQ                                
+     C                     KFLD           ISUBUK                                
+     C                     KFLD           ISTAN                                 
+     C                     KFLD           ISKB01                                
+      *                                                                         
+     C           ISKEY2    KLIST                                                
+     C                     KFLD           ISKAI                                 
+     C                     KFLD           ISTRCQ                                
+     C                     KFLD           ISKB01                                
+     C                     KFLD           ISUBUK                                
+     C                     KFLD           ISTAN                                 
+      *                                                                         
+     C           ISKEYR    KLIST                                                
+     C                     KFLD           ISKAI                                 
+      * < 売上 ﾃﾞｰﾀ >                                                           
+     C           URKEYT    KLIST                                                
+     C                     KFLD           URURD1                                
+     C                     KFLD           URURD2                                
+     C                     KFLD           URTRKT                                
+     C                     KFLD           URTRCT                                
+     C                     KFLD           URTRST                                
+     C                     KFLD           URTRUT                                
+     C                     KFLD           URADN                                 
+      *  取引先マスタ                                                           
+     C           TRKEY     KLIST                                                
+     C                     KFLD           TRTRK             取引先区分   得意   
+     C                     KFLD           TRTRC             法人　　　   得意   
+     C           TRKEY2    KLIST                                                
+     C                     KFLD           TRTRK             取引先区分   得意   
+     C                     KFLD           TRTRC             法人　　　   得意   
+     C                     KFLD           TRTRS             支店　　　   得意   
+     C************         KFLD           TRTRU             売場　　　   得意   
+      *                                                                         
+ K.I C           TRKEY3    KLIST                                                
+  .  C                     KFLD           TRTRK             取引先区分   得意   
+  .  C                     KFLD           TRTRC             法人　　　   得意   
+  .  C                     KFLD           TRTRS             支店　　　   得意   
+ K.I C                     KFLD           TRTRU             売場　　　   得意   
+      *  組織マスタ                                                             
+     C           SKKEY     KLIST                                                
+     C                     KFLD           SKNEND            年度                
+     C                     KFLD           SKSSK             組織区分            
+     C                     KFLD           SKSSC             組織 ｺｰﾄﾞ           
+      *  各種名称マスタ                                                         
+     C           KMKEY     KLIST                                                
+     C                     KFLD           KMMSK                                 
+     C                     KFLD           KMMSC                                 
+     C           ETKEY     KLIST                                                
+     C                     KFLD           ETTRKE                                
+     C                     KFLD           ETTRCE                                
+     C                     KFLD           ETTRSE                                
+     C                     KFLD           ETTRUE                                
+     C                     KFLD           ETTRKT                                
+     C                     KFLD           ETTRCT                                
+     C                     KFLD           ETTRST                                
+     C                     KFLD           ETADN                                 
+      *  送状明細 ﾃﾞｰﾀ                                                          
+     C           OMKEY     KLIST                                                
+     C                     KFLD           OMTRCT                                
+     C                     KFLD           OMTRST                                
+     C                     KFLD           OMTRUT                                
+     C                     KFLD           OMADN                                 
+      ****************************************************************          
+      *  ￥ＢＡＳＥ　　　　メイン・ルーチン                          *          
+      ****************************************************************          
+      * 初期処理                                                                
+     C                     EXSR #INIT                                           
+      * 中心処理                                                                
+     C           WEND      DOWEQ'0'                        ?DOWEQ               
+     C                     EXSR #MAIN                                           
+     C                     END                             ｣DOWEQ               
+      * 終了処理                                                                
+     C                     EXSR #END                                            
+      ****************************************************************          
+      *  ＃ＩＮＩＴ　　　　初期処理                                  *          
+      ****************************************************************          
+     C           #INIT     BEGSR                                                
+      * PARM SET                                                                
+     C                     MOVELP@PARM    W@PARM                                
+      * 帳票ＦＬＤ初期化                                                        
+     C                     CLEARHEAD                                            
+     C                     CLEARITEM0                                           
+     C                     CLEARITEM                                            
+     C                     CLEARGKEI                                            
+     C                     CLEARGKEI2                                           
+      * フラグクリア                                                            
+     C                     MOVE '0'       WEND    1                             
+     C                     MOVE '0'       WEXT    1                             
+     C                     MOVE '0'       WFST    1                             
+     C                     Z-ADD*ZERO     CNT     30                            
+      *                                                                         
+     C                     SETON                     74                         
+      * 見出項目セット                                                          
+      * ( 会社 )                                                                
+     C                     MOVEL'KS'      SKSSK     P       組織区分            
+     C                     MOVEL*BLANK    SKSSC                                 
+     C                     MOVELLDKAI     SKSSC     P       組織 ｺｰﾄﾞ           
+     C           SKKEY     CHAINSKREC                90                         
+     C                     MOVEL*BLANK    H1KAI             会社                
+     C  N90                MOVELSKSSJ     H1KAI             会社                
+///   * 営業確認                                                                
+///  C                     MOVEL*BLANK    H1KB7J                                
+///  C           P@17      LOKUPTAB1      TAB2           70                     
+///  C   70                MOVELTAB2      H1KB7J                                
+     C* オペレーター名称セット                                                  
+      *                                                                         
+     C                     Z-ADDLDNEND    SKNEND                                
+     C                     MOVEL'SY'      SKSSK                                 
+     C                     MOVELLDOPC     SKSSC     P                           
+     C           SKKEY     CHAINSKREC                91                         
+     C           *IN91     IFEQ '0'                        ?IFEQ                
+     C                     MOVELSKSSJ     H1OPNM                                
+     C                     END                             ｣IFEQ                
+      * 下限セット                                                              
+     C                     MOVELLDKAI     ISKAI                                 
+     C                     Z-ADDP@01      ISSYMD                                
+     C                     MOVELP@03      ISTRCQ                                
+     C                     MOVELP@05      ISUBUK                                
+     C                     MOVELP@08      ISTAN                                 
+      *                                                                         
+     C           P@07      IFEQ '1'                                             
+     C           ISKEYS    SETLLISREC                                           
+     C                     ELSE                                                 
+     C           ISKEY2    SETLLISREC2                                          
+     C                     END                                                  
+      *                                                                         
+     C                     EXSR #READ                                           
+      *                                                                         
+     C           \INIT     ENDSR                                                
+      ****************************************************************          
+      *  ＃ＭＡＩＮ　　　　中心処理                                  *          
+      ****************************************************************          
+     C           #MAIN     BEGSR                                                
+      * 抽出処理                                                                
+     C                     EXSR #EXTR                                           
+      * 出力処理                                                                
+     C           WEXT      IFEQ '1'                        ?IFEQ                
+     C                     EXSR #WRITE                                          
+     C                     END                             ｣IFEQ                
+      * 読込処理                                                                
+     C                     EXSR #READ                                           
+      *                                                                         
+     C           \MAIN     ENDSR                                                
+      *****************************************************************         
+      *  ＃ＥＮＤ　　　　　終了処理                                   *         
+      *****************************************************************         
+     C           #END      BEGSR                                                
+      * 合計                                                                    
+     C           WFST      IFEQ '1'                        ?IFEQ                
+     C                     WRITEGKEI                                            
+     C                     WRITEGKEI2                                           
+     C                     ENDIF                                                
+      * DATA FLG                                                                
+     C                     MOVE WFST      P@OUT                                 
+      * ON LR                                                                   
+     C                     MOVE '1'       *INLR                                 
+     C                     RETRN                                                
+      *                                                                         
+     C           \END      ENDSR                                                
+      *****************************************************************         
+      *  ＃ＲＥＡＤ　　　　読込処理                                   *         
+      *****************************************************************         
+     C           #READ     BEGSR                                                
+      * 読込                                                                    
+     C           P@07      IFEQ '1'                                             
+     C           ISKEYR    READEISREC                    99                     
+     C                     ELSE                                                 
+     C           ISKEYR    READEISREC2                   99                     
+     C                     END                                                  
+     C   99                MOVE '1'       WEND                                  
+      * 締日範囲外                                                              
+     C********   ISSYMD    IFGT P@02                                            
+     C*******              MOVE '1'       WEND                                  
+     C*******              END                             ｣IFGT                
+      *                                                                         
+     C           \READ     ENDSR                                                
+      *****************************************************************         
+      *  ＃ＥＸＴＲ　　　　抽出処理                                   *         
+      *****************************************************************         
+     C           #EXTR     BEGSR                                                
+      * 抽出 FLG ON                                                             
+     C                     MOVE '1'       WEXT                                  
+      * 削除区分                                                                
+     C           ISDEL     IFNE *BLANK                      活動区分            
+     C                     MOVE '0'       WEXT                                  
+     C                     END                                                  
+      * 請求先                                                                  
+     C           ISTRCQ    IFLT P@03                                            
+     C           ISTRCQ    ORGT P@04                                            
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             ｣IFNE                
+      * 売上部課                                                                
+     C           ISUBUK    IFLT P@05                                            
+     C           ISUBUK    ORGT P@06                                            
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             ｣IFNE                
+      * 担当                                                                    
+     C           ISTAN     IFLT P@08                                            
+     C           ISTAN     ORGT P@09                                            
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             ｣IFNE                
+      * 倉庫                                                                    
+     C           P@10      IFNE *BLANK                                          
+     C           ISSOK     IFNE P@10                                            
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             ｣IFNE                
+     C                     END                                                  
+      * 入力日                                                                  
+     C           ISCDT     IFLT P@11                                            
+     C           ISCDT     ORGT P@12                                            
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             ｣IFNE                
+      * 伝票日                                                                  
+     C           ISDYMD    IFLT P@15                                            
+     C           ISDYMD    ORGT P@16                                            
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             ｣IFNE                
+      * 違算区分                                                                
+     C           ISKB01    IFLT P@13                                            
+     C           ISKB01    ORGT P@14                                            
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             ｣IFNE                
+///   * 営業確認                                                                
+     C           P@17      IFNE '9'                                             
+     C*                                                                         
+     C           P@17      IFEQ *BLANK                                          
+     C           ISKB07    ANDNE*BLANK                                          
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             ｣IFNE                
+     C*                                                                         
+     C           P@17      IFEQ '1'                                             
+     C           ISKB07    ANDEQ*BLANK                                          
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             ｣IFNE                
+     C*                                                                         
+     C                     END                                                  
+      *                                                                         
+     C           \EXTR     ENDSR                                                
+      *****************************************************************         
+      *  ＃ＷＲＩＴＥ　　　出力処理                                   *         
+      *****************************************************************         
+     C           #WRITE    BEGSR                                                
+      * 一件目処理                                                              
+     C           WFST      IFEQ '0'                        ?IFEQ                
+     C                     Z-ADDISSYMD    W@SYMD  80                            
+     C                     MOVELISTRCQ    W@TRCQ  7                             
+     C                     MOVELISUBUK    W@UBUK  3                             
+     C                     MOVELISKB01    W@KB01  1                             
+     C                     MOVELISTR      W@TR                                  
+     C                     MOVELISTAN     W@TAN   5                             
+ZEEI C                     MOVELISKB10    W@KB10  1                             
+     C                     END                             ｣IFEQ                
+      * 請求先計                                                                
+     C********** ISSYMD    IFNE W@SYMD                                          
+     C           ISTRCQ    IFNE W@TRCQ                                          
+     C           ISUBUK    ORNE W@UBUK                                          
+     C           ISTAN     ORNE W@TAN                                           
+     C           ISKB01    ORNE W@KB01                                          
+ZEEI C           ISKB10    ORNE W@KB10                                          
+     C                     WRITEGKEI                                            
+     C                     CLEARGKEI                                            
+     C                     SETON                     74                         
+     C                     Z-ADD*ZERO     CNT                                   
+     C                     ELSE                                                 
+      * 区分計                                                                  
+     C***********ISKB01    IFNE W@KB01                                          
+     C***********          WRITEGKEI                                            
+     C***********          CLEARGKEI                                            
+     C*************        SETON                     75                         
+     C*************        END                                                  
+     C                     END                             ｣IFNE                
+      * ｸﾞﾙｰﾌﾟｲﾝｼﾞ                                                              
+     C           ISTR      IFNE W@TR                                            
+     C                     SETON                     51                         
+     C                     END                                                  
+      * 見出し出力                                                              
+     C   74                EXSR #HEAD                                           
+      * 項目転送                                                                
+     C                     EXSR #MOVE                                           
+      * 明細出力                                                                
+     C           *IN75     IFEQ '1'                                             
+     C                     WRITEITEM0                                           
+     C                     CLEARITEM0                                           
+     C                     SETOF                     75                         
+     C                     SETON                     51                         
+     C                     END                                                  
+     C                     WRITEITEM                                            
+     C                     CLEARITEM                                            
+      * 一件目 FLG                                                              
+     C                     MOVE '1'       WFST                                  
+      * 退避                                                                    
+     C                     Z-ADDISSYMD    W@SYMD  80                            
+     C                     MOVELISTRCQ    W@TRCQ  7                             
+     C                     MOVELISUBUK    W@UBUK  3                             
+     C                     MOVELISTAN     W@TAN   5                             
+     C                     MOVELISKB01    W@KB01  1                             
+     C                     MOVELISTR      W@TR                                  
+ZEEI C                     MOVELISKB10    W@KB10                                
+      *                                                                         
+     C           \WRITE    ENDSR                                                
+      *****************************************************************         
+      *  ＃ＨＥＡＤ　　　　見出し処理                                 *         
+      *****************************************************************         
+     C           #HEAD     BEGSR                                                
+     C*                                                                         
+     C           WFST      IFEQ '1'                        ?IFEQ                
+     C                     WRITEGKEI2                                           
+     C                     CLEARGKEI2                                           
+     C                     ENDIF                                                
+      * 締日                                                                    
+     C*************        Z-ADDISSYMD    H1SMD                                 
+     C                     MOVE P@11      H1FR                                  
+     C                     MOVE P@12      H1TO                                  
+     C                     MOVE P@15      H1FD                                  
+     C                     MOVE P@16      H1TD                                  
+      * 請求先                                                                  
+     C                     MOVELISTRCQ    H1TRCQ                                
+     C                     MOVE '1'       TRTRK                                 
+     C                     MOVELISTRCQ    TRTRC                                 
+     C                     MOVEL'0000'    TRTRS                                 
+     C******************** MOVE *BLANK    TRTRU                                 
+     C           TRKEY     CHAINTRREC                90                         
+     C                     MOVE *BLANK    H1TRJN                                
+     C  N90                MOVELTRTJ1     H1TRJN                                
+      * 売上部課                                                                
+     C                     MOVELISUBUK    H1BUK                                 
+     C                     Z-ADDLDNEND    SKNEND                                
+     C                     MOVEL'KA'      SKSSK                                 
+     C                     MOVEL*BLANK    SKSSC                                 
+     C                     MOVELISUBUK    SKSSC                                 
+     C                     MOVE *BLANK    H1BUKN                                
+     C           SKKEY     CHAINSKREC                90                         
+     C   90                DO                                                   
+  .  C                     MOVE 'SS'      KMMSK                                 
+  .  C                     MOVELISUBUK    KMMSC     P                           
+  .  C           KMKEY     CHAINKMREC                77                         
+     C   77                MOVEL*BLANK    H1BUKN                                
+     C  N77                MOVELKMMSAR    H1BUKN                                
+     C                     END                                                  
+     C  N90                MOVELSKSSJ     H1BUKN                                
+      * 担当                                                                    
+     C                     MOVELISTAN     H1TAN                                 
+     C                     Z-ADDLDNEND    SKNEND                                
+     C                     MOVEL'TA'      SKSSK                                 
+     C                     MOVEL*BLANK    SKSSC                                 
+     C                     MOVELISTAN     SKSSC                                 
+     C                     MOVE *BLANK    H1TANM                                
+     C           SKKEY     CHAINSKREC                90                         
+     C   90                MOVEL*BLANK    H1TANM                                
+     C  N90                MOVELSKSSJ     H1TANM                                
+ZEEI  *< 税種 >                                                                 
+  |  C                     MOVE 'ZK'      KMMSK                                 
+  |  C           ISKB10    IFEQ *BLANK                                          
+  |  C                     MOVEL'1'       KMMSC     P                           
+  |  C                     ELSE                                                 
+  |  C                     MOVELISKB10    KMMSC     P                           
+  |  C                     ENDIF                                                
+  |  C           KMKEY     CHAINKMREC                77                         
+  |  C   77                MOVEL*BLANK    \\ZEI     P                           
+  |  C  N77                MOVELKMMSJ     \\ZEI     P                           
+  |  C                     MOVEL' （ '    @@ZE1     P                           
+  |  C                     MOVEL\\ZE2     @@ZE2     P                           
+ZEEI C                     MOVE ' ） '    @@ZE3     P                           
+      * 出力                                                                    
+     C                     WRITEHEAD                                            
+     C                     SETOF                     74                         
+     C                     SETON                     75                         
+      *                                                                         
+     C           \HEAD     ENDSR                                                
+      *****************************************************************         
+      *  ＃ＭＯＶＥ　　　　転送                                       *         
+      *****************************************************************         
+     C           #MOVE     BEGSR                                                
+      * 違算区分                                                                
+     C           *IN75     IFEQ '1'                                             
+     C                     MOVELISKB01    I1IKBN                                
+     C                     MOVEL'IS'      KMMSK     P                           
+     C                     MOVELISKB01    KMMSC     P                           
+     C           KMKEY     CHAINKMREC                90                         
+     C                     MOVE *BLANK    I1IKNM                                
+     C  N90                MOVELKMMSJR    I1IKNM                                
+     C                     END                                                  
+      * №                                                                      
+     C                     ADD  1         CNT                                   
+     C                     Z-ADDCNT       I1NO                                  
+      * 得意先                                                                  
+     C                     MOVELISTRCT    I1TRCT                                
+     C                     MOVELISTRST    I1TRST                                
+     C                     MOVELISTRUT    I1TRUT                                
+     C                     MOVE '1'       TRTRK                                 
+     C                     MOVELISTRCT    TRTRC                                 
+     C                     MOVELISTRST    TRTRS                                 
+     C******************** MOVELISTRUT    TRTRU                                 
+     C           TRKEY2    CHAINTRREC                90                         
+     C                     MOVE *BLANK    I1TR2                                 
+     C  N90                MOVELTRTR2     I1TR2                                 
+      *                                                                         
+     C                     MOVEL*BLANK    I1SUM2                                
+      *                                                                         
+     C                     MOVELISDYMD    URURD1                                
+     C                     MOVE ISDYMD    URURD2                                
+     C                     MOVEL'1'       URTRKT                                
+     C                     MOVELISTRCT    URTRCT                                
+     C                     MOVELISTRST    URTRST                                
+     C                     MOVELISTRUT    URTRUT                                
+     C                     MOVELISADN     URADN                                 
+     C           URKEYT    CHAINURREC                90                         
+     C           \UR       TAG                                                  
+     C  N90                DO                                                   
+     C           URTEK     IFEQ *BLANK                                          
+     C           URPC02    IFEQ '1'                                             
+     C           URPC05    OREQ '1'                                             
+     C           URPC02    OREQ ' '                                             
+     C           URPC05    OREQ ' '                                             
+     C                     ELSE                                                 
+     C                     MOVEL' ＃  '   I1SUM2                                
+     C                     END                                                  
+     C                     ELSE                                                 
+     C           URKEYT    READEURREC                    90                     
+     C                     GOTO \UR                                             
+     C                     END                                                  
+     C                     END                                                  
+     C   90                MOVEL' ＃  '   I1SUM2                                
+      * 伝票日付                                                                
+     C                     Z-ADDISDYMD    I1DYMD                                
+      * 摘要                                                                    
+     C                     MOVELISTK      I1TK                                  
+      * 取引区分                                                                
+     C                     MOVEL'TK'      KMMSK     P                           
+     C                     MOVELISTHK     KMMSC     P                           
+     C           KMKEY     CHAINKMREC                90                         
+     C                     MOVE *BLANK    I1THKJ                                
+     C  N90                MOVELKMMSJ     I1THKJ                                
+     C                     MOVE *BLANK    I1EOS                                 
+     C                     MOVEL*BLANK    I1ATR                                 
+     C           ISKB06    IFEQ '1'                                             
+     C                     MOVEL'EOS'     I1EOS                                 
+     C                     MOVELTRTRKE    ETTRKE                                
+     C                     MOVELTRTRCE    ETTRCE                                
+     C                     MOVELTRTRSE    ETTRSE                                
+     C                     MOVELTRTRUE    ETTRUE                                
+     C                     MOVELTRTRK     ETTRKT                                
+     C                     MOVELTRTRC     ETTRCT                                
+     C                     MOVELTRTRS     ETTRST                                
+     C                     MOVELISADN     ETADN                                 
+     C           ETKEY     CHAINETREC                93                         
+     C  N93                MOVELETATRC    I1ATR                                 
+     C                     END                                                  
+     C                     MOVELISSOK     I1SOK                                 
+      *                                                                         
+     C                     MOVELISADN     I1TNO                                 
+     C                     MOVELISSENO    I1SENO                                
+     C                     MOVELISSDN     I1SNO                                 
+     C                     Z-ADDISAKIN    I1TKIN                                
+     C                     Z-ADDISSKIN    I1SKIN                                
+     C********** ISAKIN    SUB  ISSKIN    I1SA                                  
+     C           ISSKIN    SUB  ISAKIN    I1SA                                  
+      *                                                                         
+     C                     MOVEL*BLANK    I1SUM                                 
+     C********   P@17      IFEQ '9'                                             
+     C           ISKB07    IFNE *BLANK                                          
+     C                     MOVEL' ＊  '   I1SUM                                 
+     C                     END                                                  
+     C********             END                                                  
+     C*                                                                         
+     C           ISKB07    IFNE *BLANK                                          
+     C                     MOVEL'EG'      KMMSK                                 
+     C                     MOVELISKB07    KMMSC     P                           
+     C           KMKEY     CHAINKMREC                77                         
+     C           *IN77     IFEQ '0'                                             
+     C                     MOVELISKB07    I1EKCD                                
+     C                     MOVELKMMSJ     I1EKNM                                
+     C                     ELSE                                                 
+     C                     MOVEL*BLANK    I1EKCD                                
+     C                     MOVEL*BLANK    I1EKNM                                
+     C                     ENDIF                                                
+     C                     ENDIF                                                
+      *  請求№表示                                                             
+     C                     SETON                     61                         
+     C           I1SENO    IFEQ *BLANK                                          
+     C                     SETOF                     61                         
+     C                     END                                                  
+     C           I1SENO    IFEQ *ALL'0'                                         
+     C                     SETOF                     61                         
+     C                     END                                                  
+      * 合計加算                                                                
+     C                     ADD  I1TKIN    G1TKIN                                
+     C                     ADD  I1SKIN    G1SKIN                                
+     C                     ADD  I1SA      G1SA                                  
+     C                     ADD  I1TKIN    G2TKIN                                
+     C                     ADD  I1SKIN    G2SKIN                                
+     C                     ADD  I1SA      G2SA                                  
+      * 得意先 ｺｰﾄﾞ ・名称                                                      
+.....C                     MOVEL*BLANK    I1TARL                                
+.....C                     MOVEL*BLANK    I1TNO2                                
+     C           ISADN     IFNE *BLANK                                          
+ K.I C******               MOVEL*BLANK    I1TRCL                                
+  .  C******               MOVEL*BLANK    I1TRSL                                
+ K.I C                     MOVEL*BLANK    I1TARL                                
+     C                     MOVEL*BLANK    I1TNO2                                
+      *                                                                         
+     C                     MOVELISTRCT    OMTRCT            得意先・法人        
+     C                     MOVELISTRST    OMTRST            得意先・支店        
+     C                     MOVELISTRUT    OMTRUT            得意先・売場        
+     C                     MOVELISADN     OMADN             相手伝票№          
+     C           OMKEY     CHAINMXML35               90                         
+     C           *IN90     IFEQ '0'                                             
+ K.I C                     MOVELOMTRKL    TRTRK                                 
+  .  C                     MOVELOMTRCL    TRTRC                                 
+  .  C                     MOVELOMTRSL    TRTRS                                 
+  .  C                     MOVELOMTRUL    TRTRU                                 
+  .  C           TRKEY3    CHAINTRREC                91                         
+  .  C  N91                MOVELTRTAR     I1TARL                                
+  .  C*****                MOVELOMTRCL    I1TRCL                                
+ K.I C*****                MOVELOMTRSL    I1TRSL                                
+     C                     MOVELOMTNO2    I1TNO2                                
+     C                     END                                                  
+     C                     END                                                  
+      *                                                                         
+     C           \MOVE     ENDSR                                                
+      *****************************************************************         
+      *                    ＴＡＢＬＥ                                 *         
+      *****************************************************************         
+** TAB1/TAB2  営業確認                                                          
+  営業確認：未                                                                  
+1 営業確認：済                                                                  
+9 営業確認：全                                                                  

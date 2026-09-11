@@ -1,0 +1,168 @@
+      *****************************************************************         
+      * USER-NAME    :  ハピネット                                    *         
+      * FILE-NAME    :  送状明細データ　　　　　　　　　　　　　　　 ?*         
+      * FILE-ID      :  ＤＯＭＰ００                                  *         
+      * SOFT-HOUSE   :  ㈱ＩＣＲ                                      *         
+      * AUTHOR       :  S.T                                           *         
+      * CREATE       :  94/08/02                                      *         
+      * AUTHOR       :  K.ITOU                                        *         
+      * UPDATE       :  96/04/20                                      *         
+      *****************************************************************         
+     A***                                   UNIQUE                              
+     A          R OMRECA                    TEXT(' 送状明細データ ')            
+      *                                                                         
+     A            OMDEL          1A         COLHDG(' 削除区分 ')                
+     A            OMFID          2A         COLHDG(' 識別 "OM" ')               
+      * KEY                                                                     
+     A            OMMNO          8A         COLHDG(' 送状№ ')                  
+     A            OMMGY          4A         COLHDG(' 送状行№ ')                
+      *                                                                         
+     A            OMKJD1         6S 0       COLHDG(' 年月 ' ' 売上計上日 ')     
+     A            OMKJD2         2S 0       COLHDG(' 日 ' ' 売上計上日 ')       
+     A            OMBUK          3A         COLHDG(' 部課 ')                    
+      *<< 得意先 >>                                                             
+     A            OMTRKT         1A         COLHDG(' 取引先区分 ' ' 得意先 ')   
+     A            OMTRCT         7A         COLHDG(' 法人 ' ' 得意先 ')         
+     A            OMTRST         4A         COLHDG(' 支店 ' ' 得意先 ')         
+     A            OMTRUT         1A         COLHDG(' 売場 ' ' 得意先 ')         
+      *<< 出荷先（未使用） >>                                                   
+     A            OMTRKY         1A         COLHDG(' 取引先区分 ' ' 出荷先 ')   
+     A            OMTRCY         7A         COLHDG(' 法人 ' ' 出荷先 ')         
+     A            OMTRSY         4A         COLHDG(' 支店 ' ' 出荷先 ')         
+     A            OMTRUY         1A         COLHDG(' 売場 ' ' 出荷先 ')         
+      *<< センター納品先（未使用） >>                                           
+     A            OMTRKC         1A         COLHDG(' 取引先区分 ' ' 出荷先 ')   
+     A            OMTRCC         7A         COLHDG(' 法人 ' ' 出荷先 ')         
+     A            OMTRSC         4A         COLHDG(' 支店 ' ' 出荷先 ')         
+     A            OMTRUC         1A         COLHDG(' 売場 ' ' 出荷先 ')         
+      *                                                                         
+     A            OMSOK          3A         COLHDG(' 倉庫 ')                    
+     A            OMZBK          3A         COLHDG(' 在庫部課 ')                
+      *                                                                         
+     A            OMNO1          8A         COLHDG(' 対応送状伝№１ ')          
+     A            OMGY1          4A         COLHDG(' 対応送状行№１ ')          
+     A            OMNO2          8A         COLHDG(' 伝№２ ')                  
+     A            OMGY2          4A         COLHDG(' 行№２ ')                  
+      *<< 計上№ >>                                                             
+     A            OMDIDK         2A         COLHDG(' 計上№識別 ')              
+     A            OMDDNK         8A         COLHDG(' 計上№ ')                  
+     A            OMDGYK         2A         COLHDG(' 計上行№ ')                
+      *<< 契約業者 >>                                                           
+     A            OMTRKK         1A         COLHDG(' 取引先区分 ' ' 契約業者 ') 
+     A            OMTRCK         7A         COLHDG(' 法人 ' ' 契約業者 ')       
+     A            OMTRSK         4A         COLHDG(' 支店 ' ' 契約業者 ')       
+     A            OMTRUK         1A         COLHDG(' 売場 ' ' 契約業者 ')       
+      *<< 出荷業者 >>                                                           
+     A            OMTRKL         1A         COLHDG(' 取引先区分 ' ' 出荷業者 ') 
+     A            OMTRCL         7A         COLHDG(' 法人 ' ' 出荷業者 ')       
+     A            OMTRSL         4A         COLHDG(' 支店 ' ' 出荷業者 ')       
+     A            OMTRUL         1A         COLHDG(' 売場 ' ' 出荷業者 ')       
+      *<< 問合せ№ >>                                                           
+     A            OMTNO1        15A         COLHDG(' 問合せ№ ' ' 出荷業者 ')   
+     A            OMTE1          3S 0       COLHDG(' 問合せ№枝 ' ' 出荷業者 ') 
+     A            OMTCD1         1A         COLHDG(' 問合せ№ CD' ' 出荷業者 ') 
+     A            OMTNO2        15A         COLHDG(' 問合№親 ' ' 出荷業者 ')   
+     A            OMTE2          3S 0       COLHDG(' 問合№親枝 ' ' 出荷業者 ') 
+     A            OMTCD2         1A         COLHDG(' 問合№親 CD' ' 出荷業者 ') 
+      *                                                                         
+     A            OMADN         15A         COLHDG(' 相手伝票№ ')              
+     A            OMHSR          4A         COLHDG(' 配送 ﾙｰﾄ')                 
+     A            OMTHK          4A         COLHDG(' 取引区分 ')                
+      *<< オーダ№ >>                                                           
+     A            OMDIDO         2A         COLHDG(' オーダ№識別 ')            
+     A            OMDDNO         8A         COLHDG(' オーダ№ ')                
+     A            OMDGYO         2A         COLHDG(' オーダ行№ ')              
+      *                                                                         
+     A            OMITM          7P 0       COLHDG(' ｱｲﾃﾑ 数 ')                 
+     A            OMSSU          7P 0       COLHDG(' 出荷数 P/S ')              
+     A            OMSKN1        11P 0       COLHDG(' 出荷金額 ')                
+     A            OMSKN2        11P 0       COLHDG(' FIL ')                     
+      *<< 元伝情報 >>                                                           
+     A            OMMTDN         8A         COLHDG(' 伝№ ' ' 元伝情報 ')       
+     A            OMMTGY         4A         COLHDG(' 伝行№ ' ' 元伝情報 ')     
+     A            OMTEK          1A         COLHDG(' 訂正区分 ' ' 元伝情報 ')   
+     A            OMMTD          9P 0       COLHDG(' 伝票日付 ' ' 元伝情報 ')   
+      *                                                                         
+     A            OMYM1          6S 0       COLHDG(' 年月 ' ' 出荷 ')           
+     A            OMDD1          2S 0       COLHDG(' 日   ' ' 出荷 ')           
+     A            OMYM2          6S 0       COLHDG(' 年月 ' ' 配達日 ')         
+     A            OMDD2          2S 0       COLHDG(' 日   ' ' 配達日 ')         
+      *                                                                         
+     A            OMHSD          9P 0       COLHDG(' 発送日 ')                  
+     A            OMSGD          9P 0       COLHDG(' 作業日 ')                  
+     A            OMNOD          9P 0       COLHDG(' 納期日 ')                  
+     A            OMPNO          8A         COLHDG(' ﾋﾟｯｷﾝｸﾞ № ')              
+     A            OMGJDN         8A         COLHDG(' 作業指示№ ')              
+      *                                                                         
+     A            OMFL2          4A         COLHDG(' FIL2 ')                    
+      *<< ﾌﾟﾘﾝﾄ ｺﾝﾄﾛｰﾙ >>                                                       
+     A            OMPC01         1A         COLHDG('  ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')          
+     A            OMPC02         1A         COLHDG('  ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')          
+     A            OMPC03         1A         COLHDG('  ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')          
+     A            OMPC04         1A         COLHDG('  ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')          
+     A            OMPC05         1A         COLHDG('  ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')          
+     A            OMPC06         1A         COLHDG('  ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')          
+     A            OMPC07         1A         COLHDG('  ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')          
+     A            OMPC08         1A         COLHDG('  ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')          
+     A            OMPC09         1A         COLHDG('  ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')          
+     A            OMPC10         1A         COLHDG('  ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')          
+      *                                                                         
+     A            OMKB31         1A         COLHDG(' 納期区分 ')                
+     A            OMKB32         1A         COLHDG(' 未出荷 ' ' 区分 ')         
+     A            OMKB33         1A         COLHDG('  ' ' 区分 ')               
+     A            OMKB34         1A         COLHDG('  ' ' 区分 ')               
+     A            OMKB35         1A         COLHDG('  ' ' 区分 ')               
+     A            OMKB36         1A         COLHDG('  ' ' 区分 ')               
+     A            OMKB37         1A         COLHDG('  ' ' 区分 ')               
+     A            OMKB38         1A         COLHDG('  ' ' 区分 ')               
+     A            OMKB39         1A         COLHDG('  ' ' 区分 ')               
+     A            OMKB40         1A         COLHDG('  ' ' 区分 ')               
+      *<< 更新 ｺﾝﾄﾛｰﾙ >>                                                        
+     A            OMUP01         1A         COLHDG(' ｵﾝﾗｲﾝ' ' 更新 ｺﾝﾄﾛｰﾙ')     
+     A            OMUP02         1A         COLHDG(' 日次 ' ' 更新 ｺﾝﾄﾛｰﾙ')     
+     A            OMUP03         1A         COLHDG(' 月次 ' ' 更新 ｺﾝﾄﾛｰﾙ')     
+     A            OMUP04         1A         COLHDG(' 年次 ' ' 更新 ｺﾝﾄﾛｰﾙ')     
+     A            OMUP05         1A         COLHDG(' 締時 ' ' 更新 ｺﾝﾄﾛｰﾙ')     
+     A            OMUP06         1A         COLHDG(' 会計 ' ' 更新 ｺﾝﾄﾛｰﾙ')     
+     A            OMUP07         1A         COLHDG('  ' ' 更新 ｺﾝﾄﾛｰﾙ')         
+     A            OMUP08         1A         COLHDG('  ' ' 更新 ｺﾝﾄﾛｰﾙ')         
+     A            OMUP09         1A         COLHDG('  ' ' 更新 ｺﾝﾄﾛｰﾙ')         
+     A            OMUP10         1A         COLHDG('  ' ' 更新 ｺﾝﾄﾛｰﾙ')         
+     A            OMUP11         1A         COLHDG('  ' ' 更新 ｺﾝﾄﾛｰﾙ')         
+     A            OMUP12         1A         COLHDG('  ' ' 更新 ｺﾝﾄﾛｰﾙ')         
+      * ( CPU 情報 )                                                            
+     A            OMCP01         1A         COLHDG(' 設定 ' 'CPU 区分 ')        
+     A            OMCP02         1A         COLHDG(' 倉庫物理 ' 'CPU 区分 ')    
+     A            OMCP03         1A         COLHDG(' 部課物理 ' 'CPU 区分 ')    
+     A            OMCP04         1A         COLHDG(' 相手倉庫物理 ' 'CPU 区分 ')
+     A            OMCP05         1A         COLHDG(' 相手部課物理 ' 'CPU 区分 ')
+     A            OMCP06         1A         COLHDG(' 請求物理 ' 'CPU 区分 ')    
+     A            OMCP07         1A         COLHDG(' 倉庫親 ' 'CPU 区分 ')      
+     A            OMCP08         1A         COLHDG(' 相手倉庫親 ' 'CPU 区分 ')  
+     A            OMCP09         1A         COLHDG(' 部課処理 ' 'CPU 区分 ')    
+     A            OMCP10         1A         COLHDG(' 相手部課処理 ' 'CPU 区分 ')
+      * ( 配信 ｺﾝﾄﾛｰﾙ )                                                         
+     A            OMHK01         1A         COLHDG(' 東京 ' ' 配信 ｺﾝﾄﾛｰﾙ')     
+     A            OMHK02         1A         COLHDG(' 大阪 ' ' 配信 ｺﾝﾄﾛｰﾙ')     
+     A            OMHK03         1A         COLHDG(' FIL ' ' 配信 ｺﾝﾄﾛｰﾙ')      
+     A            OMHK04         1A         COLHDG(' FIL ' ' 配信 ｺﾝﾄﾛｰﾙ')      
+     A            OMHK05         1A         COLHDG(' FIL ' ' 配信 ｺﾝﾄﾛｰﾙ')      
+     A            OMHK06         1A         COLHDG(' FIL ' ' 配信 ｺﾝﾄﾛｰﾙ')      
+     A            OMHK07         1A         COLHDG(' FIL ' ' 配信 ｺﾝﾄﾛｰﾙ')      
+     A            OMHK08         1A         COLHDG(' FIL ' ' 配信 ｺﾝﾄﾛｰﾙ')      
+     A            OMHK09         1A         COLHDG(' FIL ' ' 配信 ｺﾝﾄﾛｰﾙ')      
+     A            OMHK10         1A         COLHDG(' FIL ' ' 配信 ｺﾝﾄﾛｰﾙ')      
+      * ( ｼｽﾃﾑ 管理 )                                                           
+     A            OMCDT          9P 0       COLHDG(' 作成日 ')                  
+     A            OMCTM          7P 0       COLHDG(' 作成時刻 ')                
+     A            OMUDT          9P 0       COLHDG(' 更新日 ')                  
+     A            OMUTM          7P 0       COLHDG(' 更新時刻 ')                
+     A            OMWID         10A         COLHDG(' ﾜｰｸｽﾃｰｼｮﾝID ')             
+     A            OMOPC          5A         COLHDG(' ｵﾍﾟﾚｰﾀｺｰﾄﾞ ')              
+     A            OMDST1         2A         COLHDG(' ﾃﾞｰﾀ 設定 ')               
+     A            OMDST2         2A         COLHDG(' ﾃﾞｰﾀ 更新 ')               
+     A            OMNO9          8A         COLHDG(' 送状№（親） ')            
+     A            OMGY9          4A         COLHDG(' 送状行№（親） ')          
+      * <KEY>                                                                   
+     A          K OMMNO                                                         
+     A          K OMMGY                                                         

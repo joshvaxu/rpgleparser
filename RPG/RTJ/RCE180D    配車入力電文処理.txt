@@ -1,0 +1,797 @@
+      *====================================================================*
+      *           PGMID       :  RCE180    電文処理  CXS810-20061205     *
+      *====================================================================*
+      /IF NOT DEFINED(RECV)
+     D* <<固定値>>
+     D  D#TLVA         S             10    INZ('YYMMDDhhmm')                    電文バージョン
+     D  D#MDIT         S             13    INZ('000    00   1')                 初期化用変数
+     D  D#REFG         S              3    INZ('1ST')                           例外エラーフラグ
+     D* <<共通変数>>
+     D  H#R            S              4  0 INZ(0060)                            受信件数
+     D  H#S            S              4  0 INZ(0060)                            送信件数
+     D  H#W            S              4  0 INZ(0)                               件数退避ワーク
+     D  H#K            S              4  0 INZ(0)                               配列指標
+     D  M#1CNT         S              4  0 INZ(0)                               明細件数
+     D* <<受信電文共通部>>
+     D  R#TLID         S             10                                         電文ＩＤ
+     D  R#LSID         S              9                                         ログイン識別ＩＤ
+     D  R#TMID         S             12                                         端末ＩＤ
+     D  R#SSBN         S              1                                         セッション番号
+     D  R#LGSN         S              9                                         ログイン社員番号
+     D  R#LGBC         S              7                                         ログイン部門コード
+     D  R#DSKC         S              2                                         動作環境コード
+     D  R#KZUK         S              1                                         継続有無区分
+     D  R#SSZK         S              1                                         出力指示区分
+     D  R#TLVA         S             10                                         電文バージョン
+     D  R#SORK         S              1                                         処理区分
+     D  R#KNUK         S              2                                         機能区分
+     D  R#KDOD         S              8  0 INZ                                  起動日
+     D  R#KITM         S              6  0 INZ                                  起動時刻
+     D* <<送信電文共通部>>
+     D  S#SYRD         S              8  0                                      処理日
+     D  S#SRTM         S              6  0                                      処理時刻
+     D  S#SJKS         S              3                                         新着情報件数
+     D  S#TIKS         S              3                                         手配依頼件数
+     D  S#TISS         S              3                                         手配依頼総数
+     D  S#ERUK         S              1                                         エラー有無区分
+     D  S#MSID         S             10                                         メッセージＩＤ
+     D  S#MSGO         S             80                                         メッセージ
+     D  S#KZUK         S              1                                         継続有無区分
+     D  S#TLVA         S             10                                         電文バージョン
+     D  S#HPUA         S            128                                         ヘルプ用ＵＲＬ
+     D  S#LPRT         S              1                                         ローカル印刷区分
+     D  S#KDOD         S              8  0 INZ                                  起動日
+     D  S#KITM         S              6  0 INZ                                  起動時刻
+     D*  <<送受信電文>>
+     D                 DS
+     D  T#C18110               1     15
+     D   T#C18111              1      1    INZ                                  レコード種別
+     D   T#C18112              2      2    INZ                                  明細識別番号
+     D   T#C18113              3      7    INZ                                  明細行番号
+     D   T#C18114              8      8    INZ                                  明明細識別番号
+     D   T#C18115              9     12    INZ                                  明明細行番号
+     D   T#C18116             13     13    INZ                                  エラー有無区分
+     D   T#C18117             14     14    INZ                                  表示区分
+     D   T#C1811              15     15    INZ                                  明細分類
+     D                 DS
+     D  T#HKDN0                1     25
+     D   T#HKDN1               1      1    INZ                                  レコード種別
+     D   T#HKDN2               2      2    INZ                                  明細識別番号
+     D   T#HKDN3               3      7    INZ                                  明細行番号
+     D   T#HKDN4               8      8    INZ                                  明明細識別番号
+     D   T#HKDN5               9     12    INZ                                  明明細行番号
+     D   T#HKDN6              13     13    INZ                                  エラー有無区分
+     D   T#HKDN7              14     14    INZ                                  表示区分
+     D   T#HKDN               15     25    INZ                                  配車検収番号
+     D                 DS
+     D  T#HIDN0                1     25
+     D   T#HIDN1               1      1    INZ                                  レコード種別
+     D   T#HIDN2               2      2    INZ                                  明細識別番号
+     D   T#HIDN3               3      7    INZ                                  明細行番号
+     D   T#HIDN4               8      8    INZ                                  明明細識別番号
+     D   T#HIDN5               9     12    INZ                                  明明細行番号
+     D   T#HIDN6              13     13    INZ                                  エラー有無区分
+     D   T#HIDN7              14     14    INZ                                  表示区分
+     D   T#HIDN               15     25    INZ                                  配車番号
+     D                 DS
+     D  T#HISC0                1     21
+     D   T#HISC1               1      1    INZ                                  レコード種別
+     D   T#HISC2               2      2    INZ                                  明細識別番号
+     D   T#HISC3               3      7    INZ                                  明細行番号
+     D   T#HISC4               8      8    INZ                                  明明細識別番号
+     D   T#HISC5               9     12    INZ                                  明明細行番号
+     D   T#HISC6              13     13    INZ                                  エラー有無区分
+     D   T#HISC7              14     14    INZ                                  表示区分
+     D   T#HISC               15     21    INZ                                  配車部門コード
+     D                 DS
+     D  T#HISN0                1     28
+     D   T#HISN1               1      1    INZ                                  レコード種別
+     D   T#HISN2               2      2    INZ                                  明細識別番号
+     D   T#HISN3               3      7    INZ                                  明細行番号
+     D   T#HISN4               8      8    INZ                                  明明細識別番号
+     D   T#HISN5               9     12    INZ                                  明明細行番号
+     D   T#HISN6              13     13    INZ                                  エラー有無区分
+     D   T#HISN7              14     14    INZ                                  表示区分
+     D   T#HISN               15     28    INZ                                  配車部門名
+     D                 DS
+     D  T#TNSN0                1     23
+     D   T#TNSN1               1      1    INZ                                  レコード種別
+     D   T#TNSN2               2      2    INZ                                  明細識別番号
+     D   T#TNSN3               3      7    INZ                                  明細行番号
+     D   T#TNSN4               8      8    INZ                                  明明細識別番号
+     D   T#TNSN5               9     12    INZ                                  明明細行番号
+     D   T#TNSN6              13     13    INZ                                  エラー有無区分
+     D   T#TNSN7              14     14    INZ                                  表示区分
+     D   T#TNSN               15     23    INZ                                  担当者社員番号
+     D                 DS
+     D  T#C18160               1     36
+     D   T#C18161              1      1    INZ                                  レコード種別
+     D   T#C18162              2      2    INZ                                  明細識別番号
+     D   T#C18163              3      7    INZ                                  明細行番号
+     D   T#C18164              8      8    INZ                                  明明細識別番号
+     D   T#C18165              9     12    INZ                                  明明細行番号
+     D   T#C18166             13     13    INZ                                  エラー有無区分
+     D   T#C18167             14     14    INZ                                  表示区分
+     D   T#C1816              15     36    INZ                                  担当者社員名
+     D                 DS
+     D  T#HASD0                1     20
+     D   T#HASD1               1      1    INZ                                  レコード種別
+     D   T#HASD2               2      2    INZ                                  明細識別番号
+     D   T#HASD3               3      7    INZ                                  明細行番号
+     D   T#HASD4               8      8    INZ                                  明明細識別番号
+     D   T#HASD5               9     12    INZ                                  明明細行番号
+     D   T#HASD6              13     13    INZ                                  エラー有無区分
+     D   T#HASD7              14     14    INZ                                  表示区分
+     D   T#HASD               15     20    INZ                                  配車日
+     D                 DS
+     D  T#HASP0                1     16
+     D   T#HASP1               1      1    INZ                                  レコード種別
+     D   T#HASP2               2      2    INZ                                  明細識別番号
+     D   T#HASP3               3      7    INZ                                  明細行番号
+     D   T#HASP4               8      8    INZ                                  明明細識別番号
+     D   T#HASP5               9     12    INZ                                  明明細行番号
+     D   T#HASP6              13     13    INZ                                  エラー有無区分
+     D   T#HASP7              14     14    INZ                                  表示区分
+     D   T#HASP               15     16    INZ                                  配車回数
+     D                 DS
+     D  T#C18010               1     16
+     D   T#C18011              1      1    INZ                                  レコード種別
+     D   T#C18012              2      2    INZ                                  明細識別番号
+     D   T#C18013              3      7    INZ                                  明細行番号
+     D   T#C18014              8      8    INZ                                  明明細識別番号
+     D   T#C18015              9     12    INZ                                  明明細行番号
+     D   T#C18016             13     13    INZ                                  エラー有無区分
+     D   T#C18017             14     14    INZ                                  表示区分
+     D   T#C1801              15     16    INZ                                  総回数
+     D                 DS
+     D  T#C18020               1     17
+     D   T#C18021              1      1    INZ                                  レコード種別
+     D   T#C18022              2      2    INZ                                  明細識別番号
+     D   T#C18023              3      7    INZ                                  明細行番号
+     D   T#C18024              8      8    INZ                                  明明細識別番号
+     D   T#C18025              9     12    INZ                                  明明細行番号
+     D   T#C18026             13     13    INZ                                  エラー有無区分
+     D   T#C18027             14     14    INZ                                  表示区分
+     D   T#C1802              15     17    INZ                                  積載伝票数
+     D                 DS
+     D  T#SIRC0                1     21
+     D   T#SIRC1               1      1    INZ                                  レコード種別
+     D   T#SIRC2               2      2    INZ                                  明細識別番号
+     D   T#SIRC3               3      7    INZ                                  明細行番号
+     D   T#SIRC4               8      8    INZ                                  明明細識別番号
+     D   T#SIRC5               9     12    INZ                                  明明細行番号
+     D   T#SIRC6              13     13    INZ                                  エラー有無区分
+     D   T#SIRC7              14     14    INZ                                  表示区分
+     D   T#SIRC               15     21    INZ                                  仕入先コード
+     D                 DS
+     D  T#SSNM0                1     76
+     D   T#SSNM1               1      1    INZ                                  レコード種別
+     D   T#SSNM2               2      2    INZ                                  明細識別番号
+     D   T#SSNM3               3      7    INZ                                  明細行番号
+     D   T#SSNM4               8      8    INZ                                  明明細識別番号
+     D   T#SSNM5               9     12    INZ                                  明明細行番号
+     D   T#SSNM6              13     13    INZ                                  エラー有無区分
+     D   T#SSNM7              14     14    INZ                                  表示区分
+     D   T#SSNM               15     76    INZ                                  仕入先名
+     D                 DS
+     D  T#SIMC0                1     17
+     D   T#SIMC1               1      1    INZ                                  レコード種別
+     D   T#SIMC2               2      2    INZ                                  明細識別番号
+     D   T#SIMC3               3      7    INZ                                  明細行番号
+     D   T#SIMC4               8      8    INZ                                  明明細識別番号
+     D   T#SIMC5               9     12    INZ                                  明明細行番号
+     D   T#SIMC6              13     13    INZ                                  エラー有無区分
+     D   T#SIMC7              14     14    INZ                                  表示区分
+     D   T#SIMC               15     17    INZ                                  仕入先窓口コード
+     D                 DS
+     D  T#SMNM0                1     56
+     D   T#SMNM1               1      1    INZ                                  レコード種別
+     D   T#SMNM2               2      2    INZ                                  明細識別番号
+     D   T#SMNM3               3      7    INZ                                  明細行番号
+     D   T#SMNM4               8      8    INZ                                  明明細識別番号
+     D   T#SMNM5               9     12    INZ                                  明明細行番号
+     D   T#SMNM6              13     13    INZ                                  エラー有無区分
+     D   T#SMNM7              14     14    INZ                                  表示区分
+     D   T#SMNM               15     56    INZ                                  仕入先窓口名
+     D                 DS
+     D  T#SGUK0                1     15
+     D   T#SGUK1               1      1    INZ                                  レコード種別
+     D   T#SGUK2               2      2    INZ                                  明細識別番号
+     D   T#SGUK3               3      7    INZ                                  明細行番号
+     D   T#SGUK4               8      8    INZ                                  明明細識別番号
+     D   T#SGUK5               9     12    INZ                                  明明細行番号
+     D   T#SGUK6              13     13    INZ                                  エラー有無区分
+     D   T#SGUK7              14     14    INZ                                  表示区分
+     D   T#SGUK               15     15    INZ                                  諸口区分
+     D                 DS
+     D  T#UTSC0                1     16
+     D   T#UTSC1               1      1    INZ                                  レコード種別
+     D   T#UTSC2               2      2    INZ                                  明細識別番号
+     D   T#UTSC3               3      7    INZ                                  明細行番号
+     D   T#UTSC4               8      8    INZ                                  明明細識別番号
+     D   T#UTSC5               9     12    INZ                                  明明細行番号
+     D   T#UTSC6              13     13    INZ                                  エラー有無区分
+     D   T#UTSC7              14     14    INZ                                  表示区分
+     D   T#UTSC               15     16    INZ                                  運転手コード
+     D                 DS
+     D  T#USNM0                1     36
+     D   T#USNM1               1      1    INZ                                  レコード種別
+     D   T#USNM2               2      2    INZ                                  明細識別番号
+     D   T#USNM3               3      7    INZ                                  明細行番号
+     D   T#USNM4               8      8    INZ                                  明明細識別番号
+     D   T#USNM5               9     12    INZ                                  明明細行番号
+     D   T#USNM6              13     13    INZ                                  エラー有無区分
+     D   T#USNM7              14     14    INZ                                  表示区分
+     D   T#USNM               15     36    INZ                                  運転手名
+     D                 DS
+     D  T#VNOA0                1     18
+     D   T#VNOA1               1      1    INZ                                  レコード種別
+     D   T#VNOA2               2      2    INZ                                  明細識別番号
+     D   T#VNOA3               3      7    INZ                                  明細行番号
+     D   T#VNOA4               8      8    INZ                                  明明細識別番号
+     D   T#VNOA5               9     12    INZ                                  明明細行番号
+     D   T#VNOA6              13     13    INZ                                  エラー有無区分
+     D   T#VNOA7              14     14    INZ                                  表示区分
+     D   T#VNOA               15     18    INZ                                  車番
+     D                 DS
+     D  T#C18030               1     29
+     D   T#C18031              1      1    INZ                                  レコード種別
+     D   T#C18032              2      2    INZ                                  明細識別番号
+     D   T#C18033              3      7    INZ                                  明細行番号
+     D   T#C18034              8      8    INZ                                  明明細識別番号
+     D   T#C18035              9     12    INZ                                  明明細行番号
+     D   T#C18036             13     13    INZ                                  エラー有無区分
+     D   T#C18037             14     14    INZ                                  表示区分
+     D   T#C1803              15     29    INZ                                  連絡先
+     D                 DS
+     D  T#HSBK0                1     96
+     D   T#HSBK1               1      1    INZ                                  レコード種別
+     D   T#HSBK2               2      2    INZ                                  明細識別番号
+     D   T#HSBK3               3      7    INZ                                  明細行番号
+     D   T#HSBK4               8      8    INZ                                  明明細識別番号
+     D   T#HSBK5               9     12    INZ                                  明明細行番号
+     D   T#HSBK6              13     13    INZ                                  エラー有無区分
+     D   T#HSBK7              14     14    INZ                                  表示区分
+     D   T#HSBK               15     96    INZ                                  配車備考
+     D                 DS
+     D  T#ODDN0                1     25
+     D   T#ODDN1               1      1    INZ                                  レコード種別
+     D   T#ODDN2               2      2    INZ                                  明細識別番号
+     D   T#ODDN3               3      7    INZ                                  明細行番号
+     D   T#ODDN4               8      8    INZ                                  明明細識別番号
+     D   T#ODDN5               9     12    INZ                                  明明細行番号
+     D   T#ODDN6              13     13    INZ                                  エラー有無区分
+     D   T#ODDN7              14     14    INZ                                  表示区分
+     D   T#ODDN               15     25    INZ                                  注文番号
+     D                 DS
+     D  T#HTUD0                1     20
+     D   T#HTUD1               1      1    INZ                                  レコード種別
+     D   T#HTUD2               2      2    INZ                                  明細識別番号
+     D   T#HTUD3               3      7    INZ                                  明細行番号
+     D   T#HTUD4               8      8    INZ                                  明明細識別番号
+     D   T#HTUD5               9     12    INZ                                  明明細行番号
+     D   T#HTUD6              13     13    INZ                                  エラー有無区分
+     D   T#HTUD7              14     14    INZ                                  表示区分
+     D   T#HTUD               15     20    INZ                                  発注日
+     D                 DS
+     D  T#NSBC0                1     21
+     D   T#NSBC1               1      1    INZ                                  レコード種別
+     D   T#NSBC2               2      2    INZ                                  明細識別番号
+     D   T#NSBC3               3      7    INZ                                  明細行番号
+     D   T#NSBC4               8      8    INZ                                  明明細識別番号
+     D   T#NSBC5               9     12    INZ                                  明明細行番号
+     D   T#NSBC6              13     13    INZ                                  エラー有無区分
+     D   T#NSBC7              14     14    INZ                                  表示区分
+     D   T#NSBC               15     21    INZ                                  入出庫部門コード
+     D                 DS
+     D  T#NSBN0                1     28
+     D   T#NSBN1               1      1    INZ                                  レコード種別
+     D   T#NSBN2               2      2    INZ                                  明細識別番号
+     D   T#NSBN3               3      7    INZ                                  明細行番号
+     D   T#NSBN4               8      8    INZ                                  明明細識別番号
+     D   T#NSBN5               9     12    INZ                                  明明細行番号
+     D   T#NSBN6              13     13    INZ                                  エラー有無区分
+     D   T#NSBN7              14     14    INZ                                  表示区分
+     D   T#NSBN               15     28    INZ                                  入出庫部門名
+     D                 DS
+     D  T#HISD0                1     20
+     D   T#HISD1               1      1    INZ                                  レコード種別
+     D   T#HISD2               2      2    INZ                                  明細識別番号
+     D   T#HISD3               3      7    INZ                                  明細行番号
+     D   T#HISD4               8      8    INZ                                  明明細識別番号
+     D   T#HISD5               9     12    INZ                                  明明細行番号
+     D   T#HISD6              13     13    INZ                                  エラー有無区分
+     D   T#HISD7              14     14    INZ                                  表示区分
+     D   T#HISD               15     20    INZ                                  配送日
+     D                 DS
+     D  T#SRJK0                1     15
+     D   T#SRJK1               1      1    INZ                                  レコード種別
+     D   T#SRJK2               2      2    INZ                                  明細識別番号
+     D   T#SRJK3               3      7    INZ                                  明細行番号
+     D   T#SRJK4               8      8    INZ                                  明明細識別番号
+     D   T#SRJK5               9     12    INZ                                  明明細行番号
+     D   T#SRJK6              13     13    INZ                                  エラー有無区分
+     D   T#SRJK7              14     14    INZ                                  表示区分
+     D   T#SRJK               15     15    INZ                                  ソート順区分
+     D                 DS
+     D  T#C18040               1     22
+     D   T#C18041              1      1    INZ                                  レコード種別
+     D   T#C18042              2      2    INZ                                  明細識別番号
+     D   T#C18043              3      7    INZ                                  明細行番号
+     D   T#C18044              8      8    INZ                                  明明細識別番号
+     D   T#C18045              9     12    INZ                                  明明細行番号
+     D   T#C18046             13     13    INZ                                  エラー有無区分
+     D   T#C18047             14     14    INZ                                  表示区分
+     D   T#C1804              15     22    INZ                                  ソート順区分名
+     D                 DS
+     D  T#C18050               1     15
+     D   T#C18051              1      1    INZ                                  レコード種別
+     D   T#C18052              2      2    INZ                                  明細識別番号
+     D   T#C18053              3      7    INZ                                  明細行番号
+     D   T#C18054              8      8    INZ                                  明明細識別番号
+     D   T#C18055              9     12    INZ                                  明明細行番号
+     D   T#C18056             13     13    INZ                                  エラー有無区分
+     D   T#C18057             14     14    INZ                                  表示区分
+     D   T#C1805              15     15    INZ                                  未配車
+     D                 DS
+     D  T#C18060               1     15
+     D   T#C18061              1      1    INZ                                  レコード種別
+     D   T#C18062              2      2    INZ                                  明細識別番号
+     D   T#C18063              3      7    INZ                                  明細行番号
+     D   T#C18064              8      8    INZ                                  明明細識別番号
+     D   T#C18065              9     12    INZ                                  明明細行番号
+     D   T#C18066             13     13    INZ                                  エラー有無区分
+     D   T#C18067             14     14    INZ                                  表示区分
+     D   T#C1806              15     15    INZ                                  自車配車済
+     D                 DS
+     D  T#C18070               1     15
+     D   T#C18071              1      1    INZ                                  レコード種別
+     D   T#C18072              2      2    INZ                                  明細識別番号
+     D   T#C18073              3      7    INZ                                  明細行番号
+     D   T#C18074              8      8    INZ                                  明明細識別番号
+     D   T#C18075              9     12    INZ                                  明明細行番号
+     D   T#C18076             13     13    INZ                                  エラー有無区分
+     D   T#C18077             14     14    INZ                                  表示区分
+     D   T#C1807              15     15    INZ                                  他車配車済
+     D                 DS
+     D  T#C18080               1     15
+     D   T#C18081              1      1    INZ                                  レコード種別
+     D   T#C18082              2      2    INZ                                  明細識別番号
+     D   T#C18083              3      7    INZ                                  明細行番号
+     D   T#C18084              8      8    INZ                                  明明細識別番号
+     D   T#C18085              9     12    INZ                                  明明細行番号
+     D   T#C18086             13     13    INZ                                  エラー有無区分
+     D   T#C18087             14     14    INZ                                  表示区分
+     D   T#C1808              15     15    INZ                                  未検索
+     D                 DS
+     D  T#C18090               1     20
+     D   T#C18091              1      1    INZ                                  レコード種別
+     D   T#C18092              2      2    INZ                                  明細識別番号
+     D   T#C18093              3      7    INZ                                  明細行番号
+     D   T#C18094              8      8    INZ                                  明明細識別番号
+     D   T#C18095              9     12    INZ                                  明明細行番号
+     D   T#C18096             13     13    INZ                                  エラー有無区分
+     D   T#C18097             14     14    INZ                                  表示区分
+     D   T#C1809              15     20    INZ                                  行番号ＦＲＯＭ
+     D                 DS
+     D  T#C18100               1     20
+     D   T#C18101              1      1    INZ                                  レコード種別
+     D   T#C18102              2      2    INZ                                  明細識別番号
+     D   T#C18103              3      7    INZ                                  明細行番号
+     D   T#C18104              8      8    INZ                                  明明細識別番号
+     D   T#C18105              9     12    INZ                                  明明細行番号
+     D   T#C18106             13     13    INZ                                  エラー有無区分
+     D   T#C18107             14     14    INZ                                  表示区分
+     D   T#C1810              15     20    INZ                                  行番号ＴＯ
+     D                 DS
+     D  T#BDUK0                1     15
+     D   T#BDUK1               1      1    INZ                                  レコード種別
+     D   T#BDUK2               2      2    INZ                                  明細識別番号
+     D   T#BDUK3               3      7    INZ                                  明細行番号
+     D   T#BDUK4               8      8    INZ                                  明明細識別番号
+     D   T#BDUK5               9     12    INZ                                  明明細行番号
+     D   T#BDUK6              13     13    INZ                                  エラー有無区分
+     D   T#BDUK7              14     14    INZ                                  表示区分
+     D   T#BDUK               15     15    INZ                                  前データ有無区分
+     D                 DS
+     D  T#JDUK0                1     15
+     D   T#JDUK1               1      1    INZ                                  レコード種別
+     D   T#JDUK2               2      2    INZ                                  明細識別番号
+     D   T#JDUK3               3      7    INZ                                  明細行番号
+     D   T#JDUK4               8      8    INZ                                  明明細識別番号
+     D   T#JDUK5               9     12    INZ                                  明明細行番号
+     D   T#JDUK6              13     13    INZ                                  エラー有無区分
+     D   T#JDUK7              14     14    INZ                                  表示区分
+     D   T#JDUK               15     15    INZ                                  次データ有無区分
+     D                 DS
+     D  T#C18130               1     15
+     D   T#C18131              1      1    INZ                                  レコード種別
+     D   T#C18132              2      2    INZ                                  明細識別番号
+     D   T#C18133              3      7    INZ                                  明細行番号
+     D   T#C18134              8      8    INZ                                  明明細識別番号
+     D   T#C18135              9     12    INZ                                  明明細行番号
+     D   T#C18136             13     13    INZ                                  エラー有無区分
+     D   T#C18137             14     14    INZ                                  表示区分
+     D   T#C1813              15     15    INZ                                  画面制御区分１
+     D                 DS
+     D  T#C18140               1     15
+     D   T#C18141              1      1    INZ                                  レコード種別
+     D   T#C18142              2      2    INZ                                  明細識別番号
+     D   T#C18143              3      7    INZ                                  明細行番号
+     D   T#C18144              8      8    INZ                                  明明細識別番号
+     D   T#C18145              9     12    INZ                                  明明細行番号
+     D   T#C18146             13     13    INZ                                  エラー有無区分
+     D   T#C18147             14     14    INZ                                  表示区分
+     D   T#C1814              15     15    INZ                                  画面制御区分２
+     D                 DS
+     D  T#C18170               1     15
+     D   T#C18171              1      1    INZ                                  レコード種別
+     D   T#C18172              2      2    INZ                                  明細識別番号
+     D   T#C18173              3      7    INZ                                  明細行番号
+     D   T#C18174              8      8    INZ                                  明明細識別番号
+     D   T#C18175              9     12    INZ                                  明明細行番号
+     D   T#C18176             13     13    INZ                                  エラー有無区分
+     D   T#C18177             14     14    INZ                                  表示区分
+     D   T#C1817              15     15    INZ                                  画面制御区分４
+     D                 DS
+     D  T#C18180               1     15
+     D   T#C18181              1      1    INZ                                  レコード種別
+     D   T#C18182              2      2    INZ                                  明細識別番号
+     D   T#C18183              3      7    INZ                                  明細行番号
+     D   T#C18184              8      8    INZ                                  明明細識別番号
+     D   T#C18185              9     12    INZ                                  明明細行番号
+     D   T#C18186             13     13    INZ                                  エラー有無区分
+     D   T#C18187             14     14    INZ                                  表示区分
+     D   T#C1818              15     15    INZ                                  画面制御区分５
+     D                 DS
+     D  M1ARAY                      565    DIM(#WM1MAX)
+     D   M1RCDK                       1    OVERLAY(M1ARAY:   1) INZ             レコード種別
+     D   M1DTSN                       1    OVERLAY(M1ARAY:   2) INZ             明細識別番号
+     D   M1DTGN                       5    OVERLAY(M1ARAY:   3) INZ             明細行番号
+     D   M1DDSN                       1    OVERLAY(M1ARAY:   8) INZ             明明細識別番号
+     D   M1DDGN                       4    OVERLAY(M1ARAY:   9) INZ             明明細行番号
+     D   M1ERUK                       1    OVERLAY(M1ARAY:  13) INZ             エラー有無区分
+     D   M1HYOK                       1    OVERLAY(M1ARAY:  14) INZ             表示区分
+     D   M1SNTK                       1    OVERLAY(M1ARAY:  15) INZ             選択
+     D   M1SNTKE                      1    OVERLAY(M1ARAY:  16) INZ             選択エラー
+     D   M1SNTKH                      1    OVERLAY(M1ARAY:  17) INZ             選択表示区分
+     D   M1C1812                      2    OVERLAY(M1ARAY:  18) INZ             表示明細行番号
+     D   M1C1812H                     1    OVERLAY(M1ARAY:  20) INZ             表示明細行番号表示
+     D   M1GYGN                       6    OVERLAY(M1ARAY:  21) INZ             行番号
+     D   M1GYGNH                      1    OVERLAY(M1ARAY:  27) INZ             行番号表示区分
+     D   M1DMKK                       2    OVERLAY(M1ARAY:  28) INZ             伝票区分
+     D   M1DMKKH                      1    OVERLAY(M1ARAY:  30) INZ             伝票区分表示区分
+     D   M1DPKM                       6    OVERLAY(M1ARAY:  31) INZ             伝票区分名
+     D   M1DPKMH                      1    OVERLAY(M1ARAY:  37) INZ             伝票区分名表示区分
+     D   M1URBC                       7    OVERLAY(M1ARAY:  38) INZ             売上部門コード
+     D   M1URBCH                      1    OVERLAY(M1ARAY:  45) INZ             売上部門コード表示
+     D   M1DMDN                      11    OVERLAY(M1ARAY:  46) INZ             伝票番号
+     D   M1DMDNH                      1    OVERLAY(M1ARAY:  57) INZ             伝票番号表示区分
+     D   M1DHKN                       8    OVERLAY(M1ARAY:  58) INZ             伝票発行区分名
+     D   M1DHKNH                      1    OVERLAY(M1ARAY:  66) INZ             伝票発行区分名表示
+     D   M1DHJK                       1    OVERLAY(M1ARAY:  67) INZ             伝票配車状況区分
+     D   M1DHJKH                      1    OVERLAY(M1ARAY:  68) INZ             伝票配車状況区分表
+     D   M1DHJN                      12    OVERLAY(M1ARAY:  69) INZ             伝票配車状況区分名
+     D   M1DHJNH                      1    OVERLAY(M1ARAY:  81) INZ             伝票配車状況区分名
+     D   M1USNM                      22    OVERLAY(M1ARAY:  82) INZ             運転手名
+     D   M1USNMH                      1    OVERLAY(M1ARAY: 104) INZ             運転手名表示区分
+     D   M1HASD                       6    OVERLAY(M1ARAY: 105) INZ             配車日
+     D   M1HASDH                      1    OVERLAY(M1ARAY: 111) INZ             配車日表示区分
+     D   M1HASP                       2    OVERLAY(M1ARAY: 112) INZ             配車回数
+     D   M1HASPH                      1    OVERLAY(M1ARAY: 114) INZ             配車回数表示区分
+     D   M1HASI                      82    OVERLAY(M1ARAY: 115) INZ             配送先
+     D   M1HASIH                      1    OVERLAY(M1ARAY: 197) INZ             配送先表示区分
+     D   M1HISD                       6    OVERLAY(M1ARAY: 198) INZ             配送日
+     D   M1HISDH                      1    OVERLAY(M1ARAY: 204) INZ             配送日表示区分
+     D   M1HITM1                      4    OVERLAY(M1ARAY: 205) INZ             配送時刻１
+     D   M1HITM1H                     1    OVERLAY(M1ARAY: 209) INZ             配送時刻１表示区分
+     D   M1HDBK                      22    OVERLAY(M1ARAY: 210) INZ             発送日備考
+     D   M1HDBKH                      1    OVERLAY(M1ARAY: 232) INZ             発送日備考表示区分
+     D   M1HSBK                      82    OVERLAY(M1ARAY: 233) INZ             配車備考
+     D   M1HSBKE                      1    OVERLAY(M1ARAY: 315) INZ             配車備考エラー
+     D   M1HSBKH                      1    OVERLAY(M1ARAY: 316) INZ             配車備考表示区分
+     D   M1NSBN                      14    OVERLAY(M1ARAY: 317) INZ             入出庫部門名
+     D   M1NSBNH                      1    OVERLAY(M1ARAY: 331) INZ             入出庫部門名表示区
+     D   M1YUYN1                      3    OVERLAY(M1ARAY: 332) INZ             郵便番号１
+     D   M1YUYN1H                     1    OVERLAY(M1ARAY: 335) INZ             郵便番号１表示区分
+     D   M1YUYN2                      4    OVERLAY(M1ARAY: 336) INZ             郵便番号２
+     D   M1YUYN2H                     1    OVERLAY(M1ARAY: 340) INZ             郵便番号２表示区分
+     D   M1JYAD1                     62    OVERLAY(M1ARAY: 341) INZ             住所１
+     D   M1JYAD1H                     1    OVERLAY(M1ARAY: 403) INZ             住所１表示区分
+     D   M1JYAD2                     62    OVERLAY(M1ARAY: 404) INZ             住所２
+     D   M1JYAD2H                     1    OVERLAY(M1ARAY: 466) INZ             住所２表示区分
+     D   M1HTBK                      82    OVERLAY(M1ARAY: 467) INZ             配送注記
+     D   M1HTBKH                      1    OVERLAY(M1ARAY: 549) INZ             配送注記表示区分
+     D   M1USOK                       1    OVERLAY(M1ARAY: 550) INZ             運送区分
+     D   M1USOKH                      1    OVERLAY(M1ARAY: 551) INZ             運送区分表示区分
+     D   M1HKDN                      11    OVERLAY(M1ARAY: 552) INZ             配車検収番号
+     D   M1HKDNH                      1    OVERLAY(M1ARAY: 563) INZ             配車検収番号表示区
+     D   M1C1815                      1    OVERLAY(M1ARAY: 564) INZ             画面制御区分３
+     D   M1C1815H                     1    OVERLAY(M1ARAY: 565) INZ             画面制御区分３表示
+     C*====================================================================*
+     C*                共通パラメータリスト                              *
+     C*====================================================================*
+     C* <<共通情報取得処理>>
+     C     PSS210        PLIST
+     C                   PARM                    P#KNID           10            機能ＩＤ
+     C                   PARM                    P#SORK            1            処理区分
+     C                   PARM                    P#SYSN            9            社員番号
+     C                   PARM                    P#BMNC            7            部門コード
+     C                   PARM                    P#OLFG           10            オンライン使用可否
+     C                   PARM                    P#SJKS            2 0          新着情報件数
+     C                   PARM                    P#TIKS            2 0          手配依頼件数
+     C                   PARM                    P#TISS            2 0          手配依頼総数
+     C                   PARM                    P#HPUA          128            ヘルプ用ＵＲＬ
+     C* <<エラーログ出力処理>>
+     C     PSS230C       PLIST
+     C                   PARM                    P#PGID           10            ＰＧＭＩＤ
+     C                   PARM                    P#JBID           10            ＪＯＢＩＤ
+     C                   PARM                    P#SYRD            8            処理日
+     C                   PARM                    P#SRTM            6            処理時刻
+     C                   PARM                    P#LGSN            9            ログイン社員番号
+     C                   PARM                    P#LGBC            7            ログイン部門コード
+     C                   PARM                    P#EMID           10            エラーメッセージ
+     C                   PARM                    P#MSGO           80            メッセージ
+     C                   PARM                    P#ERSB            2            エラー種別
+      /DEFINE  RECV
+      /EOF
+      /ELSE
+      *<<受信電文展開>>
+      /IF NOT DEFINED(SEND)
+     C* <<送信配列クリア>>
+     C                   CLEAR                   SNDARY                         送信配列
+     C* <<共通部>>
+     C                   MOVEL(P)  RCVARY(1)     R#TLID                         電文ＩＤ
+     C                   MOVEL(P)  RCVARY(2)     R#LSID                         ログイン識別ＩＤ
+     C                   MOVEL(P)  RCVARY(3)     R#TMID                         端末ＩＤ
+     C                   MOVEL(P)  RCVARY(4)     R#SSBN                         セッション番号
+     C                   MOVEL(P)  RCVARY(5)     R#LGSN                         ログイン社員番号
+     C                   MOVEL(P)  RCVARY(6)     R#LGBC                         ログイン部門コード
+     C                   MOVEL(P)  RCVARY(7)     R#DSKC                         動作環境コード
+     C                   MOVEL(P)  RCVARY(8)     R#KZUK                         継続有無区分
+     C                   MOVEL(P)  RCVARY(9)     R#SSZK                         出力指示区分
+     C                   MOVEL(P)  RCVARY(10)    R#TLVA                         電文バージョン
+     C                   MOVEL(P)  RCVARY(11)    R#SORK                         処理区分
+     C                   MOVEL(P)  RCVARY(12)    R#KNUK                         機能区分
+     C                   MOVEL(P)  RCVARY(13)    R#KDOD                         起動日
+     C                   MOVEL(P)  RCVARY(14)    R#KITM                         起動時刻
+     C* <<電文バージョンチェック>>
+     C                   IF        R#TLVA <> D#TLVA
+     C  N30              MOVEL(P)  'COMMON-001'  #WMSID                         メッセージＩＤ
+     C  N30              SETON                                        30
+     C                   ENDIF
+     C* <<送信電文共通項目セット>>
+     C                   Z-ADD     #WDATE        S#SYRD                         処理日
+     C                   Z-ADD     #WTIME        S#SRTM                         処理時刻
+     C                   MOVEL(P)  R#TLID        P#KNID                         機能ＩＤ
+     C                   MOVEL(P)  R#SORK        P#SORK                         処理区分
+     C                   MOVEL(P)  R#LGSN        P#SYSN                         社員番号
+     C                   MOVEL(P)  R#LGBC        P#BMNC                         部門コード
+     C                   MOVEL(P)  *BLANK        P#OLFG                         オンライン使用可否
+     C                   Z-ADD     *ZERO         P#SJKS                         新着情報件数
+     C                   Z-ADD     *ZERO         P#TIKS                         手配依頼件数
+     C                   Z-ADD     *ZERO         P#TISS                         手配依頼総数
+     C                   MOVEL(P)  *BLANK        P#HPUA                         ヘルプ用ＵＲＬ
+     C                   CALL      'RSS210'      PSS210
+     C                   IF        P#OLFG <> *BLANK
+     C  N30              MOVEL(P)  P#OLFG        #WMSID                         メッセージＩＤ
+     C  N30              SETON                                        30
+     C                   ENDIF
+     C*
+     C                   EVAL      S#SJKS = %TRIM(%EDITC(P#SJKS:'Q'))
+     C                   EVAL      S#TIKS = %TRIM(%EDITC(P#TIKS:'Q'))           手配依頼件数
+     C                   EVAL      S#TISS = %TRIM(%EDITC(P#TISS:'Q'))           手配依頼総数
+     C                   MOVEL(P)  P#HPUA        S#HPUA                         ヘルプ用ＵＲＬ
+     C*
+     C                   MOVEL(P)  '1'           S#ERUK                         エラー有無区分
+     C                   MOVEL(P)  *BLANK        S#MSID                         メッセージＩＤ
+     C                   MOVEL(P)  *BLANK        S#MSGO                         メッセージ
+     C                   MOVEL(P)  '0'           S#KZUK                         継続有無区分
+     C                   MOVEL(P)  D#TLVA        S#TLVA                         電文バージョン
+     C*
+     C                   IF        R#KDOD = *ZERO
+     C                   Z-ADD     #WDATE        S#KDOD                         起動日
+     C                   Z-ADD     #WDATE        R#KDOD                         起動日
+     C                   Z-ADD     #WTIME        S#KITM                         起動時刻
+     C                   Z-ADD     #WTIME        R#KITM                         起動時刻
+     C                   ELSE
+     C                   Z-ADD     R#KDOD        S#KDOD                         起動日
+     C                   Z-ADD     R#KITM        S#KITM                         起動時刻
+     C                   ENDIF
+     C* <<個別部>>
+     C*  <<送受信電文>>
+     C                   MOVEL(P)  RCVARY(21)    T#C18110                       明細分類
+     C                   EVAL      %SUBST(T#C18110:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(22)    T#HKDN0                        配車検収番号
+     C                   EVAL      %SUBST(T#HKDN0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(23)    T#HIDN0                        配車番号
+     C                   EVAL      %SUBST(T#HIDN0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(24)    T#HISC0                        配車部門コード
+     C                   EVAL      %SUBST(T#HISC0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(25)    T#HISN0                        配車部門名
+     C                   EVAL      %SUBST(T#HISN0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(26)    T#TNSN0                        担当者社員番号
+     C                   EVAL      %SUBST(T#TNSN0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(27)    T#C18160                       担当者社員名
+     C                   EVAL      %SUBST(T#C18160:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(28)    T#HASD0                        配車日
+     C                   EVAL      %SUBST(T#HASD0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(29)    T#HASP0                        配車回数
+     C                   EVAL      %SUBST(T#HASP0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(30)    T#C18010                       総回数
+     C                   EVAL      %SUBST(T#C18010:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(31)    T#C18020                       積載伝票数
+     C                   EVAL      %SUBST(T#C18020:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(32)    T#SIRC0                        仕入先コード
+     C                   EVAL      %SUBST(T#SIRC0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(33)    T#SSNM0                        仕入先名
+     C                   EVAL      %SUBST(T#SSNM0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(34)    T#SIMC0                        仕入先窓口コード
+     C                   EVAL      %SUBST(T#SIMC0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(35)    T#SMNM0                        仕入先窓口名
+     C                   EVAL      %SUBST(T#SMNM0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(36)    T#SGUK0                        諸口区分
+     C                   EVAL      %SUBST(T#SGUK0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(37)    T#UTSC0                        運転手コード
+     C                   EVAL      %SUBST(T#UTSC0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(38)    T#USNM0                        運転手名
+     C                   EVAL      %SUBST(T#USNM0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(39)    T#VNOA0                        車番
+     C                   EVAL      %SUBST(T#VNOA0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(40)    T#C18030                       連絡先
+     C                   EVAL      %SUBST(T#C18030:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(41)    T#HSBK0                        配車備考
+     C                   EVAL      %SUBST(T#HSBK0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(42)    T#ODDN0                        注文番号
+     C                   EVAL      %SUBST(T#ODDN0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(43)    T#HTUD0                        発注日
+     C                   EVAL      %SUBST(T#HTUD0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(44)    T#NSBC0                        入出庫部門コード
+     C                   EVAL      %SUBST(T#NSBC0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(45)    T#NSBN0                        入出庫部門名
+     C                   EVAL      %SUBST(T#NSBN0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(46)    T#HISD0                        配送日
+     C                   EVAL      %SUBST(T#HISD0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(47)    T#SRJK0                        ソート順区分
+     C                   EVAL      %SUBST(T#SRJK0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(48)    T#C18040                       ソート順区分名
+     C                   EVAL      %SUBST(T#C18040:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(49)    T#C18050                       未配車
+     C                   EVAL      %SUBST(T#C18050:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(50)    T#C18060                       自車配車済
+     C                   EVAL      %SUBST(T#C18060:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(51)    T#C18070                       他車配車済
+     C                   EVAL      %SUBST(T#C18070:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(52)    T#C18080                       未検索
+     C                   EVAL      %SUBST(T#C18080:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(53)    T#C18090                       行番号ＦＲＯＭ
+     C                   EVAL      %SUBST(T#C18090:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(54)    T#C18100                       行番号ＴＯ
+     C                   EVAL      %SUBST(T#C18100:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(55)    T#BDUK0                        前データ有無区分
+     C                   EVAL      %SUBST(T#BDUK0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(56)    T#JDUK0                        次データ有無区分
+     C                   EVAL      %SUBST(T#JDUK0:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(57)    T#C18130                       画面制御区分１
+     C                   EVAL      %SUBST(T#C18130:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(58)    T#C18140                       画面制御区分２
+     C                   EVAL      %SUBST(T#C18140:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(59)    T#C18170                       画面制御区分４
+     C                   EVAL      %SUBST(T#C18170:1:13) = D#MDIT
+     C                   MOVEL(P)  RCVARY(60)    T#C18180                       画面制御区分５
+     C                   EVAL      %SUBST(T#C18180:1:13) = D#MDIT
+     C*
+     C                   Z-ADD     H#S           H#W                            件数退避ワーク
+     C* <<明細部1>>
+     C                   Z-ADD     *ZERO         H#K                            配列指標
+     C                   DO        #WM1MAX       H#K
+     C                   ADD       1             H#S                            送信件数
+     C                   IF        %SUBST(RCVARY(H#S):2:1) <> '1'
+     C                   SUB       1             H#S                            送信件数
+     C                   LEAVE
+     C                   ENDIF
+     C                   Z-ADD     H#K           M#1CNT                         明細件数
+     C                   MOVEL(P)  RCVARY(H#S)   M1ARAY(H#K)                    明細部1
+     C                   EVAL      %SUBST(M1ARAY(H#K):13:1) = '1'
+     C                   ENDDO
+     C                   Z-ADD     H#W           H#S                            送信件数
+      /DEFINE  SEND
+      /EOF
+      /ELSE
+      *<<送信電文展開>>
+     C                   IF        D#REFG = '1ST'
+     C                   MOVEL     '2ND'         D#REFG                         例外エラーフラグ
+     C* <<エラーログ出力処理>>
+     C                   IF        S#ERUK = 'E'
+     C                   MOVEL     R#TLID        P#PGID                         ＰＧＭＩＤ
+     C                   MOVEL     WJBID         P#JBID                         ＪＯＢＩＤ
+     C                   MOVEL     S#SYRD        P#SYRD                         処理日
+     C                   MOVEL     S#SRTM        P#SRTM                         処理時刻
+     C                   MOVEL     R#LGSN        P#LGSN                         ログイン社員番号
+     C                   MOVEL     R#LGBC        P#LGBC                         ログイン部門コード
+     C                   MOVEL     WREID         P#EMID                         エラーメッセージ
+     C                   MOVEL     WREMG         P#MSGO                         メッセージ
+     C                   MOVEL     'GA'          P#ERSB                         エラー種別
+     C                   CALL      'RSS230C'     PSS230C
+     C                   ENDIF
+     C* <<共通部>>
+     C                   MOVEL     S#SYRD        SNDARY(1)                      処理日
+     C                   MOVEL     S#SRTM        SNDARY(2)                      処理時刻
+     C                   MOVEL     S#SJKS        SNDARY(3)                      新着情報件数
+     C                   MOVEL     S#TIKS        SNDARY(4)                      手配依頼件数
+     C                   MOVEL     S#TISS        SNDARY(5)                      手配依頼総数
+     C                   MOVEL     S#ERUK        SNDARY(6)                      エラー有無区分
+     C                   MOVEL     S#MSID        SNDARY(7)                      メッセージＩＤ
+     C                   MOVEL     S#MSGO        SNDARY(8)                      メッセージ
+     C                   MOVEL     S#KZUK        SNDARY(9)                      継続有無区分
+     C                   MOVEL     S#TLVA        SNDARY(10)                     電文バージョン
+     C                   MOVEL     S#HPUA        SNDARY(11)                     ヘルプ用ＵＲＬ
+     C                   MOVEL     S#LPRT        SNDARY(12)                     ローカル印刷区分
+     C                   MOVEL     S#KDOD        SNDARY(13)                     起動日
+     C                   MOVEL     S#KITM        SNDARY(14)                     起動時刻
+     C* <<個別部>>
+     C*  <<送受信電文>>
+     C                   MOVEL(P)  T#C18110      SNDARY(21)                     明細分類
+     C                   MOVEL(P)  T#HKDN0       SNDARY(22)                     配車検収番号
+     C                   MOVEL(P)  T#HIDN0       SNDARY(23)                     配車番号
+     C                   MOVEL(P)  T#HISC0       SNDARY(24)                     配車部門コード
+     C                   MOVEL(P)  T#HISN0       SNDARY(25)                     配車部門名
+     C                   MOVEL(P)  T#TNSN0       SNDARY(26)                     担当者社員番号
+     C                   MOVEL(P)  T#C18160      SNDARY(27)                     担当者社員名
+     C                   MOVEL(P)  T#HASD0       SNDARY(28)                     配車日
+     C                   MOVEL(P)  T#HASP0       SNDARY(29)                     配車回数
+     C                   MOVEL(P)  T#C18010      SNDARY(30)                     総回数
+     C                   MOVEL(P)  T#C18020      SNDARY(31)                     積載伝票数
+     C                   MOVEL(P)  T#SIRC0       SNDARY(32)                     仕入先コード
+     C                   MOVEL(P)  T#SSNM0       SNDARY(33)                     仕入先名
+     C                   MOVEL(P)  T#SIMC0       SNDARY(34)                     仕入先窓口コード
+     C                   MOVEL(P)  T#SMNM0       SNDARY(35)                     仕入先窓口名
+     C                   MOVEL(P)  T#SGUK0       SNDARY(36)                     諸口区分
+     C                   MOVEL(P)  T#UTSC0       SNDARY(37)                     運転手コード
+     C                   MOVEL(P)  T#USNM0       SNDARY(38)                     運転手名
+     C                   MOVEL(P)  T#VNOA0       SNDARY(39)                     車番
+     C                   MOVEL(P)  T#C18030      SNDARY(40)                     連絡先
+     C                   MOVEL(P)  T#HSBK0       SNDARY(41)                     配車備考
+     C                   MOVEL(P)  T#ODDN0       SNDARY(42)                     注文番号
+     C                   MOVEL(P)  T#HTUD0       SNDARY(43)                     発注日
+     C                   MOVEL(P)  T#NSBC0       SNDARY(44)                     入出庫部門コード
+     C                   MOVEL(P)  T#NSBN0       SNDARY(45)                     入出庫部門名
+     C                   MOVEL(P)  T#HISD0       SNDARY(46)                     配送日
+     C                   MOVEL(P)  T#SRJK0       SNDARY(47)                     ソート順区分
+     C                   MOVEL(P)  T#C18040      SNDARY(48)                     ソート順区分名
+     C                   MOVEL(P)  T#C18050      SNDARY(49)                     未配車
+     C                   MOVEL(P)  T#C18060      SNDARY(50)                     自車配車済
+     C                   MOVEL(P)  T#C18070      SNDARY(51)                     他車配車済
+     C                   MOVEL(P)  T#C18080      SNDARY(52)                     未検索
+     C                   MOVEL(P)  T#C18090      SNDARY(53)                     行番号ＦＲＯＭ
+     C                   MOVEL(P)  T#C18100      SNDARY(54)                     行番号ＴＯ
+     C                   MOVEL(P)  T#BDUK0       SNDARY(55)                     前データ有無区分
+     C                   MOVEL(P)  T#JDUK0       SNDARY(56)                     次データ有無区分
+     C                   MOVEL(P)  T#C18130      SNDARY(57)                     画面制御区分１
+     C                   MOVEL(P)  T#C18140      SNDARY(58)                     画面制御区分２
+     C                   MOVEL(P)  T#C18170      SNDARY(59)                     画面制御区分４
+     C                   MOVEL(P)  T#C18180      SNDARY(60)                     画面制御区分５
+     C* <<明細部1>>
+     C                   IF        M#1CNT <> *ZERO
+     C                   Z-ADD     *ZERO         H#K                            配列指標
+     C                   DO        M#1CNT        H#K
+     C*
+     C                   MOVEL     '1'           M1RCDK(H#K)                    レコード種別
+     C                   MOVEL     '1'           M1DTSN(H#K)                    明細識別番号
+     C                   EVAL      M1DTGN(H#K) = %CHAR(H#K)                     明細行番号
+     C                   MOVEL     '0'           M1DDSN(H#K)                    明明細識別番号
+     C                   MOVEL     '0'           M1DDGN(H#K)                    明明細行番号
+     C*
+     C                   ADD       1             H#S                            送信件数
+     C                   MOVEL     M1ARAY(H#K)   SNDARY(H#S)                    明細部1
+     C                   ENDDO
+     C                   ENDIF
+     C*
+     C                   ELSE
+     C                   MOVEL     'E'           SNDARY(6)                      エラー有無区分
+     C                   ENDIF
+     C*
+     C                   Z-ADD     H#S           P2CNT                          送信件数
+     C*
+      /ENDIF
+      /ENDIF

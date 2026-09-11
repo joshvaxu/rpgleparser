@@ -1,0 +1,2349 @@
+      *****************************************************************         
+      * USER-NAME    :  ÉnÉsÉlÉbÉg                                    *         
+      * PGM-NAME     :  ç›å…éÛï•è∆âÔÅiëqå…èWñÒÅjÅ@Å@Å@Å@Å@Å@Å@Å@Å@Å@ ?*         
+      * PGM-ID       :  ÇyÇ`ÇcÇOÇOÇSÇQÇq                              *         
+      * SOFT-HOUSE   :  áäÇhÇbÇq                                      *         
+      * AUTHOR       :  K.ITOU                                        *         
+      * CREATE       :  98/08/27                                      *         
+      * AUTHOR       :  X.XXXXXX                                      *         
+      * UPDATE       :    /  /                                        *         
+      *****************************************************************         
+      *===============================================================*         
+      *                 ïœçXóöó                                      *         
+      *===============================================================*         
+      * 00/09/29 SEAT-A832  ëqå…ïKê{ì¸óÕÉ`ÉFÉbÉNí«â¡Å@Å@Å@Å@Å@Å@Å@Å@  *         
+      *===============================================================*         
+      *****************************************************************         
+     H            Y/                                    1                       
+      *===============================================================*         
+      *                    ÇeÇhÇkÇd                                             
+      *===============================================================*         
+      * ( âÊñ  )                                                                
+     FZAD0042SCF  E                    WORKSTN                                  
+     F                                        RRN   KSFILE SFREC                
+     F                                              KINFDS WSINF                
+     F*(€∞∂Ÿ)   *                                                               
+      * ( îÑè„ÇcÅ@édì¸ÇcÅ@ì¸èoå…Çc  )                                           
+A1   FDRUL29  IF  E           K        DISK                                     
+A1    * ( éÛíçÇcÅ@î≠íçÇcÅ@à⁄ìÆÇcÅ@ÉNÉåÅ[ÉÄÇc  )                                 
+A1   FDMXL16  IF  E           K        DISK                                     
+A1    * ( ç›å… œΩ¿ )                                                            
+A1   FMZAL12  IF  E           K        DISK                                     
+ 7.31 * ( ì¸èoå…Çc )                                                            
+ 7.31FDNSL01  IF  E           K        DISK                                     
+K.H  FDURL01  IF  E           K        DISK                                     
+K.H  FDSRL01  IF  E           K        DISK                                     
+     F*( âìäuÇP ) *                                                             
+      * ( îÑè„ÇcÅ@édì¸ÇcÅ@ì¸èoå…Çc  )                                           
+A1   FDRU1L29 IF  E           K        DISK                           UC        
+A1   F            RUREC                             KRENAMERUREC1               
+A1    * ( éÛíçÇcÅ@î≠íçÇcÅ@à⁄ìÆÇcÅ@ÉNÉåÅ[ÉÄÇc  )                                 
+A1   FDMX1L16 IF  E           K        DISK                           UC        
+A1   F            JUREC                             KRENAMEJUREC1               
+A1   F            HAREC                             KRENAMEHAREC1               
+A1   F            IDREC                             KRENAMEIDREC1               
+A1   F            HNREC                             KRENAMEHNREC1               
+A1    * ( ç›å… œΩ¿ )                                                            
+A1   FMZA1L12 IF  E           K        DISK                           UC        
+A1   F            ZAREC                             KRENAMEZAREC1               
+     F*( âìäuÇQ ) *                                                             
+      * ( îÑè„ÇcÅ@édì¸ÇcÅ@ì¸èoå…Çc  )                                           
+A1   FDRU2L29 IF  E           K        DISK                           UC        
+A1   F            RUREC                             KRENAMERUREC2               
+A1    * ( éÛíçÇcÅ@î≠íçÇcÅ@à⁄ìÆÇcÅ@ÉNÉåÅ[ÉÄÇc  )                                 
+A1   FDMX2L16 IF  E           K        DISK                           UC        
+A1   F            JUREC                             KRENAMEJUREC2               
+A1   F            HAREC                             KRENAMEHAREC2               
+A1   F            IDREC                             KRENAMEIDREC2               
+A1   F            HNREC                             KRENAMEHNREC2               
+A1    * ( ç›å… œΩ¿ )                                                            
+A1   FMZA2L12 IF  E           K        DISK                           UC        
+A1   F            ZAREC                             KRENAMEZAREC2               
+     F*--*                                                                      
+      * ( äeéÌñºèÃ œΩ¿ )                                                        
+     FMKML01  IF  E           K        DISK                                     
+      * ( éÊà¯êÊ œΩ¿ )                                                          
+     FMTRL01  IF  E           K        DISK                                     
+      * ( ëgêD œΩ¿ )                                                            
+     FMSKL01  IF  E           K        DISK                                     
+      * ( è§ïi œΩ¿ )                                                            
+     FMSHL01  IF  E           K        DISK                                     
+      *==============================================================*          
+      *                    îzóÒ                                                 
+      *==============================================================*          
+     E                    @INF    1   2 78               : ∫œ›ƒﬁ ê‡ñæ           
+     E                    @ZAN    1   1 10               : ëOåéécçÇ             
+      *                                                                         
+     E                    TABA1   1   3  1   TABB1  10    ïsó«                  
+      *                                                                         
+     E                    TABA2   1  40  2   TABB2  10    ñºèÃ                  
+      *==============================================================*          
+      *                    ÇcÇr                                                 
+      *==============================================================*          
+ A1  IRUREC       71                                                            
+      *(€∞∂Ÿ)                                                                   
+ A1  IJUREC       74                                                            
+ A1  IHAREC       75                                                            
+ A1  IIDREC       76                                                            
+ A1  IHNREC       77                                                            
+      *( âìäuÇP )                                                               
+ A1  IRUREC1      71                                                            
+ A1  IJUREC1      74                                                            
+ A1  IHAREC1      75                                                            
+ A1  IIDREC1      76                                                            
+ A1  IHNREC1      77                                                            
+      *( âìäuÇQ )                                                               
+ A1  IRUREC2      71                                                            
+ A1  IJUREC2      74                                                            
+ A1  IHAREC2      75                                                            
+ A1  IIDREC2      76                                                            
+ A1  IHNREC2      77                                                            
+      * ( PROGRAM-ID )                                                          
+     I           SDS                                                            
+     I                                        1  10 @PGID                       
+      *  •-------------------------------------------------                     
+      *  |  ÉRÉìÉgÉçÅ[ÉãÉtÉâÉOÇÃíËã`                                            
+      *  |        WEND     âÊñ èIóπ Ã◊∏ﬁ                                        
+      *  |        WDSP     âÊñ êßå‰                                             
+      *  |        WLOP     âÊñ èàóù ƒÿ∂ﬁ∞                                       
+      *  |        WERR     âÊñ  ERROR  êßå‰                                     
+      *  |        WWRN     âÊñ  ‹∞∆›∏ﬁ êßå‰                                     
+      *  |        WINP     âÊñ ì¸óÕ Ã◊∏ﬁ                                        
+      *  |        WCAL     ëºì¸óÕ CALL Ã◊∏ﬁ                                     
+      *  |        WCHG     âÊñ ïœçX                                             
+      *  •-------------------------------------------------                     
+     ICTLFLG      DS                                                            
+     I                                        1   1 WEND                        
+     I                                        2   2 WDSP                        
+     I                                        3   3 WLOP                        
+     I                                        4   4 WLOP1                       
+     I                                        5   5 WLOP2                       
+     I                                        6   6 WLOP3                       
+     I                                        7   7 WLOP4                       
+     I                                        8   8 WEXT                        
+     I                                        9   9 WINP                        
+     I                                       10  10 WFST                        
+     I                                       11  11 WWRN                        
+     I                                       12  12 WERR                        
+     I                                       13  13 WERR1                       
+     I                                       14  14 WERR2                       
+     I                                       15  15 WERR3                       
+     I                                       16  16 WFST1                       
+     I                                       17  17 WFST2                       
+     I                                       18  18 WFST3                       
+     I                                       19  19 WFST4                       
+     I                                       20  20 WFST5                       
+     I                                       21  21 WCAL                        
+     I                                       22  22 WCHG                        
+     I                                       23  23 WCHG1                       
+     I                                       24  24 WCHG2                       
+     I                                       25  25 WCHG3                       
+     I                                       26  26 WCHG4                       
+     I                                       27  27 WCHG5                       
+      * < årê¸ >                                                                
+     IS#KBFR      DS                                                            
+     I                                        1   1 X2F                         
+     I                                        2   2 KBFR                        
+      * < WRKSTN DATA STRUCTURE >                                               
+     IWSINF       DS                                                            
+     I                                      370 370 WSLIN1                      
+     I                                      371 371 WSCOL1                      
+     I                                    B 378 3790WTPRRN                      
+     I            DS                                                            
+     I                                    B   1   20WSLINE                      
+     I                                        1   1 WSB1                        
+     I                                        2   2 WSLIN2                      
+     I                                    B   3   40WSCOLM                      
+     I                                        3   3 WSB2                        
+     I                                        4   4 WSCOL2                      
+      * < ºΩ√— ì˙ït >                                                           
+     I            DS                                                            
+     I                                        1  140@TIME                       
+     I                                        1   60WTIME                       
+     I                                        7  140WDATE                       
+     I                                        1   40W@TIM                       
+     IG1NEN@      DS                                                            
+     I                                        1   60G1NEN1                      
+     I                                        3   60G1NEN                       
+     I                                        1   40G1YY                        
+     I                                        3   40G1YY1                       
+     I                                        5   60G1MM                        
+     I                                        7   80G1DD                        
+      *                                                                         
+     I            DS                                                            
+ 6.27I                                        1   80W@DAT8                      
+     I                                        1   60W@DAT6                      
+     I                                        1   40W@DATY                      
+     I                                        5   60W@DATM                      
+ 6.27I                                        7   80W@DATD                      
+      *                                                                         
+     ISFTR        DS                                                            
+     I                                        1  12 SFTR1                       
+     I                                       13  24 SFTR2                       
+      * åvè„ì˙Åió›êœÅj                                                          
+     I            DS                                                            
+     I                                        1   80RUKJD                       
+     I                                        1   60RUKJD1                      
+     I                                        7   80RUKJD2                      
+      * åééüì˙ (FROM)                                                           
+     I            DS                                                            
+     I                                        1   80@DAYF                       
+     I                                        1   60@DAYF1                      
+     I                                        7   80@DAYF2                      
+      * åééüì˙ (TO)                                                             
+     I            DS                                                            
+     I                                        1   80@DAYT                       
+     I                                        1   60@DAYT1                      
+     I                                        7   80@DAYT2                      
+      * < ÉfÅ[É^ç\ë¢ëÃ >                                                        
+     I@JUREC    E DSDJUL01                                                      
+A2   I                                       18  250JUURD                       
+     I                                      107 1140JUNOD                       
+     I                                      115 1220JUSGD                       
+     I@HAREC    E DSDHAL01                                                      
+     I                                      115 1220HACND                       
+     I@IDREC    E DSDIDL01                                                      
+     I                                      115 1220IDSGD                       
+A1   I@HNREC    E DSDHNL01                                                      
+      *   è⁄ç◊ì‡óe CALL  ﬂ◊“∞¿                                                  
+A1   I@PARM       DS                             36                             
+A1   I                                        1   1 P@KBN                       
+A1   I                                        2   4 P@SOK                       
+A1   I                                        5   7 P@BUK                       
+A1   I                                        8  20 P@HNC                       
+A1   I                                       21  21 P@AAK                       
+A1   I                                       22  22 P@TRKZ                      
+A1   I                                       23  29 P@TRCZ                      
+A1   I                                       30  33 P@TRSZ                      
+A1   I                                       34  34 P@TRUZ                      
+A1   I                                       35  35 P@CPU                       
+A1   I                                       36  36 P@RTN                       
+      *--------------------------------------------------------------*          
+      *   LDA                                                                   
+      /COPY QCPYSRC,@LDA                                                        
+      *   “Øæ∞ºﬁ éÊìæ                                                           
+      /COPY QCPYSRC,@0010P                                                      
+      *   óÔì˙ïœä∑                                                              
+      /COPY QCPYSRC,@0040P                                                      
+      *   æ∑≠ÿ√® & ã∆ñ± €Ø∏ ¡™Ø∏                                                
+      /COPY QCPYSRC,@2010P                                                      
+      *   ŒﬂØÃﬂ è∆âÔ                                                            
+      /COPY QCPYSRC,@POP                                                        
+      *   äøéöêÿíf                                                              
+      /COPY QCPYSRC,@0050P                                                      
+      *==============================================================*          
+      *                    ÇoÇkÇhÇrÇs                                           
+      *==============================================================*          
+A1    * < *ENTRY >                                                              
+A1   C           *ENTRY    PLIST                                                
+A1   C                     PARM           @PARM  36                             
+      * < årê¸ >                                                                
+     C           PLISTK    PLIST                                                
+     C                     PARM           P@LID  10                             
+     C                     PARM           P@FID  10                             
+     C                     PARM           P@FMT  10                             
+     C                     PARM           P@CTL   3                             
+     C                     PARM           P@RTN   1                             
+      *==============================================================*          
+      *                    ÇjÇkÇhÇrÇs                                           
+      *==============================================================*          
+      *< ç›å… œΩ¿ >                                                             
+     C           ZAKEY     KLIST                                                
+     C                     KFLD           ZASOK                                 
+     C                     KFLD           ZAHNC                                 
+     C           ZAKEY1    KLIST                                                
+     C                     KFLD           ZASOK                                 
+     C           ZAKEY3    KLIST                                                
+     C                     KFLD           ZASOK                                 
+     C                     KFLD           ZAHNC                                 
+     C                     KFLD           ZAAAK                                 
+      *                                                                         
+     C           MXKEY1    KLIST                                                
+     C                     KFLD           MXSOK                                 
+     C                     KFLD           MXHNC                                 
+A1    * < ó›êœ √ﬁ∞¿ >                                                           
+A1   C           RUKEY1    KLIST                                                
+A1   C                     KFLD           RUSOK             ëqå…         ìæà”   
+A1   C                     KFLD           RUHNC             è§ïi         ìæà”   
+A1   C                     KFLD           RUKJD1            âÔåvåéìx     ìæà”   
+      *                                                                         
+A1   C           RUKEY2    KLIST                                                
+A1   C                     KFLD           RUSOK             ëqå…         ìæà”   
+A1   C                     KFLD           RUHNC             è§ïi         ìæà”   
+ 7.31 * < ì¸èoå… √ﬁ∞¿ >                                                         
+  .  C           NSKEY     KLIST                                                
+  .  C                     KFLD           NSNDN                          ìæà”   
+  .  C                     KFLD           NSAKN                          ìæà”   
+  .  C                     KFLD           NSNGY                          ìæà”   
+ 7.31C                     KFLD           NSHNC                          ìæà”   
+K.H  C           URKEY     KLIST                                                
+ .   C                     KFLD           URUDN                          ìæà”   
+ .   C                     KFLD           URAKN                          ìæà”   
+K.H  C                     KFLD           URUGY                          ìæà”   
+K.H  C           SRKEY     KLIST                                                
+ .   C                     KFLD           SRSDN                          ìæà”   
+ .   C                     KFLD           SRAKN                          ìæà”   
+K.H  C                     KFLD           SRSGY                          ìæà”   
+      * < éÊà¯êÊ œΩ¿ >                                                          
+     C           TRKEY     KLIST                                                
+     C                     KFLD           TRTRK             éÊà¯êÊãÊï™   ìæà”   
+     C                     KFLD           TRTRC             ñ@êlÅ@Å@Å@   ìæà”   
+     C                     KFLD           TRTRS             éxìXÅ@Å@Å@   ìæà”   
+     C                     KFLD           TRTRU             îÑèÍÅ@Å@Å@   ìæà”   
+      * < äeéÌñºèÃ œΩ¿ >                                                        
+     C           KMKEY     KLIST                                                
+     C                     KFLD           KMMSK             ñºèÃãÊï™            
+     C                     KFLD           KMMSC             ñºèÃ ∫∞ƒﬁ           
+A1    * < ëgêD œΩ¿ >                                                            
+A1   C           SKKEY     KLIST                                                
+A1   C                     KFLD           SKNEND            ëgêDãÊï™            
+A1   C                     KFLD           SKSSK             ëgêDãÊï™            
+A1   C                     KFLD           SKSSC             ëgêD ∫∞ƒﬁ           
+      *==============================================================*          
+      *                    ÇcÇdÇeÇmÅ@                                           
+      *==============================================================*          
+      * –Ø∏Ω√ﬁ∞¿ ∑∞                                                             
+ A1  C           *LIKE     DEFN JUSOK     MXSOK                                 
+ A1  C           *LIKE     DEFN JUHNC     MXHNC                                 
+ A1  C           *LIKE     DEFN JUKJD1    MXKJD1                                
+      *                                                                         
+     C           *LIKE     DEFN SFZAN     @SFZAN                                
+      *==============================================================*          
+      *                    ÇlÇ`ÇhÇmÅ@ÇqÇnÇtÇsÇhÇmÇd                             
+      *==============================================================*          
+      * < èâä˙èàóù >                                                            
+     C                     EXSR #INIT                                           
+      * < íÜêSèàóù >                                                            
+     C                     EXSR #MAIN                                           
+      * < èIóπèàóù >                                                            
+     C                     EXSR #END                                            
+      *==============================================================*          
+      *   ÅîÇhÇmÇhÇs       èâä˙èàóù                                             
+      *==============================================================*          
+      *  •-------------------------------------------------                     
+      *  | INPUT   :                                                            
+      *  | PROCESS :   èâä˙ê›íË                                                 
+      *  | OUTPUT  :                                                            
+      *  •-------------------------------------------------                     
+     C           #INIT     BEGSR                                                
+      * < årê¸ 16 êi æØƒ >                                                      
+     C                     BITOF'01234567'X00     1                             
+     C                     MOVE X00       X2F                                   
+     C                     BITON'24567'   X2F                                   
+     C                     MOVE 'F'       KBFR                                  
+      * < ∂∞øŸ êßå‰ 16 êi æØƒ >                                                 
+     C                     BITOF'01234567'WSB1                                  
+     C                     BITOF'01234567'WSB2                                  
+      * < ‹∞∏ èâä˙ê›íË >                                                        
+     C                     MOVEA*ALL'0'   *IN                                   
+     C                     MOVE *ALL'0'   SETOF1 10         FLG OFF ÷≥          
+     C                     MOVE *ALL'0'   SETOF2 20         FLG OFF ÷≥          
+     C                     MOVE *ZERO     RRN     40        SFL NO              
+     C                     MOVE *ZERO     CNT     30        ∂≥›ƒ Ω≥             
+     C                     MOVE '0'       FST     1         º≠¬ÿ∏ Ã◊∏ﬁ          
+      * < îNìxéQè∆ >                                                            
+     C                     Z-ADDLDNEND    SKNEND                                
+      * < âÊñ èâä˙ê›íË >                                                        
+A1   C                     MOVELLDCPUJ    CPU               CPU ñº              
+A1   C                     MOVEL@PGID     PID               Ãﬂ€∏ﬁ◊—ID           
+A1   C                     MOVELLDWID     WID               ‹∞∏Ω√∞ºÆ›ID         
+A1   C                     MOVELLDOPCJ    OPCJ              OUTQ                
+      * < æ∑≠ÿ√® & ã∆ñ± €Ø∏ ¡™Ø∏ >                                              
+     C                     EXSR #SCHK                                           
+      * < êßå‰ Ã◊∏ﬁ èâä˙ê›íË >                                                  
+     C                     MOVE *ALL'0'   CTLFLG            ∫›ƒ€∞Ÿ FLG          
+     C                     MOVE '1'       WLOP              âÊñ êßå‰            
+     C                     MOVE '1'       WDSP              âÊñ êßå‰ 1Õ         
+      * < âÊñ èâä˙ê›íË >                                                        
+     C                     EXSR #M1000                      G1 æØƒ              
+      * < ÇbÇ`ÇkÇkÇ≥ÇÍÇΩÇ‡ÇÃÇ©íPëÃÇ≈ÇÃìÆÇ´Ç©ÇÃãÊï   >                           
+     C                     MOVEA'00'      *IN,29                                
+     C           P@KBN     IFEQ '1'                        >IFEQ                
+     C                     MOVEA'11'      *IN,29                                
+     C                     END                             <IFEQ                
+      *                                                                         
+     C           \INIT     ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇlÇ`ÇhÇm       ÉÅÉCÉìèàóù                                           
+      *==============================================================*          
+      *  •-------------------------------------------------                     
+      *  | INPUT   :                                                            
+      *  | PROCESS :  âÊñ èàóù                                                  
+      *  | OUTPUT  :                                                            
+      *  •-------------------------------------------------                     
+     C           #MAIN     BEGSR                                                
+      * < âÊñ èàóù >                                                            
+     C           WEND      DOWEQ'0'                        >DOWEQ               
+      *                                                                         
+     C           WDSP      CASEQ'1'       #C1000           •>CASEQ              
+     C           WDSP      CASEQ'2'       #C2000            âÊñ êßå‰ 2          
+     C                     END                             •<CASEQ              
+      *                                                                         
+     C                     END                             <DOWEQ               
+      *                                                                         
+     C           \MAIN     ENDSR                                                
+      *===============================================================*         
+      *   ÅîÇdÇmÇc         ÉvÉçÉOÉâÉÄèIóπ                                       
+      *===============================================================*         
+      *  •-------------------------------------------------                     
+      *  | INPUT   :                                                            
+      *  | PROCESS : ÉvÉçÉOÉâÉÄèIóπ                                             
+      *  | OUTPUT  :                                                            
+      *  •-------------------------------------------------                     
+     C           #END      BEGSR                                                
+      * < Ãß≤Ÿ CLOSE >                                                          
+     C                     MOVE *ALL'/'   @00101                                
+     C                     CALL 'ZZZ0010R'             95   óÔì˙ïœä∑            
+     C                     PARM           @0010                                 
+      *                                                                         
+     C                     MOVE *ALL'/'   @00401                                
+     C                     CALL 'ZZZ0040R'             95   “Øæ∞ºﬁ éÊìæ         
+     C                     PARM           @0040                                 
+      *                                                                         
+     C                     MOVE *ALL'/'   @20101                                
+     C                     CALL 'ZZZ2010R'             95   æ∑≠ÿ√®& ã∆ñ± €Ø∏CHK 
+     C                     PARM           @2010                                 
+      *                                                                         
+     C                     MOVE *ALL'/'   @POCD1                                
+     C                     CALL 'KYD0020R'             95  POP                  
+     C                     PARM           @POP                                  
+      *                                                                         
+     C                     MOVE *ALL'/'   @POCD1                                
+     C                     CALL 'KYD0030R'             95  POP                  
+     C                     PARM           @POP                                  
+      * < årê¸è¡ãé >                                                            
+     C********             EXSR #KSNND                      årê¸è¡ãé            
+      * < âìäu F∏ÿ±∞>                                                           
+     C                     CLOSEDRU1L29                01                       
+     C                     CLOSEDMX1L16                01                       
+     C                     CLOSEMZA1L12                01                       
+     C                     CLOSEDRU2L29                01                       
+     C                     CLOSEDMX2L16                01                       
+     C                     CLOSEMZA2L12                01                       
+      * < PROGRAM END >                                                         
+     C                     SETON                     LR                         
+     C                     RETRN                                                
+      *                                                                         
+     C           \END      ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇbÇPÇOÇOÇO     âÊñ èàóù   ( G1 )                                    
+      *==============================================================*          
+      *  •-------------------------------------------------                     
+      *  | INPUT   :                                                            
+      *  | PROCESS :  ëÊÇPâÊñ ÇÃèàóùÇçsÇ§                                      
+      *  | OUTPUT  :                                                            
+      *  •-------------------------------------------------                     
+     C           #C1000    BEGSR                                                
+      *                                                                         
+     C                     EXSR #I1000                      èâä˙ æØƒ            
+      *                                                                         
+     C******               EXSR #KSN                        årê¸è¡ãé            
+      *** âÊñ  Ÿ∞Ãﬂ èàóù ***                                                    
+     C           WLOP      DOWEQ'1'                        >DOWEQ               
+      * ( “∆≠∞ ãNìÆ )                                                           
+     C                     WRITEG9                                              
+A1   C  N30                EXFMTG1                                              
+A1   C   30                WRITEG1                                              
+A1   C                     MOVE '0'       *IN30                                 
+      * < PF1: HELP >                                                           
+     C           *INKA     IFEQ '1'                        •>IFEQ               
+     C                     EXSR #H1000                      HELP èàóù           
+     C                     END                             •<IFEQ               
+      * < PF3: èIóπ >                                                           
+     C           *INKC     IFEQ '1'                        •>IFEQ               
+     C                     MOVE '1'       WEND              èIóπ                
+     C                     MOVE '0'       WLOP              LOOP END            
+     C                     MOVE '0'       WDSP              âÊñ êßå‰ END        
+     C                     END                             •<IFEQ               
+      * < PF4: åüçı >                                                           
+     C           *INKD     IFEQ '1'                        •>IFEQ               
+     C                     EXSR #P1000                      POP èàóù            
+     C                     END                             •<IFEQ               
+      * < ENTER >                                                               
+     C           *INKA     IFEQ '0'                        •>IFEQ               
+     C           *INKC     ANDEQ'0'                                             
+     C           *INKD     ANDEQ'0'                                             
+      * < âÊñ  ¡™Ø∏ >                                                           
+     C                     EXSR #G1000                                          
+      * < NOT ERR -> éüâÊñ  Õ >                                                 
+     C           WERR      IFEQ '0'                        ••>IFEQ              
+     C                     MOVE '0'       WLOP              LOOP END            
+     C                     MOVE '2'       WDSP              âÊñ êßå‰ 2 Õ        
+     C                     END                             ••<IFEQ              
+      *                                                                         
+     C                     END                             •<IFEQ               
+     C                     END                             <DOWEQ               
+      *                                                                         
+     C           \C1000    ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇhÇPÇOÇOÇO     âÊñ èâä˙èàóù                                         
+      *==============================================================*          
+      *  •-------------------------------------------------                     
+      *  | INPUT   :                                                            
+      *  | PROCESS :   âÊñ èâä˙ê›íËÇçsÇ»Ç§                                     
+      *  | OUTPUT  :                                                            
+      *  •-------------------------------------------------                     
+     C           #I1000    BEGSR                                                
+      * < ∂∞øŸ SET >                                                            
+     C                     Z-ADD02        D1LINE                                
+     C                     Z-ADD09        D1COLM                                
+      * < ºΩ√— éûçè >                                                           
+     C                     TIME           @TIME                                 
+     C                     Z-ADDW@TIM     TIM                                   
+      *                                                                         
+     C                     MOVEL@INF,1    INF               CMD ê‡ñæ            
+      *                                                                         
+     C                     MOVE *BLANK    MCD               “Øæ∞ºﬁID            
+     C                     MOVE *BLANK    MSG               “Øæ∞ºﬁ              
+     C                     MOVEA'00'      *IN,88                                
+     C                     MOVE '0'       *IN86              ROLL UP            
+     C                     MOVEASETOF1    *IN,10                                
+      *                                                                         
+     C                     MOVE '1'       WLOP              LOOP                
+      *(TEST ä¬ã´ )                                                             
+ 1.31C           LDTST     COMP '1'                      05                     
+      *( CALL ª⁄¿ƒ∑ )                                                           
+A1   C           *IN30     IFEQ '1'                        >IFEQ                
+A1   C                     MOVELP@SOK     G1SOK                                 
+A1   C                     MOVELP@HNC     G1HNC                                 
+A1   C                     END                             <IFEQ                
+      *                                                                         
+     C           \I1000    ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇlÇPÇOÇOÇO     âÊñ èâä˙èàóù   ( G1 )                                
+      *==============================================================*          
+      *  •-------------------------------------------------                     
+      *  | INPUT   :                                                            
+      *  | PROCESS :   âÊñ  (G1) ∏ÿ± èàóùÇçsÇ»Ç§                               
+      *  | OUTPUT  :   G1                                                       
+      *  •-------------------------------------------------                     
+     C           #M1000    BEGSR                                                
+      * < ëÊàÍâÊñ èâä˙âª >                                                      
+     C                     MOVE *BLANK    G1SOK                                 
+     C                     MOVE *BLANK    G1SOKJ                                
+     C                     MOVE *BLANK    G1HNC                                 
+     C                     MOVE *BLANK    G1HNJ                                 
+     C*******              Z-ADDLDSYME    G1NEN                                 
+     C                     Z-ADDLDSYME    G1NEN1                                
+     C           P@RTN     IFEQ '1'                        >IFEQ                
+     C                     Z-ADD1         G1MM                                  
+     C                     END                             <IFEQ                
+     C           P@RTN     IFEQ '2'                        >IFEQ                
+     C                     Z-ADD2         G1MM                                  
+     C                     END                             <IFEQ                
+     C           P@RTN     IFEQ '3'                        >IFEQ                
+     C                     Z-ADD3         G1MM                                  
+     C                     END                             <IFEQ                
+     C           P@RTN     IFEQ '4'                        >IFEQ                
+     C                     Z-ADD4         G1MM                                  
+     C                     END                             <IFEQ                
+     C           P@RTN     IFEQ '5'                        >IFEQ                
+     C                     Z-ADD5         G1MM                                  
+     C                     END                             <IFEQ                
+     C           P@RTN     IFEQ '6'                        >IFEQ                
+     C                     Z-ADD6         G1MM                                  
+     C                     END                             <IFEQ                
+     C           P@RTN     IFEQ '7'                        >IFEQ                
+     C                     Z-ADD7         G1MM                                  
+     C                     END                             <IFEQ                
+     C           P@RTN     IFEQ '8'                        >IFEQ                
+     C                     Z-ADD8         G1MM                                  
+     C                     END                             <IFEQ                
+     C           P@RTN     IFEQ '9'                        >IFEQ                
+     C                     Z-ADD9         G1MM                                  
+     C                     END                             <IFEQ                
+     C           P@RTN     IFEQ 'A'                        >IFEQ                
+     C                     Z-ADD10        G1MM                                  
+     C                     END                             <IFEQ                
+     C           P@RTN     IFEQ 'B'                        >IFEQ                
+     C                     Z-ADD11        G1MM                                  
+     C                     END                             <IFEQ                
+     C           P@RTN     IFEQ 'C'                        >IFEQ                
+     C                     Z-ADD12        G1MM                                  
+     C                     END                             <IFEQ                
+     C           P@RTN     IFNE *BLANK                     >IFNE                
+     C**         G1NEN     ANDGTLDSYME                                          
+     C           G1NEN1    ANDGTLDSYME                                          
+     C                     SUB  1         G1YY1                                 
+     C                     END                             <IFNE                
+      *                                                                         
+     C                     Z-ADD*ZERO     G1DAYF                                
+     C                     Z-ADD*ZERO     G\DAYF  80                            
+      *                                                                         
+     C                     Z-ADD*ALL'9'   G1DAYT                                
+     C                     Z-ADD*ALL'9'   G\DAYT  80                            
+      *                                                                         
+     C                     MOVE '1'       G1KB                                  
+     C                     MOVE *BLANK    G1AAK                                 
+     C                     Z-ADD0         G1MKTK                                
+     C                     MOVE *BLANK    G1TNI1                                
+     C                     Z-ADD0         G1KNS1                                
+     C                     MOVE *BLANK    G1TNI2                                
+     C                     Z-ADD0         G1KNS2                                
+     C                     MOVE *BLANK    G1TNI3                                
+     C                     Z-ADD0         G1KNS3                                
+      *                                                                         
+     C                     Z-ADD0         G2UKS                                 
+     C                     Z-ADD0         G2HAS                                 
+     C                     Z-ADD0         G2ZAN                                 
+      *                                                                         
+     C           \M1000    ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇfÇPÇOÇOÇO     âÊñ É`ÉFÉbÉNèàóù   ( G1 )                            
+      *==============================================================*          
+      *  •-------------------------------------------------                     
+      *  | INPUT   :  G1                                                        
+      *  | PROCESS :  G1 (KEY) ÇÃÉ`ÉFÉbÉNÇçsÇ§                                 
+      *  | OUTPUT  :                                                            
+      *  •-------------------------------------------------                     
+     C           #G1000    BEGSR                                                
+      * < ERROR FLG & âÊñ ïWéØ  OFF >                                           
+     C                     MOVE '0'       WERR                                  
+     C                     MOVE '0'       WWRN                                  
+     C                     MOVEASETOF1    *IN,10                                
+     C                     MOVEA'00'      *IN,88                                
+     C                     MOVE '0'       *IN68                                 
+      * < “Øæ∞ºﬁ∏ÿ± >                                                           
+     C                     MOVE *BLANK    @0040                                 
+     C                     MOVE *BLANK    MCD               “Øæ∞ºﬁID            
+     C                     MOVE *BLANK    MSG               “Øæ∞ºﬁ              
+      **  ëqå…  **                                                              
+     C                     MOVE *BLANK    G1SOKJ            ëqå…ñº              
+      * ( ñ¢ì¸óÕ ? )                                                            
+     C           G1SOK     IFEQ *BLANK                     >IFEQ                
+09/29C                     MOVEL'KYE0001' @00401                                
+  |  C                     EXSR #MSG                                            
+09/29C                     SETON                     10                         
+     C                     ELSE                            +                    
+      * ( ëgêD œΩ¿ ¡™Ø∏ )                                                       
+     C                     MOVE 'SK'      SKSSK             ëgêDãÊï™            
+     C                     MOVELG1SOK     SKSSC     P       ëgêD ∫∞ƒﬁ           
+     C           SKKEY     CHAINSKREC                90                         
+     C           *IN90     IFEQ '1'                        •>IFEQ               
+     C                     MOVEL'KYE0012' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     10                         
+     C                     ELSE                            -+                   
+     C                     MOVELSKSSJR    G1SOKJ            ëqå…ñº              
+     C                     MOVELSKCP03    W@CP03  1         ÇbÇoÇt              
+      *                                                                         
+ 7.31C           LDCP03    IFNE SKCP03                     ••>IFNE              
+  .  C                     MOVEL'KYE0204' @00401                                
+  .  C                     EXSR #MSG                                            
+  .  C                     SETON                     11                         
+ 7.31C                     END                             ••<IFNE              
+     C                     END                             •<IFEQ               
+      *                                                                         
+     C                     END                             <IFEQ                
+      **  ç›å…ïîâ€  **                                                          
+     C*****                MOVE *BLANK    G1BUKJ            ç›å…ïîâ€ñº          
+      * ( ñ¢ì¸óÕ ? )                                                            
+     C*****      G1BUK     IFEQ *BLANK                     >IFEQ                
+     C***                  MOVEL'KYE0001' @00401                                
+     C***                  EXSR #MSG                                            
+     C***                  SETON                     11                         
+      *                                                                         
+     C***                  ELSE                            +                    
+      * ( ëgêD œΩ¿ ¡™Ø∏ )                                                       
+     C***                  MOVE 'KA'      SKSSK             ëgêDãÊï™            
+     C***                  MOVELG1BUK     SKSSC     P       ëgêD ∫∞ƒﬁ           
+     C***        SKKEY     CHAINSKREC                90                         
+     C***        *IN90     IFEQ '1'                        •>IFEQ               
+     C**                   MOVEL'KYE0018' @00401                                
+     C**                   EXSR #MSG                                            
+     C*********************SETON                     11                         
+     C***                  ELSE                            -+                   
+     C***                  MOVELSKSSJR    G1BUKJ            ç›å…ïîâ€ñº          
+     C***                  END                             •<IFEQ               
+      *                                                                         
+     C*****                END                             <IFEQ                
+      **  è§ïiÉRÅ[Éh  **                                                        
+     C                     Z-ADD0         G1MKTK                                
+     C                     MOVE *BLANK    G1TNI1                                
+     C                     Z-ADD0         G1KNS1                                
+     C                     MOVE *BLANK    G1TNI2                                
+     C                     Z-ADD0         G1KNS2                                
+     C                     MOVE *BLANK    G1TNI3                                
+     C                     Z-ADD0         G1KNS3                                
+      *                                                                         
+     C           G1HNC     IFEQ *BLANK                     >IFEQ                
+     C                     MOVEL'KYE0001' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     12                         
+     C                     END                             <IFEQ                
+      *                                                                         
+     C           G1HNC     IFNE *BLANK                     >IFNE                
+     C           G1HNC     CHAINSHREC                90      è§ïiÉRÅ[Éh         
+     C           *IN90     IFEQ '1'                        •>IFEQ               
+     C                     MOVEL'KYE0023' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     12                         
+     C                     ELSE                            -+                   
+     C           SHHNJ     IFNE *BLANK                     ••>IFNE              
+     C                     MOVELSHHNJ     G1HNJ              è§ïiñº             
+     C                     ELSE                            --+                  
+     C                     MOVELSHHNA     G1HNJ              è§ïiñº             
+     C                     END                             ••<IFNE              
+      * äÛñ]âøäi                                                                
+     C                     Z-ADDSHMKTK    G1MKTK                                
+      * íPà ÇP                                                                  
+     C                     MOVE 'TN'      KMMSK             ñºèÃãÊï™            
+     C                     MOVELSHTNI1    KMMSC     P       ñºèÃ ∫∞ƒﬁ           
+     C           KMKEY     CHAINKMREC                91                         
+     C   91                MOVE *BLANK    G1TNI1            íPà                 
+     C  N91                DO                              ••>DO                
+     C                     MOVELKMMSA     G1TNI1            íPà                 
+      * ì¸êîÇP                                                                  
+     C                     Z-ADDSHKNS1    G1KNS1                                
+     C           SHKNS1    IFEQ 0                          •••>IFEQ             
+     C                     Z-ADD1         G1KNS1                                
+     C                     END                             •••<IFEQ             
+     C                     END                             ••<DO                
+      * íPà ÇQ                                                                  
+     C                     MOVE 'TN'      KMMSK             ñºèÃãÊï™            
+     C                     MOVELSHTNI2    KMMSC     P       ñºèÃ ∫∞ƒﬁ           
+     C           KMKEY     CHAINKMREC                91                         
+     C   91                MOVE *BLANK    G1TNI2            íPà                 
+     C  N91                DO                              ••>DO                
+     C                     MOVELKMMSA     G1TNI2            íPà                 
+      * ì¸êîÇQ                                                                  
+     C                     Z-ADDSHKNS2    G1KNS2                                
+     C           SHKNS2    IFEQ 0                          •••>IFEQ             
+     C                     Z-ADD1         G1KNS2                                
+     C                     END                             •••<IFEQ             
+     C                     END                             ••<DO                
+      * íPà ÇR                                                                  
+     C                     MOVE 'TN'      KMMSK             ñºèÃãÊï™            
+     C                     MOVELSHTNI3    KMMSC     P       ñºèÃ ∫∞ƒﬁ           
+     C           KMKEY     CHAINKMREC                91                         
+     C   91                MOVE *BLANK    G1TNI3            íPà                 
+     C  N91                DO                              ••>DO                
+     C                     MOVELKMMSA     G1TNI3            íPà                 
+      * ì¸êîÇR                                                                  
+     C                     Z-ADDSHKNS3    G1KNS3                                
+     C           SHKNS3    IFEQ 0                          •••>IFEQ             
+     C                     Z-ADD1         G1KNS3                                
+     C                     END                             •••<IFEQ             
+     C                     END                             ••<DO                
+      *                                                                         
+     C                     END                             •<IFEQ               
+     C                     END                             <IFNE                
+ 6.27 * ÅñÅñì˙ïtÅñÅñ                                                            
+  .  C                     Z-ADD*ZERO     G@DAYF                                
+  .  C                     Z-ADD*ZERO     G@DAYT                                
+  .   * ( ñ¢ì¸óÕ ? )                                                            
+  .  C           G1DAYF    IFEQ *ZERO                      >IFEQ                
+  .  C                     Z-ADD*ZERO     G@DAYF                                
+  .  C                     END                             <IFEQ                
+  .   *                                                                         
+  .  C           G1DAYF    IFNE *ZERO                      >IFNE                
+  .   * (  ﬂ◊“∞¿ æØƒ )                                                          
+  .  C                     MOVE '5'       @00101            CHECK ãÊï™          
+  .  C                     MOVE G1DAYF    @00102            éÛíçì˙              
+  .  C                     MOVE *ZERO     @00103            ì˙ïtÇQ              
+  .  C                     MOVE *BLANK    @00104            å≥çÜÇP              
+  .  C                     MOVE *BLANK    @00105            å≥çÜÇQ              
+  .  C                     MOVE *ZERO     @00106            åãâ ì˙ït            
+  .  C                     MOVE *BLANK    @00107            åãâ å≥çÜ            
+  .   * ( ì˙ït ¡™Ø∏ )                                                           
+  .  C                     CALL 'ZZZ0010R'                                      
+  .  C                     PARM           @0010                                 
+  .  C                     MOVEL@00106    G@DAYF            éÛíçì˙ 8π¿          
+  .   * ( ÿ¿∞› : ERR )                                                          
+  .  C           @00108    IFNE '00'                       •>IFNE               
+  .  C                     MOVE 'KYE0014' @00401                                
+  .  C                     EXSR #MSG                                            
+  .  C                     SETON                     17                         
+  .  C                     END                             •<IFNE               
+  .   *                                                                         
+  .  C                     END                             <IFNE                
+  .   * ( ñ¢ì¸óÕ ? )                                                            
+  .  C           G1DAYT    IFEQ *ZERO                      >IFEQ                
+  .  C           G1DAYT    OREQ *ALL'9'                    >IFEQ                
+  .  C                     Z-ADD*ALL'9'   G1DAYT                                
+  .  C                     Z-ADD*ALL'9'   G@DAYT                                
+  .  C                     END                             <IFEQ                
+  .   *                                                                         
+  .  C           G1DAYT    IFNE *ALL'9'                    >IFNE                
+  .   * (  ﬂ◊“∞¿ æØƒ )                                                          
+  .  C                     MOVE '5'       @00101            CHECK ãÊï™          
+  .  C                     MOVE G1DAYT    @00102            éÛíçì˙              
+  .  C                     MOVE *ZERO     @00103            ì˙ïtÇQ              
+  .  C                     MOVE *BLANK    @00104            å≥çÜÇP              
+  .  C                     MOVE *BLANK    @00105            å≥çÜÇQ              
+  .  C                     MOVE *ZERO     @00106            åãâ ì˙ït            
+  .  C                     MOVE *BLANK    @00107            åãâ å≥çÜ            
+  .   * ( ì˙ït ¡™Ø∏ )                                                           
+  .  C                     CALL 'ZZZ0010R'                                      
+  .  C                     PARM           @0010                                 
+  .  C                     MOVEL@00106    G@DAYT            éÛíçì˙ 8π¿          
+  .   * ( ÿ¿∞› : ERR )                                                          
+  .  C           @00108    IFNE '00'                       •>IFNE               
+  .  C                     MOVE 'KYE0014' @00401                                
+  .  C                     EXSR #MSG                                            
+  .  C                     SETON                     18                         
+  .  C                     END                             •<IFNE               
+  .   *                                                                         
+  .  C                     END                             <IFNE                
+  .   *                                                                         
+  .  C  N17N18   G@DAYF    IFGT G@DAYT                     •>IFGT               
+  .  C                     MOVE 'KYE0098' @00401                                
+  .  C                     EXSR #MSG                                            
+  .  C                     SETON                     1718                       
+ 6.27C                     END                             <DO                  
+      * ÅñÅñîNåéÅñÅñ                                                            
+ 1.31C                     Z-ADD*ZERO     W@ZNT   60        ëOåé                
+ 1.31C                     Z-ADD*ZERO     W@JGT   60        éüåé                
+      * ( ñ¢ì¸óÕ ? )                                                            
+     C           G1NEN     IFEQ *ZERO                      >IFEQ                
+     C                     Z-ADDLDSYME    G1NEN                                 
+     C                     ELSE                            +                    
+      * (  ﬂ◊“∞¿ æØƒ )                                                          
+     C                     Z-ADD1         G1DD                                  
+     C                     MOVE '5'       @00101            CHECK ãÊï™          
+     C                     MOVE G1NEN@    @00102            î≠íçì˙              
+     C                     MOVE *ZERO     @00103            ì˙ïtÇQ              
+     C                     MOVE *BLANK    @00104            å≥çÜÇP              
+     C                     MOVE *BLANK    @00105            å≥çÜÇQ              
+     C                     MOVE *ZERO     @00106            åãâ ì˙ït            
+     C                     MOVE *BLANK    @00107            åãâ å≥çÜ            
+      * ( ì˙ït ¡™Ø∏ )                                                           
+     C                     CALL 'ZZZ0010R'                                      
+     C                     PARM           @0010                                 
+      * ( ÿ¿∞› )                                                                
+     C                     MOVE @00106    G1NEN@                                
+     C           @00108    IFNE '00'                       •>IFNE               
+     C                     MOVEL'KYE0014' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     13                         
+     C                     END                             •<IFNE               
+     C                     END                             <IFEQ                
+      * ÇkÇcèàóùîNåéÇ∆î‰ärÇ∑ÇÈÅÉëOåéÅEìñåéÅEéüåéà»äOÉGÉâÅ[ÅÑÅB                  
+     C  N13                DO                              >DO                  
+     C           G1NEN1    SUB  1         W@DAT6                                
+      *                                                                         
+     C           W@DATM    IFEQ 0                          •>IFEQ               
+     C                     SUB  1         W@DATY                                
+     C                     Z-ADD12        W@DATM                                
+     C                     END                             •<IFEQ               
+ 1.31C                     Z-ADDW@DAT6    W@JGT             éüåé                
+  .   *                                                                         
+  .  C           G1NEN1    ADD  1         W@DAT6                                
+  .   *                                                                         
+  .  C           W@DATM    IFGE 13                         •>IFGE               
+  .  C                     ADD  1         W@DATY                                
+  .  C                     SUB  12        W@DATM                                
+  .  C                     END                             •<IFGE               
+ 1.31C                     Z-ADDW@DAT6    W@ZNT             ëOåé                
+      *                                                                         
+     C           LDSYME    IFEQ G1NEN1                     •>IFEQ               
+ 1.31C           LDSYME    OREQ W@JGT                                           
+ 1.31C           LDSYME    OREQ W@ZNT                                           
+     C                     ELSE                            -+                   
+     C***                  MOVE 'KYE0016' @00401                                
+     C***                  EXSR #MSG                                            
+     C***                  SETON                     13                         
+SU   C                     SETON                     68                         
+     C                     END                             •<IFEQ               
+     C                     END                             <DO                  
+      * ìñåéÅEéüåéÇÃîªíf                                                        
+A1   C                     Z-ADDG1NEN1    @DAYF1                                
+A1   C                     Z-ADDG1NEN1    @DAYT1                                
+A1   C                     Z-ADD1         @DAYF2                                
+A1   C                     Z-ADD31        @DAYT2                                
+      *                                                                         
+     C  N13                DO                              >DO                  
+ 1.31C                     SETOF                     414243                     
+  .  C                     SELEC                           •>SELEC              
+  .  C           LDSYME    WHEQ G1NEN1                     ~?IFEQ               
+  .  C                     SETON                     41                         
+  .  C           LDSYME    WHEQ W@JGT                                           
+  .  C                     SETON                     42                         
+  .  C           LDSYME    WHEQ W@ZNT                                           
+  .  C                     SETON                     43                         
+ 1.31C                     ENDSL                           •<SELEC              
+     C                     END                             <DO                  
+      **  ãÊï™  **                                                              
+     C           G1KB      IFNE '1'                        >IFNE                
+     C           G1KB      ANDNE'2'                                             
+     C                     MOVEL'KYE0056' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     14                         
+     C                     END                             <IFNE                
+ 1.31 * ( ëOåéÇÃéûó\íËÇÃÇ›ÇÕÉGÉâÅ[ )                                            
+  .  C   43      G1KB      IFEQ '2'                        >IFEQ                
+  .  C                     MOVEL'ZAE0093' @00401                                
+  .  C                     EXSR #MSG                                            
+  .  C                     SETON                     14                         
+ 1.31C                     END                             <IFEQ                
+      * ( óaÇØóaÇËãÊï™ )                                                        
+     C           G1AAK     IFNE *BLANK                     >IFNE                
+     C           G1AAK     ANDNE'1'                                             
+     C           G1AAK     ANDNE'2'                                             
+     C                     MOVEL'KYE0074' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     16                         
+     C                     END                             <IFNE                
+      *( åüçıÇeëIë )                                                           
+A1   C                     MOVEA'000'     *IN,61                                
+A1   C* ìåãû                                                                    
+A1   C           LDCP03    IFEQ 'T'                        >IFEQ                
+A1   C           W@CP03    IFEQ 'T'                        •>IFEQ               
+A1   C                     MOVE '1'       *IN61                                 
+A1   C                     END                             •<IFEQ               
+A1   C           W@CP03    IFEQ 'O'                        •>IFEQ               
+A1   C                     MOVE '1'       *IN62                                 
+A1   C                     END                             •<IFEQ               
+A1   C           W@CP03    IFEQ 'H'                        •>IFEQ               
+A1   C                     MOVE '1'       *IN63                                 
+A1   C                     END                             •<IFEQ               
+A1   C                     END                             <IFEQ                
+A1   C* ëÂç„                                                                    
+A1   C           LDCP03    IFEQ 'O'                        >IFEQ                
+A1   C           W@CP03    IFEQ 'O'                        •>IFEQ               
+A1   C                     MOVE '1'       *IN61                                 
+A1   C                     END                             •<IFEQ               
+A1   C           W@CP03    IFEQ 'T'                        •>IFEQ               
+A1   C                     MOVE '1'       *IN62                                 
+A1   C                     END                             •<IFEQ               
+A1   C           W@CP03    IFEQ 'H'                        •>IFEQ               
+A1   C                     MOVE '1'       *IN63                                 
+A1   C                     END                             •<IFEQ               
+A1   C                     END                             <IFEQ                
+A1   C* ÉqÉâÉiÉJ                                                                
+A1   C           LDCP03    IFEQ 'H'                        >IFEQ                
+A1   C           W@CP03    IFEQ 'H'                        •>IFEQ               
+A1   C                     MOVE '1'       *IN61                                 
+A1   C                     END                             •<IFEQ               
+A1   C           W@CP03    IFEQ 'T'                        •>IFEQ               
+A1   C                     MOVE '1'       *IN62                                 
+A1   C                     END                             •<IFEQ               
+A1   C           W@CP03    IFEQ 'O'                        •>IFEQ               
+A1   C                     MOVE '1'       *IN63                                 
+A1   C                     END                             •<IFEQ               
+A1   C                     END                             <IFEQ                
+A1   C*                                                                         
+A1   C           *IN61     IFEQ '0'                        >IFEQ                
+A1   C           *IN62     ANDEQ'0'                                             
+A1   C           *IN63     ANDEQ'0'                                             
+A1   C                     MOVE '1'       *IN61                                 
+A1   C                     END                             <IFEQ                
+      *<Ãß≤Ÿ µ∞Ãﬂ›>                                                             
+A1   C                     EXSR #OPEN                                           
+A1   C           *IN01     IFEQ '1'                        >IFEQ                
+A1   C                     MOVEL'KYE0074' @00401                                
+A1   C                     EXSR #MSG                                            
+A1   C                     MOVEA'000'     *IN,61                                
+A1   C                     SETON                     10                         
+A1   C                     END                             <IFEQ                
+      **                                                                        
+     C  N10N11N12                                                               
+     CANN13N14             DO                              >DO                  
+      * ÅÉÉfÅ[É^óLñ≥É`ÉFÉbÉNópÉLÅ[ÉZÉbÉgÅÑÅñ                                    
+     C                     EXSR #S1000                                          
+     C                     SETOF                     979899                     
+     C           G1AAK     IFEQ '2'                        •>IFEQ               
+     C                     MOVEL*BLANK    ZAAAK                                 
+     C           ZAKEY3    SETGTZAREC                                           
+     C           ZAKEY     READEZAREC                    97                     
+     C                     ELSE                            -+                   
+      * ÅÉÉfÅ[É^óLñ≥É`ÉFÉbÉNÅÑÅñ                                                
+     C   61      ZAKEY     CHAINZAREC                97                         
+     C   62      ZAKEY     CHAINZAREC1               97                         
+     C   63      ZAKEY     CHAINZAREC2               97                         
+     C           *IN97     IFEQ '0'                        ••>IFEQ              
+      * (( ç›å…Çlì«ÇﬂÇΩÇ∆Ç´óaÇØóaÇËãÊï™ÇÉ`ÉFÉbÉN ))                            
+     C           G1AAK     IFEQ '1'                        •••>IFEQ             
+     C           ZAAAK     IFNE '1'                        ••••>IFNE            
+     C           ZAAAK     ANDNE'3'                                             
+     C                     SETON                     97                         
+     C                     END                             ••••<IFNE            
+     C                     END                             •••<IFEQ             
+     C           G1AAK     IFEQ '2'                        •••>IFEQ             
+     C           ZAAAK     IFNE '2'                        ••••>IFNE            
+     C           ZAAAK     ANDNE'4'                                             
+     C                     SETON                     97                         
+     C                     END                             ••••<IFNE            
+     C                     END                             •••<IFEQ             
+     C                     END                             ••<IFEQ              
+..   C                     END                             •<IFEQ               
+      *                                                                         
+A1   C   31 61   RUKEY1    SETLLRUREC                                           
+A1   C      61   MXKEY1    SETLLDMXL16                                          
+A1   C   31 62   RUKEY1    SETLLRUREC1                                          
+A1   C      62   MXKEY1    SETLLDMX1L16                                         
+A1   C   31 63   RUKEY1    SETLLRUREC2                                          
+A1   C      63   MXKEY1    SETLLDMX2L16                                         
+     C           *IN99     DOWEQ'0'                        •>DOWEQ              
+     C                     EXSR #R2000                                          
+     C                     EXSR #E2000                                          
+     C           WEXT      IFEQ '1'                        ••>IFEQ              
+     C                     LEAVE                                                
+     C                     END                             ••<IFEQ              
+     C                     END                             •<DOWEQ              
+      * äYìñÇ∑ÇÈç›å…Ç™Ç»Ç¢éû                                                    
+     C           *IN97     IFEQ '1'                        •>IFEQ               
+     C                     MOVEL'KYE0067' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     1011                       
+     C                     SETON                     1214                       
+     C   31                SETON                     13                         
+     C           G1AAK     IFNE *BLANK                     ••>IFNE              
+     C                     SETON                     16                         
+     C                     END                             ••<IFNE              
+     C                     END                             •<IFEQ               
+      * ç›å…Ç†ÇËÅCëSåèÇÃÇ∆Ç´                                                    
+     C   31                DO                              •>DO                 
+     C           *IN97     IFEQ '0'                        ••>IFEQ              
+     C           *IN98     ANDEQ'1'                                             
+     C           *IN99     ANDEQ'1'                                             
+     C                     MOVEL'KYE0067' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     1011                       
+     C                     SETON                     121314                     
+     C           G1AAK     IFNE *BLANK                     •••>IFNE             
+     C                     SETON                     16                         
+     C                     END                             •••<IFNE             
+     C                     END                             ••<IFEQ              
+     C                     END                             •<DO                 
+      *                                                                         
+     C                     END                             <DO                  
+      * ç›å…Ç†ÇËÅCó\íËÇÃÇ∆Ç´                                                    
+     C   32                DO                              >DO                  
+     C           *IN97     IFEQ '0'                        •>IFEQ               
+     C           *IN99     ANDEQ'1'                                             
+     C                     MOVEL'KYE0067' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     1011                       
+     C                     SETON                     1214                       
+     C           G1AAK     IFNE *BLANK                     ••>IFNE              
+     C                     SETON                     16                         
+     C                     END                             ••<IFNE              
+     C                     END                             •<IFEQ               
+     C                     END                             <DO                  
+      * < ERROR ? >                                                             
+     C                     MOVEL@00404    MCD               “Øæ∞ºﬁID            
+     C                     MOVEL@00402    MSG               “Øæ∞ºﬁ              
+      *                                                                         
+     C           @00403    COMP '1'                      88:WRN                 
+     C           @00403    COMP '2'                      89:ERROR               
+     C   88                MOVE '1'       WWRN              WRN  FLG            
+     C   89                MOVE '1'       WERR              ERR  FLG            
+      *                                                                         
+     C           \G1000    ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇrÇPÇOÇOÇO     É~ÉbÉNÉXÇcÅ@ÇjÇdÇxèâä˙èàóù                           
+      *==============================================================*          
+      *  •-------------------------------------------------                     
+      *  | INPUT   :                                                            
+      *  | PROCESS :   ÉLÅ[çÄñ⁄ÉZÉbÉgèàóùÇÇ∑ÇÈÅB                               
+      *  | OUTPUT  :                                                            
+      *  •-------------------------------------------------                     
+     C           #S1000    BEGSR                                                
+      * < –Ø∏Ω√ﬁ∞¿ KEY SET >                                                    
+     C                     SETOF                     3132                       
+      * ãÊï™ÇPÇ™ëIÇŒÇÍÇΩéûÇRÇPÇÇnÇmÅCãÊï™ÇQÇ™ëIÇŒÇÍÇΩéûÇRÇQÇÇnÇm              
+     C           G1KB      IFEQ '1'                        >IFEQ                
+     C                     SETON                     31                         
+     C                     ELSE                            +                    
+     C                     SETON                     32                         
+     C                     END                             <IFEQ                
+      *                                                                         
+     C                     MOVE G1SOK     ZASOK                                 
+     C                     MOVE G1HNC     ZAHNC                                 
+      *< ó›êœ >                                                                 
+ A1  C                     MOVE G1SOK     RUSOK                                 
+ A1  C                     MOVE G1HNC     RUHNC                                 
+ A1  C                     MOVE G1NEN1    RUKJD1                                
+      *<–Ø∏Ω>                                                                   
+     C                     MOVE G1SOK     MXSOK                                 
+     C                     MOVE G1HNC     MXHNC                                 
+     C                     MOVE G1NEN1    MXKJD1                                
+      *                                                                         
+     C           \S1000    ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇgÇPÇOÇOÇO     ÇgÇdÇkÇoèàóù   ( G1 )                                
+      *==============================================================*          
+     C           #H1000    BEGSR                                                
+      *                                                                         
+     C                     MOVE WSLIN1    WSLIN2            ÉJÅ[É\Éãêßå‰        
+     C                     MOVE WSCOL1    WSCOL2                                
+      *                                                                         
+     C                     MOVE WSLINE    D1LINE            ÉJÅ[É\Éãêßå‰        
+     C                     MOVE WSCOLM    D1COLM                                
+      *                                                                         
+     C           \H1000    ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇoÇPÇOÇOÇO     ÇoÇnÇoèàóù   ( G1 )                                  
+      *==============================================================*          
+      *  •-------------------------------------------------                     
+      *  | INPUT   :                                                            
+      *  | PROCESS :   ÉRÅ[ÉhåüçıâÊñ Å@ï\é¶                                     
+      *  | OUTPUT  :                                                            
+      *  •-------------------------------------------------                     
+     C           #P1000    BEGSR                                                
+      *                                                                         
+     C                     MOVE WSLIN1    WSLIN2            ÉJÅ[É\Éãêßå‰        
+     C                     MOVE WSCOL1    WSCOL2                                
+      **   ëqå…   **                                                            
+     C           WSLINE    IFEQ 02                         >IFEQ                
+     C           WSCOLM    ANDGE09                                              
+     C           WSCOLM    ANDLE11                                              
+      *                                                                         
+     C                     MOVEL'SK'      @POCD1           : éØï                
+     C                     MOVEL*BLANK    @POCD2           : ∫∞ƒﬁ               
+     C                     MOVELG1SOK     @POCD2            ëqå…ÉRÅ[Éh          
+     C                     MOVELG1SOKJ    @POJR1           : ó™èÃ               
+     C                     CALL 'KYD0020R'                 ( ëgêD )             
+     C                     PARM           @POP                                  
+     C           @POCD2    IFNE *BLANK                     •>IFNE               
+     C                     MOVEL@POCD2    G1SOK             ëqå…ÉRÅ[Éh          
+     C                     MOVEL@POJR1    G1SOKJ            ëqå…ñº              
+     C                     END                             •<IFNE               
+     C                     END                             <IFEQ                
+      **   ç›å…ïîâ€   **                                                        
+     C***        WSLINE    IFEQ 02                         >IFEQ                
+     C***        WSCOLM    ANDGE36                                              
+     C***        WSCOLM    ANDLE38                                              
+      *                                                                         
+     C***                  MOVEL'KA'      @POCD1           : éØï                
+     C***                  MOVEL*BLANK    @POCD2           : ∫∞ƒﬁ               
+     C***                  MOVELG1BUK     @POCD2            ç›å…ïîâ€ÉRÅ[Éh      
+     C***                  MOVELG1BUKJ    @POJR1           : ó™èÃ               
+     C***                  CALL 'KYD0020R'                 ( ëgêD )             
+     C***                  PARM           @POP                                  
+     C***        @POCD2    IFNE *BLANK                     •>IFNE               
+     C***                  MOVEL@POCD2    G1BUK             ç›å…ïîâ€ÉRÅ[Éh      
+     C***                  MOVEL@POJR1    G1BUKJ            ç›å…ïîâ€ñº          
+     C***                  END                             •<IFNE               
+     C***                  END                             <IFEQ                
+      **  è§ïiÉRÅ[Éh  **                                                        
+     C           WSLINE    IFEQ 03                         >IFEQ                
+     C           WSCOLM    ANDGE09                                              
+     C           WSCOLM    ANDLE21                                              
+     C                     MOVELG1HNC     @POCD2            è§ïiÉRÅ[Éh          
+     C                     CALL 'KYD0030R'                 ( è§ïi )             
+     C                     PARM           @POP                                  
+     C           @POCD2    IFNE *BLANK                     •>IFNE               
+     C                     MOVEL@POCD2    G1HNC             è§ïiÉRÅ[Éh          
+     C                     MOVEL@POJR1    G1HNJ              è§ïiñº             
+     C                     END                             •<IFNE               
+     C                     END                             <IFEQ                
+      *                                                                         
+     C           \P1000    ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇbÇQÇOÇOÇO     âÊñ èàóù   ( SFL )                                   
+      *==============================================================*          
+      *  •-------------------------------------------------                     
+      *  | INPUT   :                                                            
+      *  | PROCESS :  ëÊÇQâÊñ ÇÃèàóùÇçsÇ§  ( SFL )                             
+      *  | OUTPUT  :                                                            
+      *  •-------------------------------------------------                     
+     C           #C2000    BEGSR                                                
+      *                                                                         
+     C                     EXSR #I2000                      èâä˙ æØƒ            
+     C                     EXSR #M2000                      SFL æØƒ             
+      *                                                                         
+     C***********          EXSR #KSN                        årê¸ï\é¶            
+      *** âÊñ  Ÿ∞Ãﬂ èàóù ***                                                    
+     C           WLOP      DOWEQ'1'                        >DOWEQ               
+      *                                                                         
+     C                     WRITEG2                                              
+     C                     WRITEG9                                              
+     C                     MOVE '1'       *IN82                                 
+     C                     EXFMTSFCTL                                           
+     C                     MOVE '0'       *IN82                                 
+      * < ERROR FLG & âÊñ ïWéØ  OFF >                                           
+     C                     MOVE '0'       WERR                                  
+     C                     MOVE '0'       WWRN                                  
+     C                     MOVEASETOF1    *IN,10                                
+     C                     MOVEA'00'      *IN,88                                
+      * < “Øæ∞ºﬁ∏ÿ± >                                                           
+     C                     MOVE *BLANK    @0040                                 
+     C                     MOVE *BLANK    MCD               “Øæ∞ºﬁID            
+     C                     MOVE *BLANK    MSG               “Øæ∞ºﬁ              
+      * < PF1: HELP >                                                           
+     C           *INKA     IFEQ '1'                        •>IFEQ               
+     C                     EXSR #H2000                      HELP èàóù           
+     C                     END                             •<IFEQ               
+      * < PF3: èIóπ >                                                           
+     C           *INKC     IFEQ '1'                        •>IFEQ               
+     C                     MOVE '1'       WEND              èIóπ                
+     C                     MOVE '0'       WLOP              LOOP END            
+     C                     MOVE '0'       WDSP              âÊñ êßå‰ END        
+     C                     END                             •<IFEQ               
+///   * < PF5: ëóÇËèÛñæç◊è∆âÔ >                                                 
+  /  C           *INKE     IFEQ '1'                        •>IFEQ               
+  /  C                     EXSR #L2000                      PGM CALL            
+  /  C                     END                             •<IFEQ               
+      * < PF7: éüÇjÇdÇx >                                                       
+     C           *INKG     IFEQ '1'                        •>IFEQ               
+     C                     EXSR #C2100                      ëOå„ì«çû            
+     C                     END                             •<IFEQ               
+      * < PF8: ëOÇjÇdÇx >                                                       
+     C           *INKH     IFEQ '1'                        •>IFEQ               
+     C                     EXSR #C2100                      ëOå„ì«çû            
+     C                     END                             •<IFEQ               
+      * < PF12: ëOâÊñ  >                                                        
+     C           *INKL     IFEQ '1'                        •>IFEQ               
+     C                     MOVE '0'       WLOP              LOOP END            
+     C                     MOVE '1'       WDSP              âÊñ êßå‰ 1 Õ        
+     C                     END                             •<IFEQ               
+      * < ROLL UP >                                                             
+     C           *IN85     IFEQ '1'                        •>IFEQ               
+     C                     EXSR #M2000                      ROLL èàóù           
+     C                     END                             •<IFEQ               
+      * < é¿çs KEY>                                                             
+A1   C           *IN29     IFEQ '1'                        •>IFEQ               
+A1   C           *INKG     IFEQ '0'                        ••>IFEQ              
+A1   C           *INKH     ANDEQ'0'                                             
+A1   C           *INKA     ANDEQ'0'                                             
+///  C           *INKE     ANDEQ'0'                                             
+A1   C           *INKL     ANDEQ'0'                                             
+A1   C           *IN85     ANDEQ'0'                                             
+A1   C                     MOVE '1'       WEND              èIóπ                
+A1   C                     MOVE '0'       WLOP              LOOP END            
+A1   C                     MOVE '0'       WDSP              âÊñ êßå‰ END        
+A1   C                     END                             ••<IFEQ              
+A1   C                     END                             •<IFEQ               
+      * < ERROR ? >                                                             
+     C                     MOVEL@00404    MCD               “Øæ∞ºﬁID            
+     C                     MOVEL@00402    MSG               “Øæ∞ºﬁ              
+      *                                                                         
+     C           @00403    COMP '1'                      88:WRN                 
+     C           @00403    COMP '2'                      89:ERROR               
+     C   88                MOVE '1'       WWRN              WRN  FLG            
+     C   89                MOVE '1'       WERR              ERR  FLG            
+     C                     END                             <DOWEQ               
+      *                                                                         
+     C           \C2000    ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇbÇQÇPÇOÇO     ëOå„ÉfÅ[É^èàóù   ( SFL )                             
+      *==============================================================*          
+      *  •-------------------------------------------------                     
+      *  | INPUT   :                                                            
+      *  | PROCESS :   ëOå„ÉfÅ[É^èàóùÇçsÇ»Ç§                                   
+      *  | OUTPUT  :   SFL                                                      
+      *  •-------------------------------------------------                     
+     C           #C2100    BEGSR                                                
+      *                                                                         
+A1   C   KG 61   ZAKEY1    READEZAREC                    95                     
+A1   C   KH 61   ZAKEY1    REDPEZAREC                    95                     
+A1   C   KG 62   ZAKEY1    READEZAREC1                   95                     
+A1   C   KH 62   ZAKEY1    REDPEZAREC1                   95                     
+A1   C   KG 63   ZAKEY1    READEZAREC2                   95                     
+A1   C   KH 63   ZAKEY1    REDPEZAREC2                   95                     
+     C           *IN95     IFEQ '1'                        >IFEQ                
+      * ì«ÇﬂÇ»Ç¢Ç∆Ç´ç›å…Çlì«Ç›Ç»Ç®Çµ                                            
+     C                     MOVE G1SOK     ZASOK                                 
+     C                     MOVE G1HNC     ZAHNC                                 
+A1   C      61   ZAKEY     CHAINZAREC                95                         
+A1   C      62   ZAKEY     CHAINZAREC1               95                         
+A1   C      63   ZAKEY     CHAINZAREC2               95                         
+     C                     MOVEL'KYE0063' @00401                                
+     C                     EXSR #MSG                                            
+      * ì«Ç›çûÇÒÇæÇ∆Ç´âÊñ Ç…ÉZÉbÉgÇµÇƒÉ`ÉFÉbÉN                                  
+     C                     ELSE                            +                    
+     C                     MOVE ZASOK     G1SOK                                 
+     C                     MOVE ZAHNC     G1HNC                                 
+     C                     EXSR #G1000                                          
+      * ÉtÉâÉOèâä˙âª                                                            
+     C                     MOVE '0'       *IN86                                 
+     C                     MOVE '1'       *IN81                                 
+     C                     WRITESFCTL                                           
+     C                     MOVE '0'       *IN81                                 
+     C                     Z-ADD1         RCDNBR                                
+     C                     MOVE *ZERO     RRN                                   
+      * ÉGÉâÅ[Ç†Ç¡ÇƒÇ‡ÉuÉâÉìÉNÇ≈èëÇ´èoÇ∑                                        
+     C           *IN88     IFEQ '0'                        •>IFEQ               
+     C           *IN89     ANDEQ'0'                                             
+     C                     EXSR #I2000                                          
+     C                     EXSR #M2000                                          
+     C                     ELSE                            -+                   
+     C                     ADD  1         RRN                                   
+     C                     WRITESFREC                                           
+     C                     END                             •<IFEQ               
+     C                     END                             <IFEQ                
+      *                                                                         
+     C           \C2100    ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇhÇQÇOÇOÇO     âÊñ èâä˙èàóù   ( SFL )                               
+      *==============================================================*          
+      *  •-------------------------------------------------                     
+      *  | INPUT   :                                                            
+      *  | PROCESS :   âÊñ  (SFL) èâä˙ê›íËÇçsÇ»Ç§                              
+      *  | OUTPUT  :   SFL                                                      
+      *  •-------------------------------------------------                     
+     C           #I2000    BEGSR                                                
+      *(TEST ä¬ã´ )                                                             
+ 1.31C           LDTST     COMP '1'                      05                     
+      * < ºΩ√— éûçè >                                                           
+     C                     TIME           @TIME                                 
+     C                     Z-ADDW@TIM     TIM                                   
+      *                                                                         
+     C                     MOVEL@INF,2    INF               CMD ê‡ñæ            
+      *                                                                         
+     C                     MOVE *BLANK    MCD               “Øæ∞ºﬁID            
+     C                     MOVE *BLANK    MSG               “Øæ∞ºﬁ              
+     C                     MOVE '1'       WLOP              LOOP                
+     C                     MOVEA'00'      *IN,88                                
+     C                     MOVE '0'       *IN86                                 
+     C                     MOVEA'000'     *IN,97                                
+      * ÅiÅiÇvÇeÇrÇsÇ™ÇOÇÃéûÅCç›å…ÇlÇÊÇËécäzÇèoÇ∑ÅBÅjÅj                        
+     C                     MOVE '0'       WFST                                  
+      * < SFL CLR >                                                             
+     C                     MOVE '1'       *IN81                                 
+     C                     WRITESFCTL                                           
+     C                     MOVE '0'       *IN81                                 
+      *                                                                         
+     C                     Z-ADD1         RCDNBR                                
+     C                     MOVE *ZERO     RRN                                   
+      *                                                                         
+     C                     EXSR #S1000                      KEY SET             
+      *                                                                         
+A1   C   31 61   RUKEY1    SETLLRUREC                                           
+A1   C      61   MXKEY1    SETLLDMXL16                                          
+A1   C   31 62   RUKEY1    SETLLRUREC1                                          
+A1   C      62   MXKEY1    SETLLDMX1L16                                         
+A1   C   31 63   RUKEY1    SETLLRUREC2                                          
+A1   C      63   MXKEY1    SETLLDMX2L16                                         
+      *                                                                         
+     C           \I2000    ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇnÇoÇdÇmÅ@     ÉtÉ@ÉCÉãÉIÅ[ÉvÉì                                     
+      *==============================================================*          
+      *  •-------------------------------------------------                     
+      *  | INPUT   :                                                            
+      *  | PROCESS :   âìäuÉtÉ@ÉCÉãÉIÅ[ÉvÉìÇçsÇ§                               
+      *  | OUTPUT  :                                                            
+      *  •-------------------------------------------------                     
+     C           #OPEN     BEGSR                                                
+      * <CLOSE>                                                                 
+A1   C   62                CLOSEDRU1L29                01                       
+A1   C   62                CLOSEDMX1L16                01                       
+A1   C   62                CLOSEMZA1L12                01                       
+A1   C   63                CLOSEDRU2L29                01                       
+A1   C   63                CLOSEDMX2L16                01                       
+A1   C   63                CLOSEMZA2L12                01                       
+A1    * <CLR >                                                                  
+A1   C                     MOVEA'0000'    *IN,01                                
+A1    * <OPEN>                                                                  
+A1   C   62                OPEN DRU1L29                01                       
+A1   C   62                OPEN DMX1L16                01                       
+A1   C   62                OPEN MZA1L12                01                       
+A1   C   63                OPEN DRU2L29                01                       
+A1   C   63                OPEN DMX2L16                01                       
+A1   C   63                OPEN MZA2L12                01                       
+      *                                                                         
+     C           \OPEN     ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇlÇQÇOÇOÇO     âÊñ ÉZÉbÉgèàóù   ( SFL )                             
+      *==============================================================*          
+      *  •-------------------------------------------------                     
+      *  | INPUT   :                                                            
+      *  | PROCESS :   âÊñ  (SFL) æØƒ èàóùÇçsÇ»Ç§                              
+      *  | OUTPUT  :   SFL                                                      
+      *  •-------------------------------------------------                     
+     C           #M2000    BEGSR                                                
+      *                                                                         
+     C                     MOVE *ZERO     CNT                                   
+      * ç≈èâÇ…ç›å…ÇlÇÊÇËëOåéécÇèoÇ∑                                            
+     C           WFST      IFEQ '0'                        >IFEQ                
+     C                     Z-ADD*ZERO     G2UKS                                 
+     C                     Z-ADD*ZERO     G2HAS                                 
+     C                     Z-ADD*ZERO     G2ZAN                                 
+      *                                                                         
+     C                     MOVELG1SOK     ZASOK                                 
+     C                     MOVELG1HNC     ZAHNC                                 
+     C   61      ZAKEY     SETLLZAREC                                           
+     C   62      ZAKEY     SETLLZAREC1                                          
+     C   63      ZAKEY     SETLLZAREC2                                          
+     C                     SETOF                     97                         
+      *                                                                         
+     C           *IN97     DOWEQ'0'                                             
+      *                                                                         
+A1   C   61      ZAKEY     READEZAREC                    97                     
+A1   C   62      ZAKEY     READEZAREC1                   97                     
+A1   C   63      ZAKEY     READEZAREC2                   97                     
+     C   97                LEAVE                                                
+      *                                                                         
+     C                     EXSR #M2300                      ì]ëóèàóù            
+      *                                                                         
+     C                     END                                                  
+      *                                                                         
+     C           *IN68     IFEQ '0'                        •>IFEQ               
+     C                     ADD  1         CNT                                   
+     C                     ADD  1         RRN                                   
+     C                     WRITESFREC                                           
+     C                     CLEARSFREC                                           
+     C***                  MOVE '1'       WFST                                  
+     C           CNT       IFEQ 1                          ••>IFEQ              
+     C                     Z-ADDRRN       RCDNBR                                
+     C                     END                             ••<IFEQ              
+     C                     END                             •<IFEQ               
+10.24C                     MOVE '1'       WFST                                  
+     C                     END                             <IFEQ                
+      *                                                                         
+     C           *IN85     IFEQ '0'                        >IFEQ                
+     C           *IN99     DOWEQ'0'                        •>DOWEQ              
+     C                     EXSR #R2000                                          
+     C                     EXSR #E2000                                          
+     C           WEXT      IFEQ '1'                        ••>IFEQ              
+     C                     LEAVE                                                
+     C                     END                             ••<IFEQ              
+     C                     END                             •<DOWEQ              
+     C                     END                             <IFEQ                
+      *                                                                         
+     C           *IN99     DOWEQ'0'                        >DOWEQ               
+     C           CNT       ANDLT14                                              
+      *                                                                         
+     C                     ADD  1         CNT                                   
+     C                     ADD  1         RRN                                   
+A1   C           *IN71     IFEQ '1'                        •>IFEQ               
+A1   C                     EXSR #M2100                                          
+A1   C                     ELSE                            -+                   
+A1   C                     EXSR #M2200                                          
+A1   C                     END                             •<IFEQ               
+     C                     WRITESFREC                                           
+     C                     CLEARSFREC                                           
+     C           CNT       IFEQ 1                          •>IFEQ               
+     C                     Z-ADDRRN       RCDNBR                                
+     C                     END                             •<IFEQ               
+      *                                                                         
+     C           *IN99     DOWEQ'0'                        •>DOWEQ              
+     C                     EXSR #R2000                                          
+     C                     EXSR #E2000                                          
+     C           WEXT      IFEQ '1'                        ••>IFEQ              
+     C                     LEAVE                                                
+     C                     END                             ••<IFEQ              
+     C                     END                             •<DOWEQ              
+      *                                                                         
+     C                     END                             <DOWEQ               
+      *                                                                         
+     C           *IN99     IFEQ '1'                        >IFEQ                
+     C                     MOVE '1'       *IN86                                 
+     C                     END                             <IFEQ                
+      *                                                                         
+     C           \M2000    ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇqÇQÇOÇOÇO     É~ÉbÉNÉXÇcÅ@ÇqÇdÇ`Çcèàóù                             
+      *==============================================================*          
+      *  •-------------------------------------------------                     
+      *  | INPUT   :   É~ÉbÉNÉXÉfÅ[É^                                           
+      *  | PROCESS :   ÇqÇdÇ`ÇcèàóùÇÇ∑ÇÈÅB                                     
+      *  | OUTPUT  :                                                            
+      *  •-------------------------------------------------                     
+     C           #R2000    BEGSR                                                
+      *                                                                         
+     C                     MOVEASETOF1    *IN,71                                
+      * < –Ø∏Ω√ﬁ∞¿ ì«çû >                                                       
+     C           G1KB      IFEQ '1'                        >IFEQ                
+     C           \RE01     TAG                                                  
+     C           *IN98     IFEQ '0'                        •>IFEQ               
+A1   C   61      RUKEY2    READERUREC                    98                     
+A1   C   62      RUKEY2    READERUREC1                   98                     
+A1   C   63      RUKEY2    READERUREC2                   98                     
+SUSU C           RUTHK     IFEQ '4512'                     ••>IFEQ              
+SUSU C           RUTHK     OREQ '4612'                                          
+SUSU C           RUSOK     IFEQ RUSOKA                     •••>IFEQ             
+SUSU C           RUZBK     ANDEQRUZBKA                                          
+HO   C           *IN61     IFEQ '1'                        ••••>IFEQ            
+HO   C           *IN62     OREQ '1'                                             
+HO   C           *IN63     OREQ '1'                                             
+SU   C                     MOVE '0'       *IN71                                 
+SUSU C                     GOTO \RE01                                           
+HO   C                     END                             ••••<IFEQ            
+HO   C                     END                             •••<IFEQ             
+SUSU C                     END                             ••<IFEQ              
+SUSU C                     END                             •<IFEQ               
+     C           *IN98     IFEQ '1'                        •>IFEQ               
+A1   C   61N43   MXKEY1    READEDMXL16                   99                     
+A1   C   62N43   MXKEY1    READEDMX1L16                  99                     
+A1   C   63N43   MXKEY1    READEDMX2L16                  99                     
+ 1.31C      43             SETON                         99                     
+     C                     MOVE '1'       FST                                   
+     C                     END                             •<IFEQ               
+     C                     END                             <IFEQ                
+      *                                                                         
+     C           G1KB      IFEQ '2'                        >IFEQ                
+A1   C   61      MXKEY1    READEDMXL16                   99                     
+A1   C   62      MXKEY1    READEDMX1L16                  99                     
+A1   C   63      MXKEY1    READEDMX2L16                  99                     
+     C                     END                             <IFEQ                
+      *                                                                         
+A1   C   75                MOVEL@HAREC    @JUREC                                
+A1   C   76                MOVEL@IDREC    @JUREC                                
+A1   C   77                MOVEL@HNREC    @JUREC                                
+      *                                                                         
+     C           \R2000    ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇdÇQÇOÇOÇO     ç›å…ÇlÅ@íäèoèàóù                                     
+      *==============================================================*          
+      *  •-------------------------------------------------                     
+      *  | INPUT   :   ç›å…É}ÉXÉ^                                               
+      *  | PROCESS :   ÉfÅ[É^íäèoèàóùÇÇ∑ÇÈÅB                                   
+      *  | OUTPUT  :                                                            
+      *  •-------------------------------------------------                     
+     C           #E2000    BEGSR                                                
+      * < íäèo Ã◊∏ﬁ ON >                                                        
+     C                     MOVE '1'       WEXT                                  
+      * < íäèo Ã◊∏ﬁ OFF >                                                       
+A1   C           *IN71     IFEQ '0'                        >IFEQ                
+     C           G1AAK     IFEQ ' '                        •>IFEQ               
+A1   C           JUAAK     IFNE ' '                        ••>IFNE              
+A1   C           JUAAK     ANDNE'5'                                             
+A1   C           JUAAK     ANDNE'9'                                             
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             ••<IFNE              
+     C                     END                             •<IFEQ               
+     C           G1AAK     IFEQ '1'                        •>IFEQ               
+A1   C           JUAAK     IFNE '1'                        ••>IFNE              
+A1   C           JUAAK     ANDNE'3'                                             
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             ••<IFNE              
+     C                     END                             •<IFEQ               
+     C           G1AAK     IFEQ '2'                        •>IFEQ               
+A1   C           JUAAK     IFNE '2'                        ••>IFNE              
+A1   C           JUAAK     ANDNE'4'                                             
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             ••<IFNE              
+     C                     END                             •<IFEQ               
+      *                                                                         
+     C           JUKB62    IFEQ '2'                        •>IFEQ               
+     C           JUKB65    ANDNE'1'                                             
+     C           JUKB62    OREQ '1'                                             
+     C           JUKB65    ANDEQ'1'                                             
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             •<IFEQ               
+      *                                                                         
+     C           JUTHK     IFEQ '1234'                     •>IFEQ               
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             •<IFEQ               
+      *                                                                         
+A1   C                     END                             <IFEQ                
+      * < íäèo Ã◊∏ﬁ OFF >                                                       
+A1   C           *IN71     IFEQ '1'                        >IFEQ                
+     C           G1AAK     IFEQ ' '                        •>IFEQ               
+A1   C           RUAAK     IFNE ' '                        ••>IFNE              
+A1   C           RUAAK     ANDNE'5'                                             
+A1   C           RUAAK     ANDNE'9'                                             
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             ••<IFNE              
+     C                     END                             •<IFEQ               
+     C           G1AAK     IFEQ '1'                        •>IFEQ               
+A1   C           RUAAK     IFNE '1'                        ••>IFNE              
+A1   C           RUAAK     ANDNE'3'                                             
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             ••<IFNE              
+     C                     END                             •<IFEQ               
+     C           G1AAK     IFEQ '2'                        •>IFEQ               
+A1   C           RUAAK     IFNE '2'                        ••>IFNE              
+A1   C           RUAAK     ANDNE'4'                                             
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             ••<IFNE              
+     C                     END                             •<IFEQ               
+11/19C*                                                                         
+  /  C           RUTHK     IFEQ '2211'                     •>IFEQ               
+  /  C           RUKB12    IFEQ 'X'                        ••>IFEQ              
+  /  C           RUKB12    OREQ 'Y'                                             
+  /  C           RUKB12    OREQ 'Z'                                             
+  /  C                     MOVE '0'       WEXT                                  
+  /  C                     END                             ••<IFEQ              
+     C                     END                             •<IFEQ               
+     C*                                                                         
+     C           RUTHK     IFEQ '1234'                     •>IFEQ               
+     C                     MOVE '0'       WEXT                                  
+     C                     END                             •<IFEQ               
+     C*                                                                         
+K.H  C           RUTHK     IFEQ '2212'                     •>IFEQ               
+K.H  C           RUSU      ANDEQ*ZERO                                           
+K.H  C                     MOVE '0'       WEXT                                  
+K.H  C                     END                             •<IFEQ               
+      * åvè„ì˙                                                                  
+A1   C           RUKJD     IFLT @DAYF                      •>IFLT               
+A1   C           RUKJD     ORGT @DAYT                                           
+A1   C                     MOVE '0'       WEXT                                  
+A1   C                     END                             •<IFLT               
+ 7.22 * ì`ï[ì˙ït                                                                
+  .  C           RUDPD     IFLT G@DAYF                     >IFLT                
+  .  C           RUDPD     ORGT G@DAYT                                          
+  .  C                     MOVE '0'       WEXT                                  
+ 7.22C                     END                                                  
+A1   C                     END                             <IFEQ                
+      *                                                                         
+     C           \E2000    ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇlÇQÇPÇOÇO     ÉTÉuÉtÉ@ÉCÉãï“èWèàóùÅió›êœÉfÅ[É^Åj                   
+      *==============================================================*          
+      *  •-------------------------------------------------                     
+      *  | INPUT   :   ó›êœÉfÅ[É^                                               
+      *  | PROCESS :   ÉTÉuÉtÉ@ÉCÉãï“èW                                         
+      *  | OUTPUT  :   SFREC                                                    
+      *  •-------------------------------------------------                     
+     C           #M2100    BEGSR                                                
+K.H  C           RUDID     IFEQ 'UR'                       >IFEQ                
+ .   C                     MOVELRUDDN     URUDN                                 
+ .   C                     MOVELRUAKN     URAKN                                 
+ .   C                     MOVELRUDGY     URUGY                                 
+ .   C           URKEY     CHAINURREC                90                         
+ .   C   90                CLEARURREC                                           
+ .   C                     MOVELUROPC     SFOPC                                 
+ .   C                     END                             <IFEQ                
+K.H  C           RUDID     IFEQ 'SR'                       >IFEQ                
+ .   C                     MOVELRUDDN     SRSDN                                 
+ .   C                     MOVELRUAKN     SRAKN                                 
+ .   C                     MOVELRUDGY     SRSGY                                 
+ .   C           SRKEY     CHAINSRREC                90                         
+ .   C   90                CLEARSRREC                                           
+ .   C                     MOVELSROPC     SFOPC                                 
+ .   C                     END                             <IFEQ                
+K.H  C           RUDID     IFEQ 'NS'                       >IFEQ                
+ .   C                     MOVELRUDDN     NSNDN                                 
+ .   C                     MOVELRUAKN     NSAKN                                 
+ .   C                     MOVELRUDGY     NSNGY                                 
+ .   C                     MOVELRUHNC     NSHNC                                 
+ .   C           NSKEY     CHAINNSREC                90                         
+ .   C   90                CLEARNSREC                                           
+ .   C                     MOVELNSOPC     SFOPC                                 
+ .   C                     END                             <IFEQ                
+ .   C                     MOVE 'SY'      SKSSK             ëgêDãÊï™            
+ .   C                     MOVELSFOPC     SKSSC     P       ëgêD ∫∞ƒﬁ           
+ .   C           SKKEY     CHAINSKREC                90                         
+ .   C   90                MOVEL*BLANK    SFOPN                                 
+K.H  C  N90                MOVELSKSSJR    SFOPN                                 
+      *                                                                         
+      * < åéì˙ >                                                                
+     C                     Z-ADDRUDPD     SFDAY             åéì˙                
+      * < éØï  >                                                                
+     C                     MOVE *BLANK    SFTHK                                 
+     C                     MOVE 'TK'      KMMSK             ñºèÃãÊï™            
+     C                     MOVELRUTHK     KMMSC     P       ñºèÃ ∫∞ƒﬁ           
+     C           KMKEY     CHAINKMREC                90                         
+     C   90                MOVELRUTHK     SFTHK                                 
+     C  N90                MOVELKMMSJ     SFTHK                                 
+      *                                                                         
+     C           RUTHK     IFEQ '4711'                                          
+     C                     MOVEL'KA'      SKSSK                                 
+     C                     MOVELRUZBK     SKSSC     P                           
+     C           SKKEY     CHAINSKREC                90                         
+     C                     MOVEL*BLANK    SFZBKN                                
+     C  N90                MOVELSKSSJR    SFZBKN                                
+     C                     END                                                  
+ 7.31 * < êœëóíÜÇÕê‘ï\é¶ >                                                      
+  .  C                     SETOF                     18                         
+///  C                     MOVE *IN18     IN18                                  
+  .  C           RUTHK     IFEQ '4711'                     >IFEQ                
+  .  C           RUKB01    ANDEQ'1'                                             
+  .  C           RUTHK     OREQ '4512'                                          
+K.H  C           RUTHK     OREQ '4511'                                          
+  .  C                     MOVELRUDDN     NSNDN                                 
+  .  C                     MOVELRUAKN     NSAKN                                 
+  .  C                     MOVELRUDGY     NSNGY                                 
+  .  C                     MOVELRUHNC     NSHNC                                 
+  .  C           NSKEY     CHAINNSREC                90                         
+  .  C  N90      RUTHK     IFEQ '4711'                     •>IFEQ               
+  .  C           RUKB01    ANDEQ'1'                                             
+  .  C           RUTHK     OREQ '4512'                                          
+  .  C           NSKB50    IFEQ ' '                        ••>IFEQ              
+  .  C                     SETON                     18                         
+///  C                     MOVE *IN18     IN18                                  
+  .  C                     END                             ••<IFEQ              
+  .  C                     END                             •<IFEQ               
+ 7.31C                     END                             <IFEQ                
+      * < ì`ï[áÇ >                                                              
+     C                     MOVELRUDDN     SFDNO             ì`ï[áÇ              
+///   * < ëäéËì`ï[áÇ >                                                          
+  /  C                     MOVELRUADN     SFADN             ëäéËì`ï[áÇ          
+  /  C           RUDID     IFEQ 'NS'                       >IFEQ                
+  /  C                     MOVELRUDDN     SFADN                                 
+  /  C                     END                             <IFEQ                
+      *                                                                         
+.....C                     MOVELRUSOK     SFSOK                                 
+.....C                     MOVELRUZBK     SFZBK                                 
+.....C                     MOVELRUSOKA    SFSOKA                                
+.....C                     MOVELRUZBKA    SFZBKA                                
+.....C                     MOVELRUTRKY    SFTRKY                                
+.....C                     MOVELRUTRCY    SFTRCY                                
+.....C                     MOVELRUTRSY    SFTRSY                                
+.....C                     MOVELRUTRUY    SFTRUY                                
+      * < éÊà¯êÊñº >                                                            
+ 1.06C           RUTRK     IFEQ *BLANK                     >IFEQ                
+      *                                                                         
+ 1.06C                     MOVEL*BLANK    SFTR                                  
+      *                                                                         
+     C                     MOVE 'SK'      SKSSK             ëgêDãÊï™            
+ 1.06C                     MOVELRUSOKA    SKSSC     P       ëgêD ∫∞ƒﬁ           
+     C           SKKEY     CHAINSKREC                90                         
+     C   90                MOVEL*BLANK    SFTR1                                 
+     C  N90                MOVELSKSSJR    SFTR1                                 
+      *                                                                         
+     C                     MOVE 'KA'      SKSSK             ëgêDãÊï™            
+ 1.06C                     MOVELRUZBKA    SKSSC     P       ëgêD ∫∞ƒﬁ           
+     C           SKKEY     CHAINSKREC                90                         
+     C   90                MOVEL*BLANK    SFTR2                                 
+     C  N90                MOVELSKSSJR    SFTR2                                 
+      *                                                                         
+     C                     END                             <IFEQ                
+      *                                                                         
+     C********   RUTRK     IFNE '9'                        ?IFNE                
+ 1.06C           RUTRC     IFNE *BLANK                     >IFNE                
+      *                                                                         
+     C                     MOVELRUTRK     TRTRK             éÊà¯êÊãÊï™   ìæà”   
+     C                     MOVELRUTRC     TRTRC             ñ@êlÅ@Å@Å@   ìæà”   
+     C                     MOVELRUTRS     TRTRS             éxìXÅ@Å@Å@   ìæà”   
+     C                     MOVELRUTRU     TRTRU             îÑèÍÅ@Å@Å@   ìæà”   
+     C           TRKEY     CHAINTRREC                90                         
+     C           *IN90     IFEQ '0'                        •>IFEQ               
+     C                     MOVE TRTR1     SFTR1                                 
+     C                     MOVE TRTR2     SFTR2                                 
+     C                     ELSE                            -+                   
+     C                     MOVE *BLANK    SFTR                                  
+     C                     END                             •<IFEQ               
+     C                     END                             <IFNE                
+12/21 *                                                                         
+     C           RUAAKA    IFEQ '1'                        >IFEQ                
+.... C           RUTHK     OREQ '4611'                                          
+.... C           RUKB12    ANDEQ'5'                                             
+US   C           RUTRCY    ANDNE*BLANK                                          
+      *                                                                         
+     C                     MOVELRUTRKY    TRTRK             éÊà¯êÊãÊï™   ìæà”   
+     C                     MOVELRUTRCY    TRTRC             ñ@êlÅ@Å@Å@   ìæà”   
+     C                     MOVELRUTRSY    TRTRS             éxìXÅ@Å@Å@   ìæà”   
+     C                     MOVELRUTRUY    TRTRU             îÑèÍÅ@Å@Å@   ìæà”   
+     C           TRKEY     CHAINTRREC                90                         
+     C           *IN90     IFEQ '0'                        •>IFEQ               
+     C                     MOVE TRTR1     SFTR1                                 
+     C                     MOVE TRTR2     SFTR2                                 
+     C                     ELSE                            -+                   
+     C                     MOVE *BLANK    SFTR                                  
+     C                     END                             •<IFEQ               
+     C                     END                             <IFEQ                
+      * ÇoÇk                                                                    
+     C                     MOVEL*BLANK    SFSKNO                                
+      * ó«ïsó«ãÊï™                                                              
+     C                     MOVEL*BLANK    SF0001                                
+     C           RUKB06    LOKUPTABA1     TABB1          90                     
+     C   90                MOVELTABB1     SF0001                                
+      * ãÊï™                                                                    
+     C                     MOVEL*BLANK    SF0002                                
+     C                     MOVEL*BLANK    W@@@    2                             
+     C           RUTHK     IFEQ '4511'                     >IFEQ                
+     C           RUTHK     OREQ '4611'                                          
+     C                     MOVE RUKB12    W@@@                                  
+     C                     END                             <IFEQ                
+     C           RUTHK     IFGE '5000'                     >IFGE                
+     C           RUTHK     ANDLE'5999'                                          
+     C                     MOVEL'A'       W@@@                                  
+     C                     MOVE RUKB12    W@@@                                  
+     C                     END                             <IFGE                
+K.H  C                     MOVE W@@@      W@@1    2                             
+K.H  C           RUTHK     IFEQ '4511'                     >IFEQ                
+K.H  C           NSDST1    IFEQ 'G4'                       •>IFEQ               
+K.H  C           NSDST1    OREQ 'C4'                                            
+K.H  C                     MOVE '∂'       W@@@                                  
+K.H  C                     END                             •<IFEQ               
+K.H  C                     END                             <IFEQ                
+     C           W@@@      IFNE *BLANK                     >IFNE                
+     C           W@@@      LOKUPTABA2     TABB2          90                     
+     C   90                MOVELTABB2     SF0002                                
+SU   C           W@@@      IFGE '  '                       •>IFGE               
+SU   C           W@@@      ANDLE' 9'                                            
+K.H  C           W@@1      LOKUPTABA2     TABB2          90                     
+SU   C   90                MOVELTABB2     SFTHK                                 
+SU   C                     END                             •<IFGE               
+     C                     END                             <IFNE                
+      *<<  ±≤√ªﬁ≤∫Ãﬁ∂                                                           
+     C           RUTHK     IFEQ '4612'                     >IFEQ                
+     C           RUTHK     OREQ '4512'                                          
+     C                     MOVE 'KA'      SKSSK             ëgêDãÊï™            
+     C                     MOVELRUZBKA    SKSSC     P       ëgêD ∫∞ƒﬁ           
+     C           SKKEY     CHAINSKREC                90                         
+     C                     MOVE *BLANK    SF0003                                
+     C  N90                MOVELSKSSJR    SF0003                                
+      *                                                                         
+     C                     END                             <IFEQ                
+      *                                                                         
+     C                     Z-ADD0         SF0004                                
+     C                     MOVEL*BLANK    SF0005                                
+.    C           RUTHK     IFEQ '2212'                     >IFEQ                
+     C           RUTHK     OREQ '4711'                                          
+     C           RUKB01    ANDEQ'1'                                             
+     C           RUTHK     OREQ '4512'                                          
+     C           RUKB01    ANDEQ'1'                                             
+     C           RUSQD     IFNE 0                          •>IFNE               
+     C                     SETON                     66                         
+     C                     Z-ADDRUSQD     SF0004                                
+     C                     MOVEL'ƒ◊ÃﬁŸ->' SF0005                                
+     C                     END                             •<IFNE               
+.    C                     END                             <IFEQ                
+      * < éÛì¸écÅ@ï•èoécÅ@écêî >                                                
+      *                                                                         
+     C           RUKB01    IFEQ '1'                        >IFEQ                
+      *========*                                                                
+      *  éÛì¸  *                                                                
+      *========*                                                                
+     C                     Z-ADDRUSU      SFUKS                                 
+      * ( édì¸ï‘ïiéwé¶ )                                                        
+     C           RUTHK     IFEQ '1212'                     •>IFEQ               
+K.H  C                     Z-ADDRUSU      SFUKS             œ≤≈Ω ï\é¶           
+     C                     END                             •<IFEQ               
+      *                                                                         
+     C           @SFZAN    ADD  SFUKS     SFZAN                                 
+     C                     Z-ADDSFZAN     @SFZAN                                
+      *                                                                         
+     C                     ELSE                            +                    
+      *========*                                                                
+      *  ï•èo  *                                                                
+      *========*                                                                
+      * ( édì¸à⁄ìÆèo )                                                          
+SU   C           RUTHK     IFEQ '4612'                     •>IFEQ               
+SU   C                     Z-SUBRUSU      SFUKS                                 
+SU   C           @SFZAN    ADD  SFUKS     SFZAN                                 
+SU   C                     Z-ADDSFZAN     @SFZAN                                
+SU   C                     ELSE                            -+                   
+     C                     Z-ADDRUSU      SFHAS                                 
+      * ( ∏⁄∞—√ﬁ∞¿)                                                             
+     C*****                Z-SUBRUSU      SFHAS             œ≤≈Ω ï\é¶           
+      *                                                                         
+     C           @SFZAN    SUB  SFHAS     SFZAN                                 
+     C                     Z-ADDSFZAN     @SFZAN                                
+SU   C                     END                             •<IFEQ               
+      *                                                                         
+     C                     END                             <IFEQ                
+      *                                                                         
+     C           \M2100    ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇlÇQÇQÇOÇO     ÉTÉuÉtÉ@ÉCÉãï“èWèàóùÅiÉ~ÉbÉNÉXÇcÅj        *          
+      *==============================================================*          
+      *  •-------------------------------------------------                     
+      *  | INPUT   :   –Ø∏Ω√ﬁ∞¿                                                 
+      *  | PROCESS :   ÉTÉuÉtÉ@ÉCÉãï“èW                                         
+      *  | OUTPUT  :   SFREC                                                    
+      *  •-------------------------------------------------                     
+     C           #M2200    BEGSR                                                
+      *                                                                         
+K.H  C                     MOVELJUOPC     SFOPC                                 
+ .   C                     MOVE 'SY'      SKSSK             ëgêDãÊï™            
+ .   C                     MOVELSFOPC     SKSSC     P       ëgêD ∫∞ƒﬁ           
+ .   C           SKKEY     CHAINSKREC                90                         
+ .   C   90                MOVEL*BLANK    SFOPN                                 
+K.H  C  N90                MOVELSKSSJR    SFOPN                                 
+K.H  C           JUFID     IFNE 'HA'                       >IFNE                
+ .   C                     Z-ADDJUHISZ    SF0004                                
+ .   C                     ADD  JUHIST    SF0004                                
+ .   C                     MOVEL'À∑±√ ->' SF0005                                
+K.H  C                     END                             <IFNE                
+      * < åéì˙ >                                                                
+     C                     Z-ADDJUNOD     SFDAY             åéì˙                
+      * ëSåèÇ≈ó\íËÇ™âﬂãéÇÃì˙ïtÇÃÇ‡ÇÃ                                            
+K.H  C***        G1KB      IFEQ '1'                                             
+ .   C***        JUURD     ANDLTLDDATS                                          
+ .   C***                  Z-ADDLDDATS    SFDAY             åéì˙                
+K.H  C***                  END                                                  
+      * î≠íçÅFíºëOì¸â◊˙VÇP˙VÇÃÇ∆Ç´íºëOì¸â◊èÓïÒì¸ÇÍÇÈ                            
+     C   75                DO                              >DO                  
+     C           HAUP12    IFEQ '1'                        •>IFEQ               
+     C                     Z-ADDHACND     SFDAY             åéì˙                
+     C                     END                             •<IFEQ               
+     C                     END                             <DO                  
+K.H  C   76      JUKB01    IFEQ '2'                        >IFEQ                
+ .   C                     Z-ADDIDSGD     SFDAY                                 
+K.H  C                     END                             <IFEQ                
+      * < éØï  >                                                                
+     C                     MOVE *BLANK    SFTHK                                 
+     C                     MOVE 'TK'      KMMSK             ñºèÃãÊï™            
+     C                     MOVELJUTHK     KMMSC     P       ñºèÃ ∫∞ƒﬁ           
+     C           KMKEY     CHAINKMREC                90                         
+     C   90                MOVELJUTHK     SFTHK                                 
+     C  N90                MOVELKMMSJ     SFTHK                                 
+      * ó\íËÇÕîΩì]Ç≥ÇπÇÈ                                                        
+     C                     SETON                     15                         
+///  C                     MOVE *IN15     IN15                                  
+K.H  C           JUUP08    IFEQ '1'                        >IFEQ                
+ .   C                     SETON                     17                         
+///  C                     MOVE *IN17     IN17                                  
+K.H  C                     END                             <IFEQ                
+K.H  C           JUUP09    IFEQ '1'                        >IFEQ                
+ .   C                     SETON                     18                         
+///  C                     MOVE *IN18     IN18                                  
+K.H  C                     END                             <IFEQ                
+      * < ì`ï[áÇ >                                                              
+     C                     MOVELJUJDN     SFDNO             ì`ï[áÇ              
+///   * < ëäéËì`ï[áÇ >                                                          
+  /  C                     MOVELJUADN     SFADN             ëäéËì`ï[áÇ          
+  /  C   76                MOVELIDIDN     SFADN                                 
+      *                                                                         
+.....C                     MOVELJUSOK     SFSOK                                 
+.....C                     MOVELJUZBK     SFZBK                                 
+.....C                     MOVELJUSOKA    SFSOKA                                
+.....C                     MOVELJUZBKA    SFZBKA                                
+.....C                     MOVELJUTRKY    SFTRKY                                
+.....C                     MOVELJUTRCY    SFTRCY                                
+.....C                     MOVELJUTRSY    SFTRSY                                
+.....C                     MOVELJUTRUY    SFTRUY                                
+      * < éÊà¯êÊñº >                                                            
+     C           JUTRKT    IFEQ '9'                        >IFEQ                
+      *                                                                         
+     C                     MOVE 'SK'      SKSSK             ëgêDãÊï™            
+     C                     MOVELJUTRCT    SKSSC     P       ëgêD ∫∞ƒﬁ           
+     C           SKKEY     CHAINSKREC                90                         
+     C   90                MOVEL*BLANK    SFTR1                                 
+     C  N90                MOVELSKSSJR    SFTR1                                 
+      *                                                                         
+     C                     MOVE 'KA'      SKSSK             ëgêDãÊï™            
+     C                     MOVELJUTRST    SKSSC     P       ëgêD ∫∞ƒﬁ           
+     C           SKKEY     CHAINSKREC                90                         
+     C   90                MOVEL*BLANK    SFTR2                                 
+     C  N90                MOVELSKSSJR    SFTR2                                 
+      *                                                                         
+     C                     ELSE                            +                    
+     C*                                                                         
+     C                     MOVE *BLANK    SFTR                                  
+     C*                                                                         
+     C           JUKB37    IFNE '6'                        •>IFNE               
+     C*                                                                         
+     C                     MOVE JUTRKT    TRTRK             éÊà¯êÊãÊï™   ìæà”   
+     C                     MOVE JUTRCT    TRTRC             ñ@êlÅ@Å@Å@   ìæà”   
+     C                     MOVE JUTRST    TRTRS             éxìXÅ@Å@Å@   ìæà”   
+     C                     MOVE JUTRUT    TRTRU             îÑèÍÅ@Å@Å@   ìæà”   
+     C           TRKEY     CHAINTRREC                90                         
+     C           *IN90     IFEQ '0'                        ••>IFEQ              
+     C                     MOVE TRTR1     SFTR1                                 
+     C                     MOVE TRTR2     SFTR2                                 
+     C                     END                             ••<IFEQ              
+     C*                                                                         
+     C           JUTK04    IFEQ '1'                        ••>IFEQ              
+      ****                                                                      
+     C****                 MOVE '1'       @00501                                
+     C****                 MOVE '12'      @00502                                
+     C****                 MOVEL*BLANK    @00503                                
+     C****                 MOVELJUTJ1     @00503            ìæà”êÊñº 1          
+     C****                 CALL 'ZZZ0050R'                                      
+     C****                 PARM           @0050                                 
+     C****                 MOVEL@00504    SFTR1             ìæà”êÊó™ñº 1        
+      ****                                                                      
+     C****                 MOVE '1'       @00501                                
+     C****                 MOVE '12'      @00502                                
+     C****                 MOVEL*BLANK    @00503                                
+     C****                 MOVELJUTJ2     @00503            ìæà”êÊñº 2          
+     C****                 CALL 'ZZZ0050R'                                      
+     C****                 PARM           @0050                                 
+     C****                 MOVEL@00504    SFTR2             ìæà”êÊó™ñº 2        
+     C*                                                                         
+     C                     END                             ••<IFEQ              
+     C                     END                             •<IFNE               
+     C*                                                                         
+     C           JUKB37    IFEQ '6'                        •>IFEQ               
+     C                     MOVE 'TA'      SKSSK             ëgêDãÊï™            
+     C                     MOVELJUTRCT    SKSSC     P       ëgêD ∫∞ƒﬁ           
+     C           SKKEY     CHAINSKREC                90                         
+     C  N90                MOVELSKSSJR    SFTR1             íSìñó™ñº            
+     C                     END                             •<IFEQ               
+     C*                                                                         
+     C                     END                             <IFEQ                
+      *                                                                         
+@@@  C   76                DO                              >DO                  
+ @   C                     MOVEL*BLANK    SF0001                                
+ @   C           IDKB13    LOKUPTABA1     TABB1          90                     
+ @   C   90                MOVELTABB1     SF0001                                
+@@@  C                     END                             <DO                  
+      * ó«ïsó«ãÊï™                                                              
+     C                     MOVEL*BLANK    SF0001                                
+     C           JUKB13    LOKUPTABA1     TABB1          90                     
+     C   90                MOVELTABB1     SF0001                                
+      * ãÊï™                                                                    
+     C                     MOVEL*BLANK    SF0002                                
+     C                     MOVEL*BLANK    W@@@    2                             
+     C           JUTHK     IFEQ '4511'                     >IFEQ                
+     C           JUTHK     OREQ '4611'                                          
+     C                     MOVE JUKB29    W@@@    2                             
+     C                     END                             <IFEQ                
+     C           JUTHK     IFGE '5000'                     >IFGE                
+     C           JUTHK     ANDLE'5999'                                          
+     C                     MOVEL'A'       W@@@    2                             
+     C                     MOVE JUKB29    W@@@    2                             
+     C                     END                             <IFGE                
+     C           W@@@      IFNE *BLANK                     >IFNE                
+     C           W@@@      LOKUPTABA2     TABB2          90                     
+     C   90                MOVELTABB2     SF0002                                
+     C                     END                             <IFNE                
+      *                                                                         
+     C           JUTHK     IFEQ '4711'                                          
+     C                     MOVE 'KA'      SKSSK             ëgêDãÊï™            
+     C                     MOVELJUZBK     SKSSC     P       ëgêD ∫∞ƒﬁ           
+     C           SKKEY     CHAINSKREC                90                         
+     C                     MOVE *BLANK    SFZBKN                                
+     C  N90                MOVELSKSSJR    SFZBKN                                
+     C                     END                                                  
+      *<<  ±≤√ªﬁ≤∫Ãﬁ∂                                                           
+     C           JUTHK     IFEQ '4612'                     >IFEQ                
+     C           JUTHK     OREQ '4512'                                          
+     C                     MOVE 'KA'      SKSSK             ëgêDãÊï™            
+     C                     MOVELJUZBKA    SKSSC     P       ëgêD ∫∞ƒﬁ           
+     C           SKKEY     CHAINSKREC                90                         
+     C                     MOVE *BLANK    SF0003                                
+     C  N90                MOVELSKSSJR    SF0003                                
+      *                                                                         
+     C                     END                             <IFEQ                
+      * < éÛì¸écÅ@ï•èoécÅ@écêî >                                                
+     C           JUKB01    IFEQ '1'                        >IFEQ                
+      *========*                                                                
+      *  éÛì¸  *                                                                
+      *========*                                                                
+     C                     Z-ADDJUJUS     SFUKS                                 
+     C           JUTHK     IFEQ '1212'                     •>IFEQ               
+     C                     Z-SUBJUJUS     SFUKS                                 
+     C                     END                             •<IFEQ               
+     C           JUFID     IFEQ 'HA'                       •>IFEQ               
+     C                     Z-ADDJUJUS     SFUKS                                 
+     C                     SUB  JUHIST    SFUKS                                 
+     C                     END                             •<IFEQ               
+      *                                                                         
+     C           @SFZAN    ADD  SFUKS     SFZAN                                 
+     C                     Z-ADDSFZAN     @SFZAN                                
+      *                                                                         
+     C                     ELSE                            +                    
+      *========*                                                                
+      *  ï•èo  *                                                                
+      *========*                                                                
+     C                     Z-ADDJUJUS     SFHAS                                 
+K.H  C                     SUB  JUSKS     SFHAS                                 
+K.H  C                     SUB  JUCNS     SFHAS                                 
+K.H  C*****      JUKB25    IFEQ '5'                                             
+K.H  C*****      JUKB25    OREQ '6'                                             
+K.H  C*****                SUB  JUKPS     SFHAS                                 
+K.H  C*****                END                                                  
+\\   C           JUKB45    IFNE '2'                        •>IFNE               
+\\   C           JUKB25    IFEQ '5'                        ••>IFEQ              
+\\   C           JUKB25    OREQ '6'                                             
+\\   C           JUHISZ    ADD  JUHIST    SFHAS                                 
+\\   C                     END                             ••<IFEQ              
+\\   C                     END                             •<IFNE               
+      *                                                                         
+     C           @SFZAN    SUB  SFHAS     SFZAN                                 
+     C                     Z-ADDSFZAN     @SFZAN                                
+      *                                                                         
+     C                     END                             <IFEQ                
+      *                                                                         
+     C           \M2200    ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇlÇQÇRÇOÇO     çÄñ⁄ì]ëóÅÉÇfÇPÅEÇfÇQÅÑ                               
+      *==============================================================*          
+      *  •-------------------------------------------------                     
+      *  | INPUT   :   ç›å…É}ÉXÉ^Å[                                             
+      *  | PROCESS :   çáåvåvéZ                                                 
+      *  | OUTPUT  :   G1/G2                                                    
+      *  •-------------------------------------------------                     
+     C           #M2300    BEGSR                                                
+      *                                                                         
+     C                     MOVEL@ZAN,1    SFTR                                  
+      *  ÅÉÅÉÅ@écçÇÅ@ÅÑÅÑ                                                       
+ 1.31 * // ëSåèÅEëOåé //                                                        
+ 1.31C   31 43             ADD  ZAZSZZ    SFZAN                                 
+      * // ëSåèÅEìñåé //                                                        
+     C   31 41             ADD  ZATSZZ    SFZAN                                 
+      * // ëSåèÅEéüåé //                                                        
+     C   31 42             ADD  ZATSTZ    SFZAN                                 
+      * // ó\íË //                                                              
+     C   32                ADD  ZAJSTZ    SFZAN                                 
+      *                                                                         
+     C                     Z-ADDSFZAN     @SFZAN                                
+      *                                                                         
+..   C           G1AAK     IFNE *BLANK                     >IFNE                
+..   C                     SETON                     67                         
+..   C                     Z-ADD0         SFZAN                                 
+..   C                     ELSE                            +                    
+..   C                     SETOF                     67                         
+..   C                     END                             <IFNE                
+..   C           *IN68     IFEQ '1'                        >IFEQ                
+..   C                     Z-ADD0         SFZAN                                 
+     C                     Z-ADDSFZAN     @SFZAN                                
+..   C  N43N41             SETON                     42                         
+..   C                     END                             <IFEQ                
+      *  ÅÉÅÉÅ@çáåvÅEéÛì¸êîÅ@ÅÑÅÑ                                               
+      * // ó\íË //        ó\íË                                                  
+     C***                  Z-ADDZAHTZ     G2UKS                                 
+     C***                  ADD  ZAIDIZ    G2UKS                                 
+ 1.31C  N43                ADD  ZAHTZ     G2UKS                                 
+ 1.31C  N43                ADD  ZAIDIZ    G2UKS                                 
+     C*****                ADD  ZASSS     G2UKS                                 
+      * // ëSåèÅEéüåé //  ó\íËÅ{éüåé                                            
+     C           *IN31     IFEQ '1'                        >IFEQ                
+     C******* 41                                                                
+     C*******OR 42                DO                              ~?DO          
+     C   42                DO                              •>DO                 
+     C                     ADD  ZAJSS     G2UKS                                 
+     C                     ADD  ZAJSSR    G2UKS                                 
+     C                     ADD  ZAJSSF    G2UKS                                 
+     C                     ADD  ZAJSII    G2UKS                                 
+     C                     ADD  ZAJSHI    G2UKS                                 
+     C                     ADD  ZAJSCI    G2UKS                                 
+SU   C                     SUB  ZAJSIO    G2UKS                                 
+     C                     END                             •<DO                 
+      * // ëSåèÅEìñåé //  ó\íËÅ{éüåéÅ{ìñåé                                      
+     C   41                DO                              •>DO                 
+     C                     ADD  ZATSS     G2UKS                                 
+     C                     ADD  ZATSSR    G2UKS                                 
+     C                     ADD  ZATSSF    G2UKS                                 
+     C                     ADD  ZATSII    G2UKS                                 
+     C                     ADD  ZATSHI    G2UKS                                 
+     C                     ADD  ZATSCI    G2UKS                                 
+SU   C                     SUB  ZATSIO    G2UKS                                 
+     C                     END                             •<DO                 
+ 1.31 * // ëSåèÅEëOåé //                                                        
+  .  C   43                DO                              •>DO                 
+  .  C                     Z-ADDZAZSS     G2UKS                                 
+  .  C                     ADD  ZAZSSR    G2UKS                                 
+  .  C                     ADD  ZAZSSF    G2UKS                                 
+  .  C                     ADD  ZAZSII    G2UKS                                 
+  .  C                     ADD  ZAZSHI    G2UKS                                 
+  .  C                     ADD  ZAZSCI    G2UKS                                 
+ SU  C                     SUB  ZAZSIO    G2UKS                                 
+ 1.31C                     END                             •<DO                 
+     C                     END                             <IFEQ                
+      *  ÅÉÅÉÅ@çáåvÅEï•èoêîÅ@ÅÑÅÑ                                               
+      * // ó\íË //        ó\íË                                                  
+     C****                 Z-ADDZAJTZ     G2HAS                                 
+     C****                 ADD  ZAIDOZ    G2HAS                                 
+ 1.31C  N43                ADD  ZAJTZ     G2HAS                                 
+ 1.31C  N43                ADD  ZAIDOZ    G2HAS                                 
+      * // ëSåèÅEéüåé //  ó\íËÅ{éüåé                                            
+     C           *IN31     IFEQ '1'                        >IFEQ                
+     C***   41                                                                  
+     C****OR 42                DO                              ~?DO             
+     C   42                DO                              •>DO                 
+     C                     ADD  ZAJSU     G2HAS                                 
+     C                     ADD  ZAJSUR    G2HAS                                 
+ A1  C*****                ADD  ZAJSUK    G2HAS                                 
+     C                     ADD  ZAJSUF    G2HAS                                 
+SU   C*****                ADD  ZAJSIO    G2HAS                                 
+     C                     ADD  ZAJSHO    G2HAS                                 
+     C                     ADD  ZAJSCO    G2HAS                                 
+     C                     END                             •<DO                 
+      * // ëSåèÅEìñåé //  ó\íËÅ{éüåéÅ{ìñåé                                      
+     C   41                DO                              •>DO                 
+     C                     ADD  ZATSU     G2HAS                                 
+     C                     ADD  ZATSUR    G2HAS                                 
+ A1  C******               ADD  ZATSUK    G2HAS                                 
+     C                     ADD  ZATSUF    G2HAS                                 
+ SU  C*****                ADD  ZATSIO    G2HAS                                 
+     C                     ADD  ZATSHO    G2HAS                                 
+     C                     ADD  ZATSCO    G2HAS                                 
+     C                     END                             •<DO                 
+ 1.31 * // ëSåèÅEëOåé //                                                        
+  .  C   43                DO                              •>DO                 
+  .  C                     Z-ADDZAZSU     G2HAS                                 
+  .  C                     ADD  ZAZSUR    G2HAS                                 
+ A1  C******               ADD  ZAZSUK    G2HAS                                 
+  .  C                     ADD  ZAZSUF    G2HAS                                 
+ SU  C******               ADD  ZAZSIO    G2HAS                                 
+  .  C                     ADD  ZAZSHO    G2HAS                                 
+  .  C                     ADD  ZAZSCO    G2HAS                                 
+ 1.31C                     END                             •<DO                 
+     C                     END                             <IFEQ                
+      *  ÅÉÅÉÅ@çáåvÅEécêîÅ@ÅÑÅÑ                                                 
+     C                     Z-ADDSFZAN     G2ZAN                                 
+     C                     ADD  G2UKS     G2ZAN                                 
+     C                     SUB  G2HAS     G2ZAN                                 
+      *                                                                         
+     C           \M2300    ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇgÇQÇOÇOÇO     ÇgÇdÇkÇoèàóù   ( G1 )                                
+      *==============================================================*          
+     C           #H2000    BEGSR                                                
+      *                                                                         
+     C                     MOVE WSLIN1    WSLIN2            ÉJÅ[É\Éãêßå‰        
+     C                     MOVE WSCOL1    WSCOL2                                
+      *                                                                         
+     C                     MOVE WSLINE    D1LINE            ÉJÅ[É\Éãêßå‰        
+     C                     MOVE WSCOLM    D1COLM                                
+      *                                                                         
+     C           \H2000    ENDSR                                                
+///   *==============================================================*          
+  /   *   ÅîÇkÇQÇOÇOÇO     ëóÇËèÛñæç◊è∆âÔåƒÇ—èoÇµèàóù                           
+  /   *==============================================================*          
+  /   *  •-------------------------------------------------                     
+  /   *  | PROCESS :   ëóÇËèÛñæç◊è∆âÔåƒÇ—èoÇµ                                   
+  /   *  •-------------------------------------------------                     
+  /  C           #L2000    BEGSR                                                
+  /   *                                                                         
+  /  C                     Z-ADDRRN       WKRRN1  40                            
+  /  C                     Z-ADDWTPRRN    WKRRN2  40                            
+  /  C                     Z-ADDRELRCD    RRN                                   
+  /   *                                                                         
+  /  C           RELRCD    IFNE *ZERO                      >IFNE                
+  /  C           RRN       CHAINSFREC                90                         
+  /  C  N90                DO                              •>DO                 
+  /  C                     MOVELSFADN     P@ADN   8                             
+.....C                     MOVELSFSOK     P@SOK   3                             
+  /  C                     CALL 'TBD1800C'               90                     
+  /  C                     PARM           P@ADN                                 
+.....C                     PARM           P@SOK                                 
+  /  C                     MOVE IN15      *IN15                                 
+  /  C                     MOVE IN17      *IN17                                 
+  /  C                     MOVE IN18      *IN18                                 
+  /  C                     UPDATSFREC                                           
+  /  C                     CLEARSFREC                                           
+  /  C                     END                             •<DO                 
+  /  C                     END                             <IFNE                
+  /   *                                                                         
+  /  C                     Z-ADDWKRRN1    RRN                                   
+  /  C                     Z-ADDWKRRN2    RCDNBR                                
+  /   *                                                                         
+  /  C           \L2000    ENDSR                                                
+      *==============================================================*          
+      *   ÅîÇrÇbÇgÇjÅ@     ÉZÉLÉÖÉäÉeÉBÅïã∆ñ±ÉçÉbÉNÉ`ÉFÉbÉN                     
+      *==============================================================*          
+     C           #SCHK     BEGSR                                                
+      *                                                                         
+     C                     EXSR #I1000                      G1 èâä˙ æØƒ         
+     C                     MOVE '0'       WLOP              LOOP END            
+      ***  æ∑≠ÿ√® & ã∆ñ± €Ø∏ ¡™Ø∏  ***                                          
+     C                     MOVE *BLANK    @2010                                 
+     C                     MOVE '1'       @20101            ãÊï™                
+     C                     MOVE @PGID     @20102            PGID                
+     C                     MOVE '0'       @20103            ÿ¿∞›                
+      *                                                                         
+     C                     CALL 'ZZZ2010R'             95                       
+     C                     PARM           @2010                                 
+      * ( ÿ¿∞› åãâ  )                                                           
+     C           @20103    IFNE '0'                        >IFNE                
+     C                     MOVE '1'       WLOP              LOOP                
+     C                     MOVE @20104    @00401            “Øæ∞ºﬁID            
+     C                     EXSR #MSG                                            
+     C                     MOVEL@00404    MCD               “Øæ∞ºﬁID            
+     C                     MOVEL@00402    MSG               “Øæ∞ºﬁ              
+     C           @00403    COMP '1'                      88:WRN                 
+     C           @00403    COMP '2'                      89:ERROR               
+     C                     END                             <IFNE                
+      *** âÊñ  Ÿ∞Ãﬂ èàóù ***                                                    
+     C           WLOP      DOWEQ'1'                        >DOWEQ               
+      *                                                                         
+     C                     WRITEG9                                              
+     C                     EXFMTG1                                              
+      * < PF1: HELP >                                                           
+     C           *INKA     IFEQ '1'                        •>IFEQ               
+     C                     EXSR #H1000                      HELP èàóù           
+     C                     END                             •<IFEQ               
+      * < PF3: èIóπ >                                                           
+     C           *INKC     IFEQ '1'                        •>IFEQ               
+     C                     MOVE '1'       WEND              èIóπ                
+     C                     MOVE '0'       WLOP              LOOP END            
+     C                     MOVE '0'       WDSP              âÊñ êßå‰ END        
+     C                     END                             •<IFEQ               
+     C                     END                             <DOWEQ               
+      *                                                                         
+     C           \SCHK     ENDSR                                                
+      *===============================================================*         
+      *   ÅîÇjÇrÇm         årê¸ï\é¶                                             
+      *===============================================================*         
+      *  •-------------------------------------------------                     
+      *  | INPUT   :                                                            
+      *  | PROCESS :   årê¸ï\é¶ÇçsÇ»Ç§                                         
+      *  | OUTPUT  :                                                            
+      *  •-------------------------------------------------                     
+     C           #KSN      BEGSR                                                
+      * < årê¸èÓïÒèâä˙ê›íË >                                                    
+     C                     MOVEL*BLANK    P@LID             ◊≤Ãﬁ◊ÿ∞ID           
+     C                     MOVEL*BLANK    P@FID             Ãß≤ŸID              
+     C                     MOVEL*BLANK    P@FMT             óléÆñº              
+     C                     MOVEL*BLANK    P@CTL             êßå‰ ∫∞ƒﬁ           
+     C                     MOVEL'0'       P@RTN             ñﬂÇË ∫∞ƒﬁ           
+     C                     MOVEL'ZA     ' P@LID             ◊≤Ãﬁ◊ÿ∞ID           
+     C                     MOVEL'ZAD0040S'P@FID             Ãß≤ŸID              
+     C           WDSP      IFEQ '1'                        >IFEQ                
+     C                     MOVEL'G1K     'P@FMT             óléÆñº              
+     C                     END                             <IFEQ                
+     C           WDSP      IFEQ '2'                        >IFEQ                
+     C                     MOVEL'SFCTLK  'P@FMT             óléÆñº              
+     C                     END                             <IFEQ                
+     C                     MOVEL'WRT'     P@CTL             êßå‰ ∫∞ƒﬁ           
+      * < årê¸èàóù >                                                            
+     C*****                CALL 'CDK010 ' PLISTK            årê¸èàóù            
+      *                                                                         
+     C           \KSN      ENDSR                                                
+      *===============================================================*         
+      *   ÅîÇjÇrÇmÇmÇc     årê¸çÌèú                                             
+      *===============================================================*         
+      *  •-------------------------------------------------                     
+      *  | INPUT   :                                                            
+      *  | PROCESS :   årê¸è¡ãéÇçsÇ»Ç§                                         
+      *  | OUTPUT  :                                                            
+      *  •-------------------------------------------------                     
+     C           #KSNND    BEGSR                                                
+      * < årê¸èÓïÒèâä˙ê›íË >                                                    
+     C                     MOVEL*BLANK    P@LID             ◊≤Ãﬁ◊ÿ∞ID           
+     C                     MOVEL*BLANK    P@FID             Ãß≤ŸID              
+     C                     MOVEL*BLANK    P@FMT             óléÆñº              
+     C                     MOVEL*BLANK    P@CTL             êßå‰ ∫∞ƒﬁ           
+     C                     MOVEL'0'       P@RTN             ñﬂÇË ∫∞ƒﬁ           
+     C                     MOVEL'*ALL   ' P@LID             ◊≤Ãﬁ◊ÿ∞ID           
+     C                     MOVEL'*ALL   ' P@FID             Ãß≤ŸID              
+     C                     MOVEL'*ALL '   P@FMT             óléÆñº              
+     C                     MOVEL'RMV'     P@CTL             êßå‰ ∫∞ƒﬁ           
+      * < årê¸èàóù >                                                            
+     C****                 CALL 'CDK010 ' PLISTK            årê¸èàóù            
+      *                                                                         
+     C           \KSNND    ENDSR                                                
+      *===============================================================*         
+      *   ÅîÇlÇrÇf         ÉÅÉbÉZÅ[ÉWéÊìæ                                       
+      *===============================================================*         
+     C           #MSG      BEGSR                                                
+      * < “Øæ∞ºﬁ éÊìæ >                                                         
+     C                     CALL 'ZZZ0040R'                                      
+     C                     PARM           @0040                                 
+      *                                                                         
+     C           \MSG      ENDSR                                                
+      *==============================================================*          
+      *                    ÉeÅ[ÉuÉã                                             
+      *==============================================================*          
+**  @INF *  ∫œ›ƒﬁ∑∞ èÓïÒ                                                        
+PF1: ëÄçÏê‡ñæ PF3: èIóπ PF4: åüçı                                               
+PF1: ëÄçÏê‡ñæ PF3: èIóπ PF5: ëóÇËèÛ PF6: è⁄ç◊ PF7: éü PF8: ëO PF12: ëOâÊñ       
+**  @ZAN *  ëOåéécçÇ                                                            
+ ëOåéécçÇ                                                                       
+**  TABA1 TABB1                                                                 
+0 Å@Å@Å@                                                                        
+1 ïsó«ïi                                                                        
+2 åüç∏óv                                                                        
+**  TABA2 TABB2                                                                 
+ 1 ÉTÉìÉvÉã                                                                     
+ 2 ë°Å@íÊ                                                                       
+ 3 ìWÅ@é¶                                                                       
+ 4 îpÅ@ä¸                                                                       
+ 5 óaÅ@ÇØ                                                                       
+ 6 óaÅ@ÇË                                                                       
+ 7 ïiî‘ïœçX                                                                     
+ 8 ç›å…í≤êÆ                                                                     
+ 9 ç›å…ïœçX                                                                     
+ K äÒÅ@ït                                                                       
+ A ëgÅ@óß                                                                       
+ B âÅ@ëÃ                                                                       
+ C êUÅ@ë÷                                                                       
+ Z íIâµí≤êÆ                                                                     
+ S Ç`Å@Çl                                                                       
+ T å≈íËéëéY                                                                     
+ ∂ ï‘ïiâﬂèË                                                                     
+0                                                                               
+0                                                                               
+0                                                                               
+A1 ã@äBê›íu                                                                     
+A2 ã@äBà¯è„                                                                     
+A3 è§ïiï‚è[                                                                     
+A4 è§ïià¯éÊ                                                                     
+A5 åiïiï‚è[                                                                     
+A6 åiïià¯éÊ                                                                     
+A7 íSìñéùèo                                                                     
+A8 íSìñéùèo                                                                     
+A9                                                                              
+A0                                                                              
+AA⁄›¿Ÿ éÿì¸                                                                     
+AB⁄›¿Ÿ ï‘ãp                                                                     
+AC ésèÍì¸å…                                                                     
+AD ésèÍèoå…                                                                     
+A                                                                               
+A                                                                               
+A                                                                               
+A                                                                               
+A                                                                               
+A                                                                               

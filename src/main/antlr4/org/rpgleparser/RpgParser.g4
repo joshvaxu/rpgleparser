@@ -2,6 +2,25 @@ parser grammar RpgParser;
 
 options { tokenVocab = RpgLexer; }
 
+@members {
+    private Boolean rpg400Dialect = null;
+
+    /**
+     * True when the source being parsed is RPG/400 (RPG III) fixed format.
+     * Reads the dialect flag from the lexer through the token-source chain.
+     */
+    public boolean rpg400() {
+        if (rpg400Dialect == null) {
+            org.antlr.v4.runtime.TokenSource ts = _input.getTokenSource();
+            while (ts instanceof org.rpgleparser.tokens.TransformTokenSource) {
+                ts = ((org.rpgleparser.tokens.TransformTokenSource) ts).getTokenSource();
+            }
+            rpg400Dialect = (ts instanceof RpgLexer) && ((RpgLexer) ts).rpg400;
+        }
+        return rpg400Dialect;
+    }
+}
+
 r: (dcl_pr 
 	| dcl_pi
 	| ctl_opt
@@ -21,12 +40,17 @@ statement:
   	| ospec_fixed
 	| fspec 
 	| fspec_fixed 
+	| fspec_fixed_r400
 	| block
 	| cspec_fixed
 	| blank_spec
 	| cspec_fixed_sql
 	| ispec_fixed 
+	| ispec_fixed_r400
+	| espec_fixed_r400
+	| dds_spec
 	| hspec_fixed
+	| hspec_fixed_r400
 	| star_comments
 	| free_linecomments
 	| blank_line 
@@ -304,8 +328,10 @@ ifstatement:
 casestatement:
 	((CS_FIXED
 	cspec_continuedIndicators*
-	cs_controlLevel 
-	indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators factor1=factor)
+	( cs_controlLevelR400
+	| cs_controlLevel indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators
+	)
+	factor1=factor)
 	(csCASEQ
 	| csCASNE
 	| csCASLE
@@ -318,8 +344,10 @@ casestatement:
 casestatementend:
 	CS_FIXED
 	cspec_continuedIndicators*
-	cs_controlLevel 
-	indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators factor1=factor
+	( cs_controlLevelR400
+	| cs_controlLevel indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators
+	)
+	factor1=factor
 	(csEND | csENDCS)
 ;
 
@@ -380,11 +408,11 @@ other:
 beginselect:
 	(CS_FIXED
 	cspec_continuedIndicators*
-	cs_controlLevel 
-	indicatorsOff=onOffIndicatorsFlag 
-	indicators=cs_indicators 
+	( cs_controlLevelR400
+	| cs_controlLevel indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators
+	)
 	factor1=factor 
-	csSELECT
+	(csSELECT | csSELEC)
 	)
 	| (op_select FREE_SEMI free_linecomments? )
 ;
@@ -399,9 +427,9 @@ whenstatement:
 when:
 	(CS_FIXED
 	cspec_continuedIndicators*
-	cs_controlLevel 
-	indicatorsOff=onOffIndicatorsFlag 
-	indicators=cs_indicators 
+	( cs_controlLevelR400
+	| cs_controlLevel indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators
+	)
 	factor1=factor 
 	csWHEN
 	)
@@ -411,14 +439,18 @@ when:
 csWHENxx:
 CS_FIXED
 	cspec_continuedIndicators*
-	cs_controlLevel 
-	indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators factor1=factor 
+	( cs_controlLevelR400
+	| cs_controlLevel indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators
+	)
+	factor1=factor 
 	 (csWHENEQ
 	| csWHENNE
 	| csWHENLE
 	| csWHENLT
 	| csWHENGE
-	| csWHENGT)
+	| csWHENGT
+	| csWHEQ
+	| csWHNE)
 	andConds=csANDxx*
 	orConds=csORxx*
 ;
@@ -427,8 +459,10 @@ endselect:
 	(
 	CS_FIXED
 	cspec_continuedIndicators*
-	cs_controlLevel 
-	indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators factor1=factor 
+	( cs_controlLevelR400
+	| cs_controlLevel indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators
+	)
+	factor1=factor 
 	(csEND | csENDSL)
 	)
 	| (op_endsl FREE_SEMI free_linecomments? );
@@ -450,8 +484,10 @@ beginif:
 begindou:
     (CS_FIXED
 	cspec_continuedIndicators*
-	cs_controlLevel 
-	indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators factor1=factor 
+	( cs_controlLevelR400
+	| cs_controlLevel indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators
+	)
+	factor1=factor 
 	csDOU
 	)
 	| (op_dou FREE_SEMI free_linecomments?)
@@ -459,8 +495,10 @@ begindou:
 begindow:
     (CS_FIXED
 	cspec_continuedIndicators*
-	cs_controlLevel 
-	indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators factor1=factor 
+	( cs_controlLevelR400
+	| cs_controlLevel indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators
+	)
+	factor1=factor 
 	csDOW
 	)
 	| (op_dow FREE_SEMI free_linecomments?)
@@ -468,8 +506,10 @@ begindow:
 begindo:
     (CS_FIXED
 	cspec_continuedIndicators*
-	cs_controlLevel 
-	indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators factor1=factor 
+	( cs_controlLevelR400
+	| cs_controlLevel indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators
+	)
+	factor1=factor 
 	csDO
 	)
 	| (op_dow FREE_SEMI free_linecomments?)
@@ -505,8 +545,10 @@ elsestmt:
 csIFxx:
 CS_FIXED
 	cspec_continuedIndicators*
-	cs_controlLevel 
-	indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators factor1=factor 
+	( cs_controlLevelR400
+	| cs_controlLevel indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators
+	)
+	factor1=factor 
 	 (csIFEQ
 	| csIFNE
 	| csIFLE
@@ -519,8 +561,10 @@ CS_FIXED
 csDOUxx:
 CS_FIXED
 	cspec_continuedIndicators*
-	cs_controlLevel 
-	indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators factor1=factor 
+	( cs_controlLevelR400
+	| cs_controlLevel indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators
+	)
+	factor1=factor 
 	 (csDOUEQ
 	| csDOUNE
 	| csDOULE
@@ -534,8 +578,10 @@ CS_FIXED
 csDOWxx:
 CS_FIXED
 	cspec_continuedIndicators*
-	cs_controlLevel 
-	indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators factor1=factor 
+	( cs_controlLevelR400
+	| cs_controlLevel indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators
+	)
+	factor1=factor 
 	 (csDOWEQ
 	| csDOWNE
 	| csDOWLE
@@ -554,8 +600,10 @@ complexCondxx:
 csANDxx:
 CS_FIXED
 	cspec_continuedIndicators*
-	cs_controlLevel 
-	indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators factor1=factor 
+	( cs_controlLevelR400
+	| cs_controlLevel indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators
+	)
+	factor1=factor 
 	(csANDEQ
 	| csANDNE
 	| csANDLE
@@ -568,8 +616,10 @@ CS_FIXED
 csORxx:
 CS_FIXED
 	cspec_continuedIndicators*
-	cs_controlLevel 
-	indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators factor1=factor 
+	( cs_controlLevelR400
+	| cs_controlLevel indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators
+	)
+	factor1=factor 
 	(csOREQ
 	| csORNE
 	| csORLE
@@ -601,8 +651,10 @@ endif:
 	(
 	CS_FIXED
 	cspec_continuedIndicators*
-	cs_controlLevel 
-	indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators factor1=factor 
+	( cs_controlLevelR400
+	| cs_controlLevel indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators
+	)
+	factor1=factor 
 	(csEND | csENDIF)
 	)
 	| (op_endif FREE_SEMI free_linecomments? );
@@ -611,8 +663,10 @@ enddo:
 	(
 	CS_FIXED
 	cspec_continuedIndicators*
-	cs_controlLevel 
-	indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators factor1=factor 
+	( cs_controlLevelR400
+	| cs_controlLevel indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators
+	)
+	factor1=factor 
 	(csEND | csENDDO)
 	)
 	| (op_enddo FREE_SEMI free_linecomments? );	
@@ -765,9 +819,21 @@ fspec_fixed: FS_FIXED FS_RecordName FS_Type FS_Designation FS_EndOfFile FS_Addut
 cspec_fixed:
 	CS_FIXED
 	cspec_continuedIndicators*
-	cs_controlLevel 
-	indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators factor1=factor 
+	( cs_controlLevelR400
+	| cs_controlLevel indicatorsOff=onOffIndicatorsFlag indicators=cs_indicators
+	)
+	factor1=factor 
 	(cspec_fixed_standard|cspec_fixed_x2);
+
+cs_controlLevelR400:
+	{ rpg400() }? BlankIndicator (BlankFlag | NoFlag) (GeneralIndicator | GeneralIndicatorR400) (GeneralIndicator | GeneralIndicatorR400)? (GeneralIndicator | GeneralIndicatorR400)?
+	| { rpg400() }? BlankIndicator (BlankFlag | NoFlag) BlankIndicator (GeneralIndicator | GeneralIndicatorR400)?
+	| { rpg400() }? CS_R400_IndFlag12 (GeneralIndicator | GeneralIndicatorR400)?
+	| { rpg400() }? BlankIndicator (GeneralIndicator | GeneralIndicatorR400)?
+	| { rpg400() }? CS_R400_Ind13 (GeneralIndicator | GeneralIndicatorR400)?
+	| { rpg400() }? (AndIndicator | OrIndicator) (BlankFlag | NoFlag) (GeneralIndicator | GeneralIndicatorR400) (GeneralIndicator | GeneralIndicatorR400)?
+	| { rpg400() }? (AndIndicator | OrIndicator) (BlankFlag | NoFlag) (GeneralIndicator | GeneralIndicatorR400)
+	| { rpg400() }? (AndIndicator | OrIndicator);
 
 cspec_continuedIndicators:
 	cs_controlLevel 
@@ -880,10 +946,12 @@ freeENDSR:
 	
 onOffIndicatorsFlag:
     BlankFlag
-    | NoFlag;
+    | NoFlag
+    | CS_R400_IndFlag12;
 
 cs_controlLevel:
-    BlankIndicator
+    BlankIndicator (GeneralIndicatorR400 | GeneralIndicator)?
+	| CS_R400_IndFlag12
 	| ControlLevel0Indicator
 	| ControlLevelIndicator
 	| LastRecordIndicator
@@ -892,8 +960,11 @@ cs_controlLevel:
 	| OrIndicator
 ;
 cs_indicators:
-BlankIndicator
+CS_R400_Ind13
+	| BlankIndicator
 	| GeneralIndicator
+	| GeneralIndicatorR400
+	| CS_R400_IndFlag12
 	| ControlLevelIndicator
 	| FunctionKeyIndicator 
 	| LastRecordIndicator
@@ -919,7 +990,17 @@ cspec_fixed_sql: CS_ExecSQL
 	CSQL_TEXT+
 	CSQL_END;
 cspec_fixed_standard: 
-	csACQ
+	// RPG/400 blank operation code (repeat-previous semantics): parse as a no-op
+	{ rpg400() }? CS_OperationAndExtender
+	factor2=factor
+	result=resultType
+	len=CS_FieldLength
+	decimalPositions=CS_DecimalPositions
+	hi=resultIndicator
+	lo=resultIndicator
+	eq=resultIndicator
+	cs_fixed_comments? (EOL|EOF)
+	| csACQ
 	| csADD
 	| csADDDUR
 	| csALLOC
@@ -960,7 +1041,7 @@ cspec_fixed_standard:
 	| csDEFINE
 	| csDELETE
 	| csDIV
-	| csDO
+	//| csDO
 	//| csDOU
 	//| csDOUEQ
 	//| csDOUNE
@@ -986,7 +1067,6 @@ cspec_fixed_standard:
 	//| csENDIF
 	//| csENDMON
 	//| csENDSL
-	//| csENDSR
 	| csEVAL
 	| csEVAL_CORR
 	| csEVALR
@@ -1048,10 +1128,19 @@ cspec_fixed_standard:
 	| csROLBK
 	| csSCAN
 	//| csSELECT
+	//| csSELEC
 	| csSETGT
 	| csSETLL
 	| csSETOFF
+	| csSETOF
 	| csSETON
+	| csLOKUP
+	| csRETRN
+	| csREDPE
+	| csBITOF
+	| csDELET
+	| csUPDAT
+	| csDEFN
 	| csSHTDN
 	| csSORTA
 	| csSQRT
@@ -1445,7 +1534,7 @@ csMOVE:
 csMOVEA:
 	operation=OP_MOVEA
 	operationExtender=cs_operationExtender? 
-	cspec_fixed_standard_parts;
+	cspec_fixed_standard_parts (SPLAT_IN | SPLAT_ALL)?;
 csMOVEL:
 	operation=OP_MOVEL
 	operationExtender=cs_operationExtender? 
@@ -1583,6 +1672,42 @@ csSETOFF:
 csSETON:
 	operation=OP_SETON
 	cspec_fixed_standard_parts;
+csLOKUP:
+	operation=OP_LOKUP
+	cspec_fixed_standard_parts;
+csRETRN:
+	operation=OP_RETRN
+	cspec_fixed_standard_parts;
+csSETOF:
+	operation=OP_SETOF
+	cspec_fixed_standard_parts;
+csWHEQ:
+	operation=OP_WHEQ
+	cspec_fixed_standard_parts;
+csWHNE:
+	operation=OP_WHNE
+	cspec_fixed_standard_parts;
+csREDPE:
+	operation=OP_REDPE
+	operationExtender=cs_operationExtender?
+	cspec_fixed_standard_parts;
+csBITOF:
+	operation=OP_BITOF
+	cspec_fixed_standard_parts;
+csDELET:
+	operation=OP_DELET
+	operationExtender=cs_operationExtender?
+	cspec_fixed_standard_parts;
+csUPDAT:
+	operation=OP_UPDAT
+	operationExtender=cs_operationExtender?
+	cspec_fixed_standard_parts;
+csDEFN:
+	operation=OP_DEFN
+	cspec_fixed_standard_parts;
+csSELEC:
+	operation=OP_SELEC
+	cspec_fixed_standard_parts;
 csSHTDN:
 	operation=OP_SHTDN
 	cspec_fixed_standard_parts;
@@ -1692,13 +1817,13 @@ cs_operationExtender:
   extender4=CS_OperationAndExtender?
   CLOSE_PAREN;	
 factor:
-   content=factorContent (COLON (content2=factorContent | constant2=symbolicConstants))? | CS_BlankFactor | constant=symbolicConstants literal?;
+   content=factorContent (COLON (content2=factorContent | constant2=symbolicConstants))? | CS_BlankFactor | (GeneralIndicator | GeneralIndicatorR400) | constant=symbolicConstants literal?;
    
 factorContent:
 CS_FactorContent | literal;
 
 resultType:	
-   CS_FactorContent (COLON (constant=symbolicConstants))?  | CS_BlankFactor;
+   CS_FactorContent (COLON (constant=symbolicConstants))?  | CS_BlankFactor | (SPLAT_IN | SPLAT_ALL);
 cs_fixed_comments:CS_FixedComments;		
 //cs_fixed_x2: CS_OperationAndExtendedFactor2 C2_FACTOR2_CONT* C2_FACTOR2 C_EOL;
 cspec_fixed_x2: csOperationAndExtendedFactor2 fixedexpression=c_free (C_FREE_NEWLINE | EOF);
@@ -1711,8 +1836,38 @@ csOperationAndExtendedFactor2:
 	//|operation=OP_ELSEIF
 	;
 
-ispec_fixed: IS_FIXED 
-	((IS_FileName
+// -------- RPG/400 (RPG III) fixed specifications --------
+fspec_fixed_r400:
+	FS_FIXED_R400 FS_RecordName FS_Type FS_Designation FS_EndOfFile FS_Addution FS_Format?
+	FR_RecName? FR_Mid FR_RAddr FR_Blank FR_Device FR_KwBlank?
+	(FR_KRENAME FR_KwName?
+	| FR_KINFDS FR_KwName?
+	| FR_KSFILE FR_KwName?)?
+	(EOL|EOF);
+	
+ispec_fixed_r400:
+	IS_FIXED_R400
+	( IR_Name (IR_82 | IR_DS | IR_SubName)?
+	| IR_Name? IR_DS (IR_Len | IR_To | IR_DSLength)? (IR_FieldName | IR_SubName)?
+	| IR_SubName? IR_FieldName
+	| IR_To IR_FieldName?
+	| CS_R400_IndFlag12
+	)
+	(EOL|EOF);
+
+espec_fixed_r400:
+	ES_FIXED_R400
+	(EOL|EOF);
+
+dds_spec:
+	DDS_SPEC
+	;
+	
+hspec_fixed_r400:
+	HS_FIXED_R400
+	(EOL|EOF);
+
+ispec_fixed: IS_FIXED  	((IS_FileName
 	//IS_LogicalRelationship
 		(is_external_rec
 		|is_rec)

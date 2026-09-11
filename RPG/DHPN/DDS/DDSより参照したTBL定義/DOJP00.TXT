@@ -1,0 +1,296 @@
+      *****************************************************************         
+      * USER-NAME    :  ハピネット                                    *         
+      * FILE-NAME    :  送り状データ　　　　　　　　　　　　　　　　 ?*         
+      * FILE-ID      :  ＤＯＪＰ００                                  *         
+      * SOFT-HOUSE   :  ㈱ＩＣＲ                                      *         
+      * AUTHOR       :  S.T                                           *         
+      * CREATE       :  94/08/02                                      *         
+      * AUTHOR       :  K.ITOU                                        *         
+      * UPDATE       :  96/04/20                                      *         
+      *****************************************************************         
+     A          R OJREC                     TEXT(' 送り状データ ')              
+      *                                                                         
+     A            OJDEL          1A         COLHDG(' 削除区分 ')                
+     A            OJFID          2A         COLHDG(' 識別 "OJ" ')               
+      * KEY                                                                     
+     A            OJJNO          8A         COLHDG(' 送状№ ')                  
+     A            OJJGY          4A         COLHDG(' 送状行№ ')                
+      *                                                                         
+     A            OJKJD1         6S 0       COLHDG(' 年月 ' ' 売上計上日 ')     
+     A            OJKJD2         2S 0       COLHDG(' 日　 ' ' 売上計上日 ')     
+     A            OJRKK          1A         COLHDG(' 来勘区分 ')                
+     A            OJDST          2A         COLHDG(' 会社 ')                    
+     A            OJGIB          2A         COLHDG(' 事業部 ')                  
+     A            OJBUM          3A         COLHDG(' 部門 ')                    
+     A            OJBUK          3A         COLHDG(' 部課 ')                    
+     A            OJBUKG         3A         COLHDG(' 部課ＧＲ ')                
+     A            OJBUKK         3A         COLHDG(' 管理会計部課 ')            
+      *                                                                         
+     A            OJTRKK         1A         COLHDG(' 取引先区分 ' ' 契約業者 ') 
+     A            OJTRCK         7A         COLHDG(' 法人　　　 ' ' 契約業者 ') 
+     A            OJTRSK         4A         COLHDG(' 支店　　　 ' ' 契約業者 ') 
+     A            OJTRUK         1A         COLHDG(' 売場　　　 ' ' 契約業者 ') 
+      *                                                                         
+     A            OJTRKL         1A         COLHDG(' 取引先区分 ' ' 出荷業者 ') 
+     A            OJTRCL         7A         COLHDG(' 法人　　　 ' ' 出荷業者 ') 
+     A            OJTRSL         4A         COLHDG(' 支店　　　 ' ' 出荷業者 ') 
+     A            OJTRUL         1A         COLHDG(' 売場　　　 ' ' 出荷業者 ') 
+      *                                                                         
+     A            OJTNO1        15A         COLHDG(' 問合せ№ ' ' 出荷業者 ')   
+     A            OJTE1          3S 0       COLHDG(' 問合せ№枝 ' ' 出荷業者 ') 
+     A            OJTCD1         1A         COLHDG(' 問合せ№ CD' ' 出荷業者 ') 
+      *                                                                         
+     A            OJNNK         11A         COLHDG(' 荷主 CD' ' 契約業者 ')     
+     A            OJNEK          3A         COLHDG(' 荷主枝番 ' ' 契約業者 ')   
+     A            OJNNL         11A         COLHDG(' 荷主 CD' ' 出荷業者 ')     
+     A            OJNEL          3A         COLHDG(' 荷主枝番 ' ' 出荷業者 ')   
+      *                                                                         
+     A            OJSOK          3A         COLHDG(' 倉庫 ')                    
+     A            OJZBK          3A         COLHDG(' 在庫部課 ')                
+      *                                                                         
+     A            OJYM1          6S 0       COLHDG(' 年月 ' ' 出荷 ')           
+     A            OJDD1          2S 0       COLHDG(' 日   ' ' 出荷 ')           
+     A            OJYM2          6S 0       COLHDG(' 年月 ' ' 配達日 ')         
+     A            OJDD2          2S 0       COLHDG(' 日   ' ' 配達日 ')         
+     A            OJSYD1         6S 0       COLHDG(' 年月 ' ' 処理日 ')         
+     A            OJSYD2         2S 0       COLHDG(' 日   ' ' 処理日 ')         
+      *                                                                         
+     A            OJNO1          8A         COLHDG(' 伝№１ ')                  
+     A            OJGY1          4A         COLHDG(' 行№１ ')                  
+07.19A            OJNO2          8A         COLHDG('ﾋﾟｯｷﾝｸﾞ № ')               
+     A            OJGY2          4A         COLHDG(' 行№２ ')                  
+      *                                                                         
+     A            OJKSU          7P 0       COLHDG(' 個口数 ')                  
+     A            OJSASG         7P 2       COLHDG(' 載数 ')                    
+     A            OJJYU          7P 2       COLHDG(' 重量 ')                    
+      *                                                                         
+     A            OJTRKT         1A         COLHDG(' 取引先区分 ' ' 得意先 ')   
+     A            OJTRCT         7A         COLHDG(' 法人　　　 ' ' 得意先 ')   
+     A            OJTRST         4A         COLHDG(' 支店　　　 ' ' 得意先 ')   
+     A            OJTRUT         1A         COLHDG(' 売場　　　 ' ' 得意先 ')   
+      *                                                                         
+     A            OJTRKY         1A         COLHDG(' 取引先区分 ' ' 出荷先 ')   
+     A            OJTRCY         7A         COLHDG(' 法人　　　 ' ' 出荷先 ')   
+     A            OJTRSY         4A         COLHDG(' 支店　　　 ' ' 出荷先 ')   
+     A            OJTRUY         1A         COLHDG(' 売場　　　 ' ' 出荷先 ')   
+      *                                                                         
+     A            OJKB01         1A         COLHDG(' 区分 FIL01 ')              
+     A            OJKB02         1A         COLHDG(' 経路 ')                    
+     A            OJKB03         1A         COLHDG(' 伝票区分 ')                
+     A            OJKB04         1A         COLHDG(' 伝票発行 ')                
+     A            OJKB05         1A         COLHDG(' 中継区分 1')               
+     A            OJKB06         1A         COLHDG(' 中継区分 2')               
+     A            OJKB07         1A         COLHDG(' 中継区分 3')               
+     A            OJKB08         1A         COLHDG(' 営業止め ')                
+      *                                                                         
+     A            OJTDFS         2A         COLHDG(' JIS 発店 ' ' 都道府県 ')   
+     A            OJCTYS         3A         COLHDG(' JIS 発店 ' ' 市町村 ')     
+     A            OJTDFE         2A         COLHDG(' JIS 着店 ' ' 都道府県 ')   
+     A            OJCTYE         3A         COLHDG(' JIS 着店 ' ' 市町村 ')     
+      *                                                                         
+     A            OJSTNK         5A         COLHDG(' 発店 ' ' 契約業者 ')       
+     A            OJETNK         5A         COLHDG(' 着店 ' ' 契約業者 ')       
+     A            OJSTNL         5A         COLHDG(' 発店 ' ' 出荷業者 ')       
+     A            OJETNL         5A         COLHDG(' 着店 ' ' 出荷業者 ')       
+      *                                                                         
+     A            OJSSSK         5A         COLHDG(' 発店精算 ' ' 契約業者 ')   
+     A            OJSSEK         5A         COLHDG(' 着店精算 ' ' 契約業者 ')   
+     A            OJSSSL         5A         COLHDG(' 発店精算 ' ' 出荷業者 ')   
+     A            OJSSEL         5A         COLHDG(' 着店精算 ' ' 出荷業者 ')   
+      *                                                                         
+     A            OJHSR          4A         COLHDG(' 配送 ﾙｰﾄ')                 
+     A            OJDSBN         2A         COLHDG(' 荷札種別 ')                
+     A            OJDSBO         2A         COLHDG(' 送状種別 ')                
+     A            OJBLK          3A         COLHDG(' ﾌﾞﾛｯｸ ')                   
+     A            OJBLY          4A         COLHDG(' ﾌﾞﾛｯｸ 予備 ')              
+      *                                                                         
+     A            OJKN1          7P 0       COLHDG(' 運賃 ')                    
+     A            OJKN2          7P 0       COLHDG(' 代引手数料 ')              
+     A            OJKN3          7P 0       COLHDG(' 保険 ')                    
+     A            OJKN4          7P 0       COLHDG(' 中継料 ')                  
+     A            OJKN5          7P 0       COLHDG(' 立替金 ')                  
+     A            OJZE1          7P 0       COLHDG(' 消費税 1')                 
+     A            OJZE2          7P 0       COLHDG(' 消費税 2')                 
+      *                                                                         
+     A            OJSKN1         7P 0       COLHDG(' 請求運賃 ')                
+     A            OJSKN2         7P 0       COLHDG(' 請求代引手数料 ')          
+     A            OJSKN3         7P 0       COLHDG(' 請求保険 ')                
+     A            OJSKN4         7P 0       COLHDG(' 請求中継料 ')              
+     A            OJSKN5         7P 0       COLHDG(' 請求立替金 ')              
+     A            OJSZE1         7P 0       COLHDG(' 請求消費税 1')             
+     A            OJSZE2         7P 0       COLHDG(' 請求消費税 2')             
+      *                                                                         
+     A            OJKJ          22J         COLHDG(' 記事 ')                    
+      *                                                                         
+     A            OJSMKM         1A         COLHDG(' 締処理区分　　 ' +         
+     A                                             ' 締処理 ﾏｽﾀ 情報 ')         
+     A            OJSMBM         2S 0       COLHDG(' 締日　　　　　 ' +         
+     A                                             ' 締処理 ﾏｽﾀ 情報 ')         
+     A            OJSKDM         9P 0       COLHDG(' 締切日　　　　 ' +         
+     A                                             ' 締処理 ﾏｽﾀ 情報 ')         
+      *                                                                         
+     A            OJUPT          1A         COLHDG(' 更新 ｴﾘｱ       ' +         
+     A                                             ' 締処理 ﾄﾗﾝ 情報 ')         
+     A            OJSMBT         2S 0       COLHDG(' 締日　　　　　 ' +         
+     A                                             ' 締処理 ﾄﾗﾝ 情報 ')         
+     A            OJSQD1         6S 0       COLHDG(' 年月　請求日　 ' +         
+     A                                             ' 締処理 ﾄﾗﾝ 情報 ')         
+     A            OJSQD2         2S 0       COLHDG(' 日　　請求日　 ' +         
+     A                                             ' 締処理 ﾄﾗﾝ 情報 ')         
+      *                                                                         
+     A            OJTRKQ         1A         COLHDG(' 取引先区分 ' ' 精算先 ')   
+     A            OJTRCQ         7A         COLHDG(' 法人　　　 ' ' 精算先 ')   
+     A            OJTRSQ         4A         COLHDG(' 支店　　　 ' ' 精算先 ')   
+     A            OJTRUQ         1A         COLHDG(' 売場　　　 ' ' 精算先 ')   
+      *                                                                         
+     A            OJFIL1         1A         COLHDG(' 問合せ№採番 ｴﾗｰ ')        
+      *                                                                         
+     A            OJSZKT         1A         COLHDG(' 消費税区分 ' +             
+     A                                             ' 取引先情報 ')              
+     A            OJZRKT         1A         COLHDG(' 税率区分　 ' +             
+     A                                             ' 取引先情報 ')              
+     A            OJZSKT         1A         COLHDG(' 税算出区分 ' +             
+     A                                             ' 取引先情報 ')              
+      *                                                                         
+     A            OJMMK          1A         COLHDG(' 金額 ' ' 丸め区分 ' +      
+     A                                             ' 取引先情報 ')              
+     A            OJMMS          1A         COLHDG(' 消費税 ' ' 丸め区分 ' +    
+     A                                             ' 取引先情報 ')              
+      *                                                                         
+     A            OJMKK          1A         COLHDG(' 金額 ' ' 丸め桁数 ' +      
+     A                                             ' 取引先情報 ')              
+     A            OJMKS          1A         COLHDG(' 消費税 ' ' 丸め桁数 ' +    
+     A                                             ' 取引先情報 ')              
+     A            OJKB18         1A         COLHDG(' 出荷サブ区分 ')            
+.....A            OJKB19         1A         COLHDG(' 荷札区分 ')                
+     A            OJKB20         1A         COLHDG(' 区分 20 ')                 
+     A            OJKB21         1A         COLHDG(' 区分 21 ')                 
+     A            OJKB22         1A         COLHDG(' 区分 22 ')                 
+     A            OJKB23         1A         COLHDG(' 区分 23 ')                 
+     A            OJKB24         1A         COLHDG(' 区分 24 ')                 
+     A            OJKB25         1A         COLHDG(' 区分 25 ')                 
+      *                                                                         
+     A            OJMTDN         8A         COLHDG(' 伝№ ' ' 元伝情報 ')       
+     A            OJMTGY         4A         COLHDG(' 伝行№ ' ' 元伝情報 ')     
+     A            OJTEK          1A         COLHDG(' 訂正区分 ' ' 元伝情報 ')   
+     A            OJMTD          9P 0       COLHDG(' 伝票日付 ' ' 元伝情報 ')   
+      *                                                                         
+.....A            OJADR1        32O         COLHDG(' 届先住所 (1)')             
+.....A            OJADR2        32O         COLHDG(' 届先住所 (2)')             
+.....A            OJADR3        32O         COLHDG(' 届先住所 (2)')             
+.....A            OJTJ1         32O         COLHDG(' 届先名称 (1)')             
+.....A            OJTJ2         32O         COLHDG(' 届先名称 (2)')             
+     A            OJTEL         20A         COLHDG(' 届先電話番号 ')            
+      *                                                                         
+     A            OJTRK1         1A         COLHDG(' 取引先区分 ' ' 契約法人 ') 
+     A            OJTRC1         7A         COLHDG(' 法人　　　 ' ' 契約法人 ') 
+     A            OJTRS1         4A         COLHDG(' 支店　　　 ' ' 契約法人 ') 
+     A            OJTRU1         1A         COLHDG(' 売場　　　 ' ' 契約法人 ') 
+      *                                                                         
+     A            OJTRK2         1A         COLHDG(' 取引先区分 ' ' 出荷法人 ') 
+     A            OJTRC2         7A         COLHDG(' 法人　　　 ' ' 出荷法人 ') 
+     A            OJTRS2         4A         COLHDG(' 支店　　　 ' ' 出荷法人 ') 
+     A            OJTRU2         1A         COLHDG(' 売場　　　 ' ' 出荷法人 ') 
+      *                                                                         
+     A            OJTNO2        15A         COLHDG(' 問合№親 ' ' 出荷業者 ')   
+     A            OJTE2          3S 0       COLHDG(' 問合№親枝 ' ' 出荷業者 ') 
+     A            OJTCD2         1A         COLHDG(' 問合№親 CD' ' 出荷業者 ') 
+      *                                                                         
+     A            OJHSD          9P 0       COLHDG(' 発送日 ')                  
+     A            OJGKD          9P 0       COLHDG(' 限界日 ')                  
+     A            OJCSU          7P 0       COLHDG(' ﾁｬ-ﾀ 便台数 ')             
+     A            OJSSU          7P 0       COLHDG(' 出荷数量 ')                
+     A            OJPL1          1S 0       COLHDG(' ﾌﾟﾗｽ1 ')                   
+     A            OJNNO         10A         COLHDG(' 納入明細№ ')              
+     A            OJTNO3        15A         COLHDG(' 問合せ№ ' ' （訂正） ')   
+     A            OJTE3          3S 0       COLHDG(' 問合せ№枝 ' ' （訂正） ') 
+     A            OJTCD3         1A         COLHDG(' 問合せ№ CD' ' （訂正） ') 
+      *                                                                         
+     A            OJSSU4         7P 0       COLHDG(' 消費税率 ')                
+     A            OJJBKD         9P 0       COLHDG(' 消費税率 ' +               
+     A                                            ' 基準採用日 ')               
+     A            OJSKET         2S 0       COLHDG(' CD 総桁数 ')               
+     A            OJFL2          8A         COLHDG(' 送状№ ﾌﾟﾙｰﾌ 用 ')         
+      *                                                                         
+     A            OJPC01         1A         COLHDG(' 荷札 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')      
+     A            OJPC02         1A         COLHDG(' 送状 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')      
+     A            OJPC03         1A         COLHDG(' 送状集約 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')  
+     A            OJPC04         1A         COLHDG(' 伝送 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')      
+     A            OJPC05         1A         COLHDG('  ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')          
+     A            OJPC06         1A         COLHDG('  ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')          
+     A            OJPC07         1A         COLHDG(' ｺｽﾄ 管理抽出済 ')          
+     A            OJPC08         1A         COLHDG('  ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')          
+     A            OJPC09         1A         COLHDG('  ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')          
+     A            OJPC10         1A         COLHDG('  ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')          
+      *                                                                         
+     A            OJKB31         1A         COLHDG(' 運賃計算 ')                
+     A            OJKB32         1A         COLHDG('ﾁｬｰﾀ 便 ')                  
+     A            OJKB33         1A         COLHDG('ﾃﾞｰﾀ 発生 ')                
+     A            OJKB34         1A         COLHDG(' 出荷種別 ')                
+     A            OJKB35         1A         COLHDG(' 伝票取扱 ')                
+     A            OJKB36         1A         COLHDG(' 送状要 ')                  
+     A            OJKB37         1A         COLHDG(' 荷札要 ')                  
+     A            OJKB38         1A         COLHDG(' ｾﾝﾀｰ 納品 ')               
+     A            OJKB39         1A         COLHDG(' 伝送要 ')                  
+     A            OJKB40         1A         COLHDG(' 親子 ')                    
+     A            OJKB41         1A         COLHDG(' 経費 ')                    
+CHG  A            OJKB42         1A         COLHDG(' 代引き区分 ')              
+BTC2 A            OJKB43         1A         COLHDG(' 配送便種別 ')              
+     A            OJKB44         1A         COLHDG(' ４４ ')                    
+     A            OJKB45         1A         COLHDG(' 運賃支払 ﾁｪｯｸﾘｽﾄ ')        
+      *                                                                         
+     A            OJUP01         1A         COLHDG(' ｵﾝﾗｲﾝ    ' ' 更新 ｺﾝﾄﾛｰﾙ') 
+     A            OJUP02         1A         COLHDG(' 日次　　 ' ' 更新 ｺﾝﾄﾛｰﾙ') 
+     A            OJUP03         1A         COLHDG(' 月次　　 ' ' 更新 ｺﾝﾄﾛｰﾙ') 
+     A            OJUP04         1A         COLHDG(' 年次　　 ' ' 更新 ｺﾝﾄﾛｰﾙ') 
+     A            OJUP05         1A         COLHDG(' 締時　　 ' ' 更新 ｺﾝﾄﾛｰﾙ') 
+     A            OJUP06         1A         COLHDG(' 会計　　 ' ' 更新 ｺﾝﾄﾛｰﾙ') 
+     A            OJUP07         1A         COLHDG('  ' ' 更新 ｺﾝﾄﾛｰﾙ')         
+     A            OJUP08         1A         COLHDG('  ' ' 更新 ｺﾝﾄﾛｰﾙ')         
+     A            OJUP09         1A         COLHDG('  ' ' 更新 ｺﾝﾄﾛｰﾙ')         
+     A            OJUP10         1A         COLHDG('  ' ' 更新 ｺﾝﾄﾛｰﾙ')         
+     A            OJUP11         1A         COLHDG('  ' ' 更新 ｺﾝﾄﾛｰﾙ')         
+     A            OJUP12         1A         COLHDG(' 未払先 M  ' ' 更新 ｺﾝﾄﾛｰﾙ')
+      * ( CPU 情報 )                                                            
+     A            OJCP01         1A         COLHDG(' 設定　　　　 ' 'CPU 区分 ')
+     A            OJCP02         1A         COLHDG(' 倉庫物理　　 ' 'CPU 区分 ')
+     A            OJCP03         1A         COLHDG(' 部課物理　　 ' 'CPU 区分 ')
+     A            OJCP04         1A         COLHDG(' 相手倉庫物理 ' 'CPU 区分 ')
+     A            OJCP05         1A         COLHDG(' 相手部課物理 ' 'CPU 区分 ')
+     A            OJCP06         1A         COLHDG(' 請求物理　　 ' 'CPU 区分 ')
+     A            OJCP07         1A         COLHDG(' 倉庫親　　　 ' 'CPU 区分 ')
+     A            OJCP08         1A         COLHDG(' 相手倉庫親　 ' 'CPU 区分 ')
+     A            OJCP09         1A         COLHDG(' 部課処理　　 ' 'CPU 区分 ')
+     A            OJCP10         1A         COLHDG(' 相手部課処理 ' 'CPU 区分 ')
+      * ( 配信 ｺﾝﾄﾛｰﾙ )                                                         
+     A            OJHK01         1A         COLHDG(' 東京　　 ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+     A            OJHK02         1A         COLHDG(' 大阪　　 ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+     A            OJHK03         1A         COLHDG(' FIL      ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+     A            OJHK04         1A         COLHDG(' FIL      ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+     A            OJHK05         1A         COLHDG(' FIL      ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+     A            OJHK06         1A         COLHDG(' FIL      ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+     A            OJHK07         1A         COLHDG(' FIL      ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+     A            OJHK08         1A         COLHDG(' FIL      ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+     A            OJHK09         1A         COLHDG(' FIL      ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+     A            OJHK10         1A         COLHDG(' FIL      ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+      * ( ｼｽﾃﾑ 管理 )                                                           
+     A            OJCDT          9P 0       COLHDG(' 作成日 ')                  
+     A            OJCTM          7P 0       COLHDG(' 作成時刻 ')                
+     A            OJUDT          9P 0       COLHDG(' 更新日 ')                  
+     A            OJUTM          7P 0       COLHDG(' 更新時刻 ')                
+     A            OJWID         10A         COLHDG(' ﾜｰｸｽﾃｰｼｮﾝID ')             
+     A            OJOPC          5A         COLHDG(' ｵﾍﾟﾚｰﾀｺｰﾄﾞ ')              
+     A            OJDST1         2A         COLHDG(' ﾃﾞｰﾀ 設定 ')               
+     A            OJDST2         2A         COLHDG(' ﾃﾞｰﾀ 更新 ')               
+     A            OJYUB          8A         COLHDG(' 郵便番号 ')                
+     A            OJDSTK         2A         COLHDG(' 契約業者　会社 ')          
+     A            OJBIK1        34O         COLHDG(' 備考１ ')                  
+     A            OJBIK2        34O         COLHDG(' 備考２ ')                  
+.....A            OJBIK3        52O         COLHDG(' 備考３ ')                  
+.....A            OJBIK4        52O         COLHDG(' 備考４ ')                  
+.....A            OJBIK5        52O         COLHDG(' 備考５ ')                  
+.....A            OJBIK6        52O         COLHDG(' 備考６ ')                  
+.....A            OJACN         20O         COLHDG(' 注文№ ')                  
+      * <KEY>                                                                   
+     A          K OJJNO                                                         
+     A          K OJJGY                                                         

@@ -1,0 +1,19 @@
+      *****************************************************************         
+      * USER-NAME    :  ハピネット                                    *         
+      * FILE-NAME    :  送り状データ　　　　　　　　　　　　　　　　 ?*         
+      * FILE-ID      :  ＭＸＪＬ０１                                  *         
+      * SOFT-HOUSE   :  ㈱ＩＣＲ                                      *         
+      * AUTHOR       :  H.YATSU                                       *         
+      * CREATE       :  03/01/16                                      *         
+      *****************************************************************         
+     A          R OJREC                     PFILE(DOJP00)                       
+      * <KEY>                                                                   
+     A          K OJJNO                                                         
+     A          K OJJGY                                                         
+     A          K OJTNO2                                                        
+      *                                                                         
+     A          R OJRECA                    PFILE(DOJPADD)                      
+      * <KEY>                                                                   
+     A          K OJJNO                                                         
+     A          K OJJGY                                                         
+     A          K OJTNO2                                                        

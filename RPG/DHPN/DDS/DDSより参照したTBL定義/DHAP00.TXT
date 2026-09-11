@@ -1,0 +1,472 @@
+      *****************************************************************         
+      * USER-NAME    :  ハピネット                                    *         
+      * FILE-NAME    :  発注データ　　　　　　　　　　　　　　　　　 ?*         
+      * FILE-ID      :  ＤＨＡＰ００                                  *         
+      * SOFT-HOUSE   :  ㈱ＩＣＲ                                      *         
+      * AUTHOR       :  S.T                                           *         
+      * CREATE       :  94/08/02                                      *         
+      * AUTHOR       :  K.ITOU                                        *         
+      * UPDATE       :  96/04/20                                      *         
+      *****************************************************************         
+     A***                                   UNIQUE                              
+     A          R HAREC                     TEXT(' 発注データ ')                
+      *                                                                         
+     A            HADEL          1A         COLHDG(' 削除区分 ')                
+     A            HAFID          2A         COLHDG(' 識別 "HA" ')               
+      * KEY                                                                     
+     A            HAHDN          8A         COLHDG(' 発注№ ')                  
+     A            HAHGY          2A         COLHDG(' 発注行№ ')                
+      *                                                                         
+     A            HATHK          4A         COLHDG(' 取引区分 ')                
+     A            HAKJD1         6S 0       COLHDG(' 年月 ' ' 発注日 ')         
+     A            HAKJD2         2S 0       COLHDG(' 日　 ' ' 発注日 ')         
+     A            HAAAK          1A         COLHDG(' 預け預り区分 ')            
+     A            HARKK          1A         COLHDG(' 来勘区分 ')                
+     A            HANOK          1A         COLHDG(' 納期区分 ')                
+     A            HAJHP          4A         COLHDG(' 受発注 ﾊﾟﾀｰﾝ ')            
+     A            HADST          2A         COLHDG(' 会社 ')                    
+     A            HAGIB          2A         COLHDG(' 事業部 ')                  
+     A            HABUM          3A         COLHDG(' 部門 ')                    
+     A            HABUK          3A         COLHDG(' 部課 ')                    
+     A            HABUKG         3A         COLHDG(' 部課ＧＲ ')                
+     A            HATAN          5A         COLHDG(' 担当 ')                    
+      *                                                                         
+     A            HATRKS         1A         COLHDG(' 取引先区分 ' ' 仕入先 ')   
+     A            HATRCS         7A         COLHDG(' 法人　　　 ' ' 仕入先 ')   
+     A            HATRSS         4A         COLHDG(' 支店　　　 ' ' 仕入先 ')   
+     A            HATRUS         1A         COLHDG(' 売場　　　 ' ' 仕入先 ')   
+      *                                                                         
+     A            HATRKC         1A         COLHDG(' 取引先区分 ' ' 発注先 ')   
+     A            HATRCC         7A         COLHDG(' 法人　　　 ' ' 発注先 ')   
+     A            HATRSC         4A         COLHDG(' 支店　　　 ' ' 発注先 ')   
+     A            HATRUC         1A         COLHDG(' 売場　　　 ' ' 発注先 ')   
+      *                                                                         
+     A            HASOK          3A         COLHDG(' 倉庫 ')                    
+     A            HAZBK          3A         COLHDG(' 在庫部課 ')                
+      *                                                                         
+     A            HADSTA         2A         COLHDG(' 会社　　 ' ' 社内相手先 ') 
+     A            HAGIBA         2A         COLHDG(' 事業部　 ' ' 社内相手先 ') 
+     A            HABUMA         3A         COLHDG(' 部門　　 ' ' 社内相手先 ') 
+     A            HABUKA         3A         COLHDG(' 部課　　 ' ' 社内相手先 ') 
+     A            HABUGA         3A         COLHDG(' 部課ＧＲ ' ' 社内相手先 ') 
+     A            HATANA         5A         COLHDG(' 担当　　 ' ' 社内相手先 ') 
+     A            HASOKA         3A         COLHDG(' 倉庫　　 ' ' 社内相手先 ') 
+     A            HAZBKA         3A         COLHDG(' 在庫部課 ' ' 社内相手先 ') 
+      *                                                                         
+     A            HANOD1         6S 0       COLHDG(' 年月 ' +                   
+     A                                             ' 納期（入荷予定日） ')      
+     A            HANOD2         2S 0       COLHDG(' 日　 ' +                   
+     A                                             ' 納期（入荷予定日） ')      
+     A            HACND1         6S 0       COLHDG(' 年月 ' ' 直前入荷情報 ' +  
+     A                                             ' （納期） ')                
+     A            HACND2         2S 0       COLHDG(' 日　 ' ' 直前入荷情報 ' +  
+     A                                             ' （納期） ')                
+     A            HAYM1          6S 0       COLHDG(' 年月 ' ' ﾊﾞﾝﾀﾞｲ 納品日 ')  
+     A            HADD1          2S 0       COLHDG(' 日　 ' ' ﾊﾞﾝﾀﾞｲ 納品日 ')  
+      *                                                                         
+     A            HATDN          8A         COLHDG(' 伝№ ' ' 取置№ ')         
+     A            HATGY          2A         COLHDG(' 行№ ' ' 取置№ ')         
+     A            HAJDN          8A         COLHDG(' 伝№ ' ' 受注№ ')         
+     A            HAJGY          2A         COLHDG(' 行№ ' ' 受注№ ')         
+     A            HASDN          8A         COLHDG(' 伝№ ' ' 仕入№ ')         
+     A            HASGY          2A         COLHDG(' 行№ ' ' 仕入№ ')         
+      *                                                                         
+     A            HACTG1         2A         COLHDG(' 大 ｶﾃｺﾞﾘｰ ')               
+     A            HACTG2         2A         COLHDG(' 中 ｶﾃｺﾞﾘｰ ')               
+     A            HACTG3         2A         COLHDG(' 小 ｶﾃｺﾞﾘｰ ')               
+      *                                                                         
+     A            HAHNC         13A         COLHDG(' 商品 ｺｰﾄﾞ ')               
+     A            HATNIN         1A         COLHDG(' 入力単位 ')                
+     A            HAKNS          9P 3       COLHDG(' 換算値 ')                  
+     A            HAHAS          7P 0       COLHDG(' 発注数 ')                  
+     A            HAHAT         11P 2       COLHDG(' 発注単価 ')                
+     A            HATKK          1A         COLHDG(' 単価決定区分 ')            
+     A            HAKIN         11P 0       COLHDG(' 金額 ')                    
+     A            HAZEI         11P 0       COLHDG(' 消費税 ')                  
+     A            HANYRS         7P 0       COLHDG(' 直前入荷予定数 ')          
+     A            HANKS          7P 0       COLHDG(' 入荷数 ')                  
+     A            HATOS          7P 0       COLHDG(' 取置数 ')                  
+     A            HACNS          7P 0       COLHDG(' ｷｬﾝｾﾙ 数 ')                
+     A            HASSS          7P 0       COLHDG(' 積送数 ')                  
+     A            HASU1          7P 0       COLHDG(' FIL ')                     
+     A            HASU2          7P 0       COLHDG(' FIL ')                     
+     A            HAGHGZ        11P 2       COLHDG(' 月次標準原価 ' +           
+     A                                             '( 全社 )')                  
+     A            HAIHG         11P 2       COLHDG(' 移動平均原価 ')            
+     A            HATNG         11P 2       COLHDG(' 手入力原価 ')              
+     A            HAGHGT        11P 2       COLHDG(' 月次標準原価 ' +           
+     A                                             '( 部課 )')                  
+     A            HAARR1        11P 0       COLHDG(' 粗利 ( 暫定 )')            
+     A            HAARR2        11P 0       COLHDG(' 粗利 ( 確定 )')            
+     A            HASYG          1A         COLHDG(' 採用原価 ')                
+      *                                                                         
+     A            HAKRK          1A         COLHDG(' 完了区分 ')                
+     A            HAKRS          1A         COLHDG(' 完了手段 ')                
+     A            HANKD1         6S 0       COLHDG(' 年月 ' ' 入荷日 ')         
+     A            HANKD2         2S 0       COLHDG(' 日　 ' ' 入荷日 ')         
+     A            HAHAD1         6S 0       COLHDG(' 年月 ' ' 伝票日付 ')       
+     A            HAHAD2         2S 0       COLHDG(' 日　 ' ' 伝票日付 ')       
+     A            HAKKN         10A         COLHDG(' 計画№ ')                  
+     A            HAACN         15A         COLHDG(' 相手注文№ ')              
+     A            HAADN         15A         COLHDG(' 相手伝票№ ')              
+     A            HABIK1        22O         COLHDG(' 備考１ ')                  
+     A            HABIK2        22O         COLHDG(' 備考２ ')                  
+     A            HADSP          5P 0       COLHDG(' 表示順 ')                  
+     A            HAKIN1         5P 0       COLHDG(' FIL ')                     
+     A            HAJAN         13A         COLHDG(' JANｺｰﾄﾞ ')                 
+      *                                                                         
+     A            HATRKT         1A         COLHDG(' 取引先区分 ' ' 得意先 ')   
+     A            HATRCT         7A         COLHDG(' 法人　　　 ' ' 得意先 ')   
+     A            HATRST         4A         COLHDG(' 支店　　　 ' ' 得意先 ')   
+     A            HATRUT         1A         COLHDG(' 売場　　　 ' ' 得意先 ')   
+      *                                                                         
+     A            HAHSR          4A         COLHDG(' 配送 ﾙｰﾄ ')                
+     A            HATKR          5P 4       COLHDG(' 単価掛率 ')                
+     A            HATDS          1A         COLHDG(' 都度請求 ')                
+     A            HATMT          1A         COLHDG(' 単価未定 ')                
+     A            HAKKJ          1A         COLHDG(' 仮計上 ')                  
+     A            HAJHB          1A         COLHDG(' 受発注媒体 ')              
+     A            HAAAKA         1A         COLHDG(' 相手預け預り区分 ')        
+      *                                                                         
+     A            HASMKM         1A         COLHDG(' 締処理区分　　 ' +         
+     A                                             ' 締処理 ﾏｽﾀ 情報 ')         
+     A            HASMBM         2S 0       COLHDG(' 締日　　　　　 ' +         
+     A                                             ' 締処理 ﾏｽﾀ 情報 ')         
+     A            HASKDM         9P 0       COLHDG(' 締切日　　　　 ' +         
+     A                                             ' 締処理 ﾏｽﾀ 情報 ')         
+      *                                                                         
+     A            HAUPT          1A         COLHDG(' 更新 ｴﾘｱ       ' +         
+     A                                             ' 締処理 ﾄﾗﾝ 情報 ')         
+     A            HASMBT         2S 0       COLHDG(' 締日　　　　　 ' +         
+     A                                             ' 締処理 ﾄﾗﾝ 情報 ')         
+     A            HASQD1         6S 0       COLHDG(' 年月　請求日　 ' +         
+     A                                             ' 締処理 ﾄﾗﾝ 情報 ')         
+     A            HASQD2         2S 0       COLHDG(' 日　　請求日　 ' +         
+     A                                             ' 締処理 ﾄﾗﾝ 情報 ')         
+      *                                                                         
+     A            HATRKQ         1A         COLHDG(' 取引先区分 ' ' 精算先 ')   
+     A            HATRCQ         7A         COLHDG(' 法人　　　 ' ' 精算先 ')   
+     A            HATRSQ         4A         COLHDG(' 支店　　　 ' ' 精算先 ')   
+     A            HATRUQ         1A         COLHDG(' 売場　　　 ' ' 精算先 ')   
+      *                                                                         
+     A            HATRKH         1A         COLHDG(' 取引先区分 ' ' 法人 ')     
+     A            HATRCH         7A         COLHDG(' 法人　　　 ' ' 法人 ')     
+     A            HATRSH         4A         COLHDG(' 支店　　　 ' ' 法人 ')     
+     A            HATRUH         1A         COLHDG(' 売場　　　 ' ' 法人 ')     
+      *                                                                         
+     A            HASZKT         1A         COLHDG(' 消費税区分 ' +             
+     A                                             ' 取引先情報 ')              
+     A            HAZRKT         1A         COLHDG(' 税率区分　 ' +             
+     A                                             ' 取引先情報 ')              
+     A            HAZSKT         1A         COLHDG(' 税算出区分 ' +             
+     A                                             ' 取引先情報 ')              
+      *                                                                         
+     A            HAMMK          1A         COLHDG(' 金額　　 ' ' 丸め区分 ' +  
+     A                                             ' 　取引先情報 ')            
+     A            HAMMS          1A         COLHDG(' 消費税　 ' ' 丸め区分 ' +  
+     A                                             ' 　取引先情報 ')            
+     A            HAMMT          1A         COLHDG(' 単価　　 ' ' 丸め区分 ' +  
+     A                                             ' 　取引先情報 ')            
+     A            HAMMST         1A         COLHDG(' 先方単価 ' ' 丸め区分 ' +  
+     A                                             ' 　取引先情報 ')            
+      *                                                                         
+     A            HAMKK          1A         COLHDG(' 金額　　 ' ' 丸め桁数 ' +  
+     A                                             ' 　取引先情報 ')            
+     A            HAMKS          1A         COLHDG(' 消費税　 ' ' 丸め桁数 ' +  
+     A                                             ' 　取引先情報 ')            
+     A            HAMKT          1A         COLHDG(' 単価　　 ' ' 丸め桁数 ' +  
+     A                                             ' 　取引先情報 ')            
+     A            HAMKST         1A         COLHDG(' 先方単価 ' ' 丸め桁数 ' +  
+     A                                             ' 　取引先情報 ')            
+      *                                                                         
+     A            HAASH          1A         COLHDG(' ｱｿｰﾄ  表示　　 ' +         
+     A                                             ' 取引先情報 ')              
+      *                                                                         
+     A            HADSB          2A         COLHDG(' 伝票種別　　　 ' +         
+     A                                             ' 取引先情報 ')              
+     A            HANHK          1A         COLHDG(' 年表示区分　　 ' +         
+     A                                             ' 取引先情報 ')              
+     A            HADMS          2S 0       COLHDG(' 伝票明細数　　 ' +         
+     A                                             ' 取引先情報 ')              
+     A            HATK01         1A         COLHDG(' 配送業者　　　 ' +         
+     A                                             ' 取引先情報 ')              
+     A            HATK04         1A         COLHDG(' 諸口　　　　　 ' +         
+     A                                             ' 取引先情報 ')              
+     A            HATK23         1A         COLHDG(' ＴＲＣ区分　　 ' +         
+     A                                             ' 取引先情報 ')              
+      *                                                                         
+     A            HASPHC        13A         COLHDG(' 先方商品 ｺｰﾄﾞ    ' +       
+     A                                             ' 取引条件情報 ')            
+     A            HABRH         10A         COLHDG(' 分類／品別　　　 ' +       
+     A                                             ' 取引条件情報 ')            
+     A            HAJCA          2A         COLHDG(' ＪＣＡ区分　　　 ' +       
+     A                                             ' 取引条件情報 ')            
+     A            HASPKT         9P 0       COLHDG(' 先方小売単価　　 ' +       
+     A                                             ' 取引条件情報 ')            
+      *                                                                         
+     A            HASAS          5P 2       COLHDG(' 載数　　　　 ' +           
+     A                                             ' 商品情報 ')                
+     A            HATNI1         1A         COLHDG(' 単位 (1)     ' +           
+     A                                             ' 商品情報 ')                
+     A            HATNI2         1A         COLHDG(' 単位 (2)     ' +           
+     A                                             ' 商品情報 ')                
+     A            HATNI3         1A         COLHDG(' 単位 (3)     ' +           
+     A                                             ' 商品情報 ')                
+     A            HAKNS1         9P 3       COLHDG(' 換算値 (1)   ' +           
+     A                                             ' 商品情報 ')                
+     A            HAKNS2         9P 3       COLHDG(' 換算値 (2)   ' +           
+     A                                             ' 商品情報 ')                
+     A            HAKNS3         9P 3       COLHDG(' 換算値 (3)   ' +           
+     A                                             ' 商品情報 ')                
+     A            HAMKTK         9P 0       COLHDG(' ﾒｰｶ 希望小売単価 ' +       
+     A                                             ' 税抜 ' ' 商品情報 ')       
+     A            HAMKTZ         9P 0       COLHDG(' ﾒｰｶ 希望小売単価 ' +       
+     A                                             ' 税額 ' ' 商品情報 ')       
+     A            HATNIB         1A         COLHDG(' ベース単位　 ' +           
+     A                                             ' 商品情報 ')                
+     A            HAHZK          1A         COLHDG(' 非在庫区分　 ' +           
+     A                                             ' 商品情報 ')                
+     A            HASZKU         1A         COLHDG(' 消費税区分（売） ' +       
+     A                                             ' 商品情報 ')                
+     A            HASZKK         1A         COLHDG(' 消費税区分（買） ' +       
+     A                                             ' 商品情報 ')                
+     A            HAZRKS         1A         COLHDG(' 税率区分　　 ' +           
+     A                                             ' 商品情報 ')                
+     A            HAAST          1A         COLHDG(' アソート区分 ' +           
+     A                                             ' 商品情報 ')                
+     A            HAKHI          1A         COLHDG(' 経費　　　　 ' +           
+     A                                             ' 商品情報 ')                
+     A            HAS004         1A         COLHDG(' 商品区分　　 ' +           
+     A                                             ' 商品情報 ')                
+     A            HAHNTP         3A         COLHDG(' 品 ﾀｲﾌﾟ      ' +           
+     A                                             ' 商品情報 ')                
+     A            HASET         13A         COLHDG(' ｾｯﾄ 品親 ｺｰﾄﾞ ' +          
+     A                                             ' 商品情報 ')                
+      *                                                                         
+     A            HABJDT         9P 0       COLHDG(' 物流指示日 ')              
+     A            HABJTM         7P 0       COLHDG(' 物流指示時刻 ')            
+     A            HABJDN         8A         COLHDG(' 伝№ ' ' 物流指示№ ')     
+     A            HABJGY         2A         COLHDG(' 行№ ' ' 物流指示№ ')     
+      *                                                                         
+     A            HATDP          5P 0       COLHDG(' 手書伝票 ﾍﾟｰｼﾞ ')          
+     A            HADN1          8A         COLHDG(' 伝№ ' ' 発注指示№ ')     
+     A            HAGY1          2A         COLHDG(' 伝№ ' ' 発注指示№ ')     
+     A            HATEK          1A         COLHDG(' 訂正区分 ' ' FIL ')        
+     A            HAMTD          9P 0       COLHDG(' 伝票日付 ' ' FIL ')        
+      *                                                                         
+     A            HASB11         2A         COLHDG(' 大 ' ' 商品分類 (1) ')     
+     A            HASB12         2A         COLHDG(' 中 ' ' 商品分類 (1) ')     
+     A            HASB13         2A         COLHDG(' 小 ' ' 商品分類 (1) ')     
+     A            HASB21         2A         COLHDG(' 大 ' ' 商品分類 (2) ')     
+     A            HASB22         2A         COLHDG(' 中 ' ' 商品分類 (2) ')     
+     A            HASB23         2A         COLHDG(' 小 ' ' 商品分類 (2) ')     
+     A            HASB31         2A         COLHDG(' 大 ' ' 商品分類 (3) ')     
+     A            HASB32         2A         COLHDG(' 中 ' ' 商品分類 (3) ')     
+     A            HASB33         2A         COLHDG(' 小 ' ' 商品分類 (3) ')     
+     A            HASB41         2A         COLHDG(' 大 ' ' 商品分類 (4) ')     
+     A            HASB42         2A         COLHDG(' 中 ' ' 商品分類 (4) ')     
+     A            HASB43         2A         COLHDG(' 小 ' ' 商品分類 (4) ')     
+     A            HASBA1         2A         COLHDG(' 大 ' ' 商品分類 (10)')     
+     A            HASBA2         2A         COLHDG(' 中 ' ' 商品分類 (10)')     
+     A            HASBA3         2A         COLHDG(' 小 ' ' 商品分類 (10)')     
+      *                                                                         
+     A            HAHNJ         22O         COLHDG(' 商品名 ')                  
+     A            HAHNA         25A         COLHDG(' 商品名 (ｶﾅ) ')             
+      *                                                                         
+     A            HAKGT          3P 0       COLHDG(' 在庫日数 ')                
+     A            HASKNO        10A         COLHDG(' FIL ')                     
+     A            HAYM2          6S 0       COLHDG(' 年月 ' ' FIL ')            
+     A            HADD2          2S 0       COLHDG(' 日　 ' ' FIL ')            
+     A            HASASG         5P 2       COLHDG(' 載数 ')                    
+     A            HADPGS         3P 0       COLHDG(' 伝票行数 ')                
+     A            HADPKN        11P 0       COLHDG(' 伝票合計金額 ')            
+     A            HADPSZ        11P 0       COLHDG(' 伝票合計消費税 ')          
+     A            HATNIP         1A         COLHDG(' FIL ')                     
+     A            HAPAS         11P 2       COLHDG(' FIL ')                     
+      *                                                                         
+     A            HATRK1         1A         COLHDG(' 取引先区分 ' ' FIL ')      
+     A            HATRC1         7A         COLHDG(' 法人　　　 ' ' FIL ')      
+     A            HATRS1         4A         COLHDG(' 支店　　　 ' ' FIL ')      
+     A            HATRU1         1A         COLHDG(' 売場　　　 ' ' FIL ')      
+      *                                                                         
+     A            HAFIL1         7P 0       COLHDG(' FIL ')                     
+     A            HATNIS         1A         COLHDG(' 載数単位 ')                
+     A            HAFIL2         9P 0       COLHDG(' FIL ')                     
+     A            HAFIL3         9P 0       COLHDG(' FIL ')                     
+     A            HAFIL4         9P 0       COLHDG(' FIL ')                     
+      *                                                                         
+     A            HASYD1         6S 0       COLHDG(' 年月 ' ' 本日日付 ')       
+     A            HASYD2         2S 0       COLHDG(' 日　 ' ' 本日日付 ')       
+      *                                                                         
+     A            HAPC01         1A         COLHDG(' ﾁｪｯｸﾘｽﾄ    ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            HAPC02         1A         COLHDG(' 伝票　　　 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            HAPC03         1A         COLHDG(' 日報　　　 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            HAPC04         1A         COLHDG(' 月報　　　 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            HAPC05         1A         COLHDG(' ｴﾗｰﾘｽﾄ     ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            HAPC06         1A         COLHDG(' FIL        ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            HAPC07         1A         COLHDG('ﾌﾟﾙｰﾌ 発行  ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            HAPC08         1A         COLHDG(' 入荷予定　 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            HAPC09         1A         COLHDG('ﾛｹｰｼｮﾝ 決定 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            HAPC10         1A         COLHDG(' 発注書     ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+      *                                                                         
+     A            HAKB01         1A         COLHDG(' 受払　　　　 ' ' 区分 ')   
+     A            HAKB02         1A         COLHDG(' 計上　　　　 ' ' 区分 ')   
+     A            HAKB03         1A         COLHDG(' 経費　　　　 ' ' 区分 ')   
+     A            HAKB04         1A         COLHDG(' 訂正不可　　 ' ' 区分 ')   
+     A            HAKB05         1A         COLHDG(' 指示済　　　 ' ' 区分 ')   
+     A            HAKB06         1A         COLHDG(' 伝送済　　　 ' ' 区分 ')   
+     A            HAKB07         1A         COLHDG(' 精算書　　　 ' ' 区分 ')   
+     A            HAKB08         1A         COLHDG(' 確定　　　　 ' ' 区分 ')   
+     A            HAKB09         1A         COLHDG(' 取置　　　　 ' ' 区分 ')   
+     A            HAKB10         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB11         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB12         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB13         1A         COLHDG(' 良／不良　　 ' ' 区分 ')   
+     A            HAKB14         1A         COLHDG(' 欠品　　　　 ' ' 区分 ')   
+     A            HAKB15         1A         COLHDG(' 在庫反映　　 ' ' 区分 ')   
+     A            HAKB16         1A         COLHDG(' コメント　　 ' ' 区分 ')   
+     A            HAKB17         1A         COLHDG(' 調整　　　　 ' ' 区分 ')   
+     A            HAKB18         1A         COLHDG(' 単伝区分　　 ' ' 区分 ')   
+     A            HAKB19         1A         COLHDG(' 行分納　　　 ' ' 区分 ')   
+     A            HAKB20         1A         COLHDG(' 赤黒　　　　 ' ' 区分 ')   
+     A            HAKB21         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB22         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB23         1A         COLHDG(' 直送　　　　 ' ' 区分 ')   
+     A            HAKB24         1A         COLHDG(' №摘要有　　 ' ' 区分 ')   
+     A            HAKB25         1A         COLHDG(' 手配区分　　 ' ' 区分 ')   
+     A            HAKB26         1A         COLHDG(' 手配要　　　 ' ' 区分 ')   
+     A            HAKB27         1A         COLHDG(' 返品理由　　 ' ' 区分 ')   
+     A            HAKB28         1A         COLHDG(' 作業区分　　 ' ' 区分 ')   
+     A            HAKB29         1A         COLHDG(' ｾﾝﾄﾗﾙ ﾊﾞｲｲﾝｸﾞ' ' 区分 ')   
+     A            HAKB30         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB31         1A         COLHDG(' 変換 ｴﾗｰ     ' ' 区分 ')   
+     A            HAKB32         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB33         1A         COLHDG(' 買取／委託　 ' ' 区分 ')   
+     A            HAKB34         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB35         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB36         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB37         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB38         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB39         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB40         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB41         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB42         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB43         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB44         1A         COLHDG(' ＭＭ商材　　 ' ' 区分 ')   
+     A            HAKB45         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB46         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB47         1A         COLHDG(' 新／中古　　 ' ' 区分 ')   
+     A            HAKB48         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB49         1A         COLHDG(' ＡＭ区分　　 ' ' 区分 ')   
+     A            HAKB50         1A         COLHDG(' 非仕入　　　 ' ' 区分 ')   
+      * ( CPU 情報 )                                                            
+     A            HACP01         1A         COLHDG(' 設定　　　　 ' 'CPU 区分 ')
+     A            HACP02         1A         COLHDG(' 倉庫物理　　 ' 'CPU 区分 ')
+     A            HACP03         1A         COLHDG(' 部課物理　　 ' 'CPU 区分 ')
+     A            HACP04         1A         COLHDG(' 相手倉庫物理 ' 'CPU 区分 ')
+     A            HACP05         1A         COLHDG(' 相手部課物理 ' 'CPU 区分 ')
+     A            HACP06         1A         COLHDG(' 請求物理　　 ' 'CPU 区分 ')
+     A            HACP07         1A         COLHDG(' 倉庫親　　　 ' 'CPU 区分 ')
+     A            HACP08         1A         COLHDG(' 相手倉庫親　 ' 'CPU 区分 ')
+     A            HACP09         1A         COLHDG(' 部課処理　　 ' 'CPU 区分 ')
+     A            HACP10         1A         COLHDG(' 相手部課処理 ' 'CPU 区分 ')
+      * ( 配信 ｺﾝﾄﾛｰﾙ )                                                         
+     A            HAHK01         1A         COLHDG(' 東京　　 ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+     A            HAHK02         1A         COLHDG(' 大阪　　 ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+     A            HAHK03         1A         COLHDG(' 船橋　　 ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+     A            HAHK04         1A         COLHDG(' ﾋﾗﾅｶ     ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+     A            HAHK05         1A         COLHDG(' FIL      ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+     A            HAHK06         1A         COLHDG(' FIL      ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+     A            HAHK07         1A         COLHDG(' FIL      ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+     A            HAHK08         1A         COLHDG(' FIL      ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+     A            HAHK09         1A         COLHDG(' FIL      ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+     A            HAHK10         1A         COLHDG(' FIL      ' ' 配信 ｺﾝﾄﾛｰﾙ') 
+      *                                                                         
+     A            HAUP01         1A         COLHDG(' ｵﾝﾗｲﾝ    ' ' 更新 ｺﾝﾄﾛｰﾙ') 
+     A            HAUP02         1A         COLHDG(' 日次　　 ' ' 更新 ｺﾝﾄﾛｰﾙ') 
+     A            HAUP03         1A         COLHDG(' 締時　　 ' ' 更新 ｺﾝﾄﾛｰﾙ') 
+     A            HAUP04         1A         COLHDG(' 月次　　 ' ' 更新 ｺﾝﾄﾛｰﾙ') 
+     A            HAUP05         1A         COLHDG(' 年次　　 ' ' 更新 ｺﾝﾄﾛｰﾙ') 
+     A            HAUP06         1A         COLHDG(' 会計　　 ' ' 更新 ｺﾝﾄﾛｰﾙ') 
+     A            HAUP07         1A         COLHDG(' 入荷検収 ' ' 更新 ｺﾝﾄﾛｰﾙ') 
+     A            HAUP08         1A         COLHDG(' 直前入荷 ' ' 更新 ｺﾝﾄﾛｰﾙ') 
+     A            HAUP09         1A         COLHDG(' 発注確定 ' ' 更新 ｺﾝﾄﾛｰﾙ') 
+     A            HAUP10         1A         COLHDG(' FIL      ' ' 更新 ｺﾝﾄﾛｰﾙ') 
+     A            HAUP11         1A         COLHDG(' FIL      ' ' 更新 ｺﾝﾄﾛｰﾙ') 
+     A            HAUP12         1A         COLHDG(' FIL      ' ' 更新 ｺﾝﾄﾛｰﾙ') 
+      * ( ｼｽﾃﾑ 管理 )                                                           
+     A            HACDT          9P 0       COLHDG(' 作成日 ')                  
+     A            HACTM          7P 0       COLHDG(' 作成時刻 ')                
+     A            HAUDT          9P 0       COLHDG(' 更新日 ')                  
+     A            HAUTM          7P 0       COLHDG(' 更新時刻 ')                
+     A            HAWID         10A         COLHDG(' ﾜｰｸｽﾃｰｼｮﾝID ')             
+     A            HAOPC          5A         COLHDG(' ｵﾍﾟﾚｰﾀｺｰﾄﾞ ')              
+     A            HADST1         2A         COLHDG(' ﾃﾞｰﾀ 設定 ')               
+     A            HADST2         2A         COLHDG(' ﾃﾞｰﾀ 更新 ')               
+     A            HATRN         11P 0       COLHDG(' ﾄﾗﾝｻﾞｸｼｮﾝ № ')            
+      *                                                                         
+     A            HARSS          3P 0       COLHDG(' 累積週数 ')                
+      *                                                                         
+     A            HATRKD         1A         COLHDG(' 取区 ' ' 計上得意先 ')     
+     A            HATRCD         7A         COLHDG(' 法人 ' ' 計上得意先 ')     
+     A            HATRSD         4A         COLHDG(' 支店 ' ' 計上得意先 ')     
+     A            HATRUD         1A         COLHDG(' 売場 ' ' 計上得意先 ')     
+     A            HABUKK         3A         COLHDG(' 管理会計部課 ')            
+     A            HAKB51         1A         COLHDG(' 自他社       ' ' 区分 ')   
+SA006A            HAKB52         1A         COLHDG(' 西松屋伝送済 ' ' 区分 ')   
+     A            HAKB53         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB54         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB55         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB56         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB57         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB58         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB59         1A         COLHDG(' FIL          ' ' 区分 ')   
+.....A            HAKB60         1A         COLHDG(' 山形発注区分 ' ' 区分 ')   
+     A            HAKB61         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            HAKB62         1A         COLHDG(' FIL          ' ' 区分 ')   
+.....A            HAKB63         1A         COLHDG(' HCC 発注区分 ' ' 区分 ')   
+     A            HAKB64         1A         COLHDG(' 締切処理     ' ' 区分 ')   
+     A            HAKB65         1A         COLHDG(' 検品 ﾃﾞｰﾀ 作成区分 ')      
+ 6.19A            HAKB66         1A         COLHDG(' ﾛｹｰｼｮﾝ 管理  ' ' 区分 ')   
+11.06A            HAKB67         1A         COLHDG(' 今回入荷分　 ' ' 区分 ')   
+11.06A            HAKB68         1A         COLHDG(' 発注送信済　 ' ' 区分 ')   
+10.28A            HAKB69         1A         COLHDG(' ｿﾆｰPCﾃﾞｰﾀ    ' ' 区分 ')   
+10.28A            HAKB70         1A         COLHDG(' 新譜・旧譜　 ' ' 区分 ')   
+      *                                                                         
+     A            HAPDN          8A         COLHDG(' ﾋﾟｯｷﾝｸﾞ ／発注書№ ')      
+     A            HAAKN          6A         COLHDG(' 赤黒№ ')                  
+     A            HAMAKN         6A         COLHDG(' 元赤黒№ ')                
+      *                                                                         
+     A            HALOK          1A         COLHDG(' FIL ')                     
+     A            HALO1          1A         COLHDG(' FIL ')                     
+     A            HALO2          1A         COLHDG(' FIL ')                     
+     A            HAGJKS         3P 0       COLHDG(' 発注書行 ')                
+     A            HAOSYS         7P 0       COLHDG(' FIL ')                     
+      *                                                                         
+     A            HASP02         1A         COLHDG(' FIL ')                     
+     A            HASP03         1A         COLHDG(' FIL ')                     
+     A            HASP04         1A         COLHDG(' FIL ')                     
+     A            HASP05         1A         COLHDG(' FIL ')                     
+     A            HASP06         1A         COLHDG(' FIL ')                     
+     A            HASP07         1A         COLHDG(' FIL ')                     
+     A            HASP08         1A         COLHDG(' FIL ')                     
+     A            HASP09         1A         COLHDG(' FIL ')                     
+      *                                                                         
+     A            HASU06         1A         COLHDG(' 入荷予定済 ')              
+     A            HASU07         1A         COLHDG(' BM 新譜・旧譜 ')           
+     A            HACOL          4A         COLHDG(' FIL ')                     
+      *                                                                         
+     A            HASSJS         7P 0       COLHDG(' 受注集計 ')                
+ 8.23A            HASHSZ         7P 0       COLHDG(' 新 HT 入荷集計 ')          
+     A            HASHST         7P 0       COLHDG(' FIL ')                     
+     A            HASSKS         7P 0       COLHDG(' FIL ')                     
+     A            HASSU1         7P 0       COLHDG(' FIL ')                     
+     A            HASSU2         7P 0       COLHDG(' FIL ')                     
+     A            HASSU3         7P 0       COLHDG(' FIL ')                     
+     A            HASSU4         7P 0       COLHDG(' FIL ')                     
+     A            HASKIN        11P 0       COLHDG(' FIL ')                     
+     A            HAKB71         1A         COLHDG(' FIL ')                     
+      * <KEY>                                                                   
+     A          K HAHDN                                                         
+     A          K HAAKN                                                         
+     A          K HAHGY                                                         

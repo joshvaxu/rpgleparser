@@ -1,0 +1,33 @@
+      *****************************************************************         
+      * USER-NAME    :  ÉnÉsÉlÉbÉg                                    *         
+      * FILE-NAME    :  É~ÉbÉNÉXÉfÅ[É^Å@ÇkÇeÇOÇPÅ@Å@Å@Å@Å@Å@Å@Å@Å@Å@ ?*         
+      * FILE-ID      :  ÇcÇlÇwÇkÇOÇP                                  *         
+      * SOFT-HOUSE   :  áäÇhÇbÇq                                      *         
+      * AUTHOR       :  X.XXXXXX                                      *         
+      * CREATE       :    /  /                                        *         
+      * AUTHOR       :  X.XXXXXX                                      *         
+      * UPDATE       :    /  /                                        *         
+      *****************************************************************         
+     A          R HAREC                     PFILE(DHAP00)                       
+      *                                                                         
+     A          K HASOK                                                         
+     A          K HAZBK                                                         
+     A          K HAHNC                                                         
+     A          K HANOD1                                                        
+     A          K HANOD2                                                        
+     A          K HAHDN                                                         
+     A          K HAHGY                                                         
+      *                                                                         
+     A          O HADEL                     COMP(NE ' ')                        
+      *                                                                         
+     A          R IDREC                     PFILE(DIDP00)                       
+      *                                                                         
+     A          K IDSOK                                                         
+     A          K IDZBK                                                         
+     A          K IDHNC                                                         
+     A          K IDNOD1                                                        
+     A          K IDNOD2                                                        
+     A          K IDIDN                                                         
+     A          K IDIGY                                                         
+      *                                                                         
+     A          O IDDEL                     COMP(NE ' ')                        

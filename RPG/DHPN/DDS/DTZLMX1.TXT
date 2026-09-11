@@ -1,0 +1,40 @@
+      *****************************************************************         
+      * USER-NAME    :  ÉnÉsÉlÉbÉg                                    *         
+      * FILE-NAME    :  É~ÉbÉNÉXÉfÅ[É^Å@ÇkÇeÇOÇPÅ@Å@Å@Å@Å@Å@Å@Å@Å@Å@ ?*         
+      * FILE-ID      :  ÇcÇlÇwÇkÇOÇP                                  *         
+      * SOFT-HOUSE   :  áäÇhÇbÇq                                      *         
+      * AUTHOR       :  X.XXXXXX                                      *         
+      * CREATE       :    /  /                                        *         
+      * AUTHOR       :  X.XXXXXX                                      *         
+      * UPDATE       :    /  /                                        *         
+      *****************************************************************         
+      *                                                                         
+     A          R NYREC                     PFILE(DTZ3P00)                      
+     A          K NYJODN                                                        
+     A          K NYJUM                                                         
+     A          K NYJNND                                                        
+     A          K NYJSOK                                                        
+     A          K NYJBND                                                        
+     A          K NYJLIN                                                        
+     A          K NYJSKN                                                        
+     A          K NYCDT                                                         
+     A          K NYCTM                                                         
+     A          S NYDEL                     COMP(EQ ' ')                        
+     A            NYTEK                     COMP(EQ ' ')                        
+      *                                                                         
+      *                                                                         
+     A          R HTREC                     PFILE(DTZ2P00)                      
+      *                                                                         
+     A          K HTJODN                                                        
+     A          K HTJUM                                                         
+     A          K HTJNND                                                        
+     A          K HTJSOK                                                        
+     A          K HTJBND                                                        
+     A          K HTJLIN                                                        
+     A          K HTJSKN                                                        
+     A          K HTCDT                                                         
+     A          K HTCTM                                                         
+     A          K HTCTM                                                         
+     A          K HTRKKB                                                        
+     A          S HTDEL                     COMP(EQ ' ')                        
+      *                                                                         

@@ -1,0 +1,31 @@
+      *****************************************************************         
+      * USER-NAME    :  ÉnÉsÉlÉbÉg                                    *         
+      * FILE-NAME    :  ëóÇËèÛÉfÅ[É^Å@ÇkÇeÇPÇTÅ@Å@Å@Å@Å@Å@Å@Å@Å@Å@Å@ ?*         
+      * FILE-ID      :  ÇcÇnÇiÇkÇPÇT                                  *         
+      * SOFT-HOUSE   :  áäÇhÇbÇq                                      *         
+      * AUTHOR       :  M.M                                           *         
+      * CREATE       :  97/02/26                                      *         
+      * AUTHOR       :  X.XXXXX                                       *         
+      * UPDATE       :  XX/XX/XX                                      *         
+      *****************************************************************         
+     A          R OJREC                     PFILE(DOJP00)                       
+      * <KEY>                                                                   
+     A          K OJTRKL                                                        
+     A          K OJTRCL                                                        
+     A          K OJTRSL                                                        
+     A          K OJTRUL                                                        
+     A          K OJTNO2                                                        
+     A          K OJTE2                                                         
+     A*                                                                         
+     A          S OJTEK                     COMP(EQ ' ')                        
+      *****************************************************************         
+     A          R OJRECA                    PFILE(DOJPADD)                      
+      * <KEY>                                                                   
+     A          K OJTRKL                                                        
+     A          K OJTRCL                                                        
+     A          K OJTRSL                                                        
+     A          K OJTRUL                                                        
+     A          K OJTNO2                                                        
+     A          K OJTE2                                                         
+     A*                                                                         
+     A          S OJTEK                     COMP(EQ ' ')                        

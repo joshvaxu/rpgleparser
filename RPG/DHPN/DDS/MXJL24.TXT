@@ -1,0 +1,25 @@
+      *****************************************************************         
+      * USER-NAME    :  ÉnÉsÉlÉbÉg                                    *         
+      * FILE-NAME    :  ëóÇËèÛÉfÅ[É^Å@ÇkÇeÇQÇSÅ@Å@Å@Å@Å@Å@Å@Å@Å@Å@Å@ ?*         
+      * FILE-ID      :  ÇcÇnÇiÇkÇQÇS                                  *         
+      * SOFT-HOUSE   :  áäÇhÇbÇq                                      *         
+      * AUTHOR       :  D.A                                           *         
+      * CREATE       :  97/03/13                                      *         
+      *****************************************************************         
+     A          R OJREC                     PFILE(DOJP00)                       
+      * <KEY>                                                                   
+     A          K OJTNO2                                                        
+     A          K OJHSD                                                         
+     A          K OJTRKY                                                        
+     A          K OJTRCY                                                        
+     A          K OJTRSY                                                        
+     A          K OJTRUY                                                        
+      *****************************************************************         
+     A          R OJRECA                    PFILE(DOJPADD)                      
+      * <KEY>                                                                   
+     A          K OJTNO2                                                        
+     A          K OJHSD                                                         
+     A          K OJTRKY                                                        
+     A          K OJTRCY                                                        
+     A          K OJTRSY                                                        
+     A          K OJTRUY                                                        

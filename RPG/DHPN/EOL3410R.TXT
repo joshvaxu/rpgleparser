@@ -1,0 +1,1669 @@
+     H*****************************************************************         
+     H* USER-NAME    :  （株）ハピネット経理システム                  *         
+     H* PROGRAM-NAME :  トイザらス集信 ﾘｽﾄ                                      
+     H* PROGRAM-ID   :  ＥＯＬ３４２０Ｒ                              *         
+     H* SOFT-HOUSE   :  ㈱　ＩＣＲ                                    *         
+     H* AUTHOR       :  H.OKITA                                       *         
+     H* CREATE       :  04/05/13                                      *         
+     H* AUTHOR       :  X.XXXXXX                                      *         
+     H* COMPILE      :  01                                            *         
+     H*****************************************************************         
+     H* 変更履歴                                                                
+     H* 04/09/08 (A1403) 再変換時にエラー区分 "Z"( 再変換 ) の対応              
+     H* 04/09/16 (T0141) ＰＯチェンジの時ＰＯチェンジ数が表示愛されない。       
+     H*****************************************************************         
+     H            Y/                                    1                       
+     F****************************************************************          
+      *  内訳科目マスタ                                                         
+     FDTZ1L06 IF  E           K        DISK                                     
+      *  取引先Ｍ                                                               
+     FMTRL01  IF  E           K        DISK                                     
+      * < 取引先マスタ >                                                        
+     FMTRL57  IF  E           K        DISK                                     
+     F            TRREC                             KRENAMETRREC2               
+      *  名称マスタ                                                             
+     FMKML01  IF  E           K        DISK                                     
+      *  受注データ                                                             
+     FDJUL01  IF  E           K        DISK                                     
+     FDTZ4L04 IF  E           K        DISK                                     
+     FDTZLMX1 IF  E           K        DISK                                     
+     F            HTREC                             KRENAMEHTREC9               
+      *  納品予約データ                                                         
+     FDTZ3L05 IF  E           K        DISK                                     
+A1   F            NYREC                             KRENAMENYREC2               
+     FDTZ2L02 IF  E           K        DISK                                     
+A1   F            HTREC                             KRENAMEHTREC2               
+      *  帳票ファイル                                                           
+     FEOL3410PO   E             74     PRINTER                                  
+     E****************************************************************          
+     E*                    配列定義                                  *          
+     E****************************************************************          
+     E                    @T      1   8 30                                      
+     E                    @X      1   5 10                                      
+     E                    @ER         9  1               : 単位                 
+     I****************************************************************          
+     I*                    ＤＳ定義                                  *          
+     I****************************************************************          
+      * レコード別定義                                                          
+     INYREC       82                                                            
+     IHTREC9      81                                                            
+     I              HTDEL                           @TDEL                       
+     I              HTFID                           @TFID                       
+     I              HTKBH                           @TKBH                       
+     I              HTODNO                          @TODNO                      
+     I              HTNNDE                          @TNNDE                      
+     I              HTNND                           @TNND                       
+     I              HTHKOD                          @THKOD                      
+     I              HTUM                            @TUM                        
+     I              HTTX11                          @TTX11                      
+     I              HTTX21                          @TTX21                      
+     I              HTTX31                          @TTX31                      
+     I              HTTX41                          @TTX41                      
+     I              HTTX51                          @TTX51                      
+     I              HTTX12                          @TTX12                      
+     I              HTTX22                          @TTX22                      
+     I              HTTX32                          @TTX32                      
+     I              HTTX42                          @TTX42                      
+     I              HTTX52                          @TTX52                      
+     I              HTTX13                          @TTX13                      
+     I              HTTX23                          @TTX23                      
+     I              HTTX33                          @TTX33                      
+     I              HTTX43                          @TTX43                      
+     I              HTTX53                          @TTX53                      
+     I              HTTX14                          @TTX14                      
+     I              HTTX24                          @TTX24                      
+     I              HTTX34                          @TTX34                      
+     I              HTTX44                          @TTX44                      
+     I              HTTX54                          @TTX54                      
+     I              HTTX15                          @TTX15                      
+     I              HTTX25                          @TTX25                      
+     I              HTTX35                          @TTX35                      
+     I              HTTX45                          @TTX45                      
+     I              HTTX55                          @TTX55                      
+     I              HTSHAN                          @TSHAN                      
+     I              HTSNDN                          @TSNDN                      
+     I              HTSOK                           @TSOK                       
+     I              HTSOKN                          @TSOKN                      
+     I              HTSAD1                          @TSAD1                      
+     I              HTSAD2                          @TSAD2                      
+     I              HTSYUB                          @TSYUB                      
+     I              HTSKOK                          @TSKOK                      
+     I              HTBNDC                          @TBNDC                      
+     I              HTBNDN                          @TBNDN                      
+     I              HTBNDA                          @TBNDA                      
+     I              HTTUKA                          @TTUKA                      
+     I              HTNBC1                          @TNBC1                      
+     I              HTNBT1                          @TNBT1                      
+     I              HTNBQ1                          @TNBQ1                      
+     I              HTNBD1                          @TNBD1                      
+     I              HTNBF1                          @TNBF1                      
+     I              HTNBR1                          @TNBR1                      
+     I              HTNBC2                          @TNBC2                      
+     I              HTNBT2                          @TNBT2                      
+     I              HTNBQ2                          @TNBQ2                      
+     I              HTNBD2                          @TNBD2                      
+     I              HTNBF2                          @TNBF2                      
+     I              HTNBR2                          @TNBR2                      
+     I              HTNBC3                          @TNBC3                      
+     I              HTNBT3                          @TNBT3                      
+     I              HTNBQ3                          @TNBQ3                      
+     I              HTNBD3                          @TNBD3                      
+     I              HTNBF3                          @TNBF3                      
+     I              HTNBR3                          @TNBR3                      
+     I              HTNBC4                          @TNBC4                      
+     I              HTNBT4                          @TNBT4                      
+     I              HTNBQ4                          @TNBQ4                      
+     I              HTNBD4                          @TNBD4                      
+     I              HTNBF4                          @TNBF4                      
+     I              HTNBR4                          @TNBR4                      
+     I              HTNBC5                          @TNBC5                      
+     I              HTNBT5                          @TNBT5                      
+     I              HTNBQ5                          @TNBQ5                      
+     I              HTNBD5                          @TNBD5                      
+     I              HTNBF5                          @TNBF5                      
+     I              HTNBR5                          @TNBR5                      
+     I              HTNBC6                          @TNBC6                      
+     I              HTNBT6                          @TNBT6                      
+     I              HTNBQ6                          @TNBQ6                      
+     I              HTNBD6                          @TNBD6                      
+     I              HTNBF6                          @TNBF6                      
+     I              HTNBR6                          @TNBR6                      
+     I              HTNBC7                          @TNBC7                      
+     I              HTNBT7                          @TNBT7                      
+     I              HTNBQ7                          @TNBQ7                      
+     I              HTNBD7                          @TNBD7                      
+     I              HTNBF7                          @TNBF7                      
+     I              HTNBR7                          @TNBR7                      
+     I              HTNBC8                          @TNBC8                      
+     I              HTNBT8                          @TNBT8                      
+     I              HTNBQ8                          @TNBQ8                      
+     I              HTNBD8                          @TNBD8                      
+     I              HTNBF8                          @TNBF8                      
+     I              HTNBR8                          @TNBR8                      
+     I              HTCHAR                          @TCHAR                      
+     I              HTTERM                          @TTERM                      
+     I              HTKBD                           @TKBD                       
+     I              HTLIN                           @TLIN                       
+     I              HTSKN                           @TSKN                       
+     I              HTJAN                           @TJAN                       
+     I              HTHNT                           @THNT                       
+     I              HTHNTN                          @THNTN                      
+     I              HTFIL                           @TFIL                       
+     I              HTHTSU                          @THTSU                      
+     I              HTTNKA                          @TTNKA                      
+     I              HTIRPK                          @TIRPK                      
+     I              HTIRKT                          @TIRKT                      
+     I              HTTRKT                          @TTRKT                      
+     I              HTTRCT                          @TTRCT                      
+     I              HTTRST                          @TTRST                      
+     I              HTTRUT                          @TTRUT                      
+     I              HTHNC                           @THNC                       
+     I              HTJAC                           @TJAC                       
+     I              HTSYD                           @TSYD                       
+     I              HTJCNT                          @TJCNT                      
+     I              HTNYS                           @TNYS                       
+     I              HTPOS                           @TPOS                       
+     I              HTJUS                           @TJUS                       
+     I              HTHKS                           @THKS                       
+     I              HTKPS                           @TKPS                       
+     I              HTSKS                           @TSKS                       
+     I              HTKB01                          @TKB01                      
+     I              HTKB02                          @TKB02                      
+     I              HTKB03                          @TKB03                      
+     I              HTKB04                          @TKB04                      
+     I              HTKB05                          @TKB05                      
+     I              HTKB06                          @TKB06                      
+     I              HTKB07                          @TKB07                      
+     I              HTKB08                          @TKB08                      
+     I              HTKB09                          @TKB09                      
+     I              HTKB10                          @TKB10                      
+     I              HTKB11                          @TKB11                      
+     I              HTKB12                          @TKB12                      
+     I              HTKB13                          @TKB13                      
+     I              HTKB14                          @TKB14                      
+     I              HTKB15                          @TKB15                      
+     I              HTKB16                          @TKB16                      
+     I              HTKB17                          @TKB17                      
+     I              HTKBP8                          @TKBP8                      
+     I              HTKBP9                          @TKBP9                      
+     I              HTKB20                          @TKB20                      
+     I              HTCDT                           @TCDT                       
+     I              HTCTM                           @TCTM                       
+     I              HTOPC                           @TOPC                       
+     I              HTWID                           @TWID                       
+     I              HTDST1                          @TDST1                      
+     I              HTDST2                          @TDST2                      
+     I              HTTRNO                          @TTRNO                      
+     I              HTRKKB                          @TRKKB                      
+     I              HTJODN                          @TJODN                      
+     I              HTJUM                           @TJUM                       
+     I              HTJNND                          @TJNND                      
+     I              HTJSOK                          @TJSOK                      
+     I              HTJBND                          @TJBND                      
+     I              HTJLIN                          @TJLIN                      
+     I              HTJSKN                          @TJSKN                      
+     IHTREC2                                                                    
+     I              HTDEL                           H#DEL                       
+     I              HTFID                           H#FID                       
+     I              HTKBH                           H#KBH                       
+     I              HTODNO                          H#ODNO                      
+     I              HTNNDE                          H#NNDE                      
+     I              HTNND                           H#NND                       
+     I              HTHKOD                          H#HKOD                      
+     I              HTUM                            H#UM                        
+     I              HTTX11                          H#TX11                      
+     I              HTTX21                          H#TX21                      
+     I              HTTX31                          H#TX31                      
+     I              HTTX41                          H#TX41                      
+     I              HTTX51                          H#TX51                      
+     I              HTTX12                          H#TX12                      
+     I              HTTX22                          H#TX22                      
+     I              HTTX32                          H#TX32                      
+     I              HTTX42                          H#TX42                      
+     I              HTTX52                          H#TX52                      
+     I              HTTX13                          H#TX13                      
+     I              HTTX23                          H#TX23                      
+     I              HTTX33                          H#TX33                      
+     I              HTTX43                          H#TX43                      
+     I              HTTX53                          H#TX53                      
+     I              HTTX14                          H#TX14                      
+     I              HTTX24                          H#TX24                      
+     I              HTTX34                          H#TX34                      
+     I              HTTX44                          H#TX44                      
+     I              HTTX54                          H#TX54                      
+     I              HTTX15                          H#TX15                      
+     I              HTTX25                          H#TX25                      
+     I              HTTX35                          H#TX35                      
+     I              HTTX45                          H#TX45                      
+     I              HTTX55                          H#TX55                      
+     I              HTSHAN                          H#SHAN                      
+     I              HTSNDN                          H#SNDN                      
+     I              HTSOK                           H#SOK                       
+     I              HTSOKN                          H#SOKN                      
+     I              HTSAD1                          H#SAD1                      
+     I              HTSAD2                          H#SAD2                      
+     I              HTSYUB                          H#SYUB                      
+     I              HTSKOK                          H#SKOK                      
+     I              HTBNDC                          H#BNDC                      
+     I              HTBNDN                          H#BNDN                      
+     I              HTBNDA                          H#BNDA                      
+     I              HTTUKA                          H#TUKA                      
+     I              HTNBC1                          H#NBC1                      
+     I              HTNBT1                          H#NBT1                      
+     I              HTNBQ1                          H#NBQ1                      
+     I              HTNBD1                          H#NBD1                      
+     I              HTNBF1                          H#NBF1                      
+     I              HTNBR1                          H#NBR1                      
+     I              HTNBC2                          H#NBC2                      
+     I              HTNBT2                          H#NBT2                      
+     I              HTNBQ2                          H#NBQ2                      
+     I              HTNBD2                          H#NBD2                      
+     I              HTNBF2                          H#NBF2                      
+     I              HTNBR2                          H#NBR2                      
+     I              HTNBC3                          H#NBC3                      
+     I              HTNBT3                          H#NBT3                      
+     I              HTNBQ3                          H#NBQ3                      
+     I              HTNBD3                          H#NBD3                      
+     I              HTNBF3                          H#NBF3                      
+     I              HTNBR3                          H#NBR3                      
+     I              HTNBC4                          H#NBC4                      
+     I              HTNBT4                          H#NBT4                      
+     I              HTNBQ4                          H#NBQ4                      
+     I              HTNBD4                          H#NBD4                      
+     I              HTNBF4                          H#NBF4                      
+     I              HTNBR4                          H#NBR4                      
+     I              HTNBC5                          H#NBC5                      
+     I              HTNBT5                          H#NBT5                      
+     I              HTNBQ5                          H#NBQ5                      
+     I              HTNBD5                          H#NBD5                      
+     I              HTNBF5                          H#NBF5                      
+     I              HTNBR5                          H#NBR5                      
+     I              HTNBC6                          H#NBC6                      
+     I              HTNBT6                          H#NBT6                      
+     I              HTNBQ6                          H#NBQ6                      
+     I              HTNBD6                          H#NBD6                      
+     I              HTNBF6                          H#NBF6                      
+     I              HTNBR6                          H#NBR6                      
+     I              HTNBC7                          H#NBC7                      
+     I              HTNBT7                          H#NBT7                      
+     I              HTNBQ7                          H#NBQ7                      
+     I              HTNBD7                          H#NBD7                      
+     I              HTNBF7                          H#NBF7                      
+     I              HTNBR7                          H#NBR7                      
+     I              HTNBC8                          H#NBC8                      
+     I              HTNBT8                          H#NBT8                      
+     I              HTNBQ8                          H#NBQ8                      
+     I              HTNBD8                          H#NBD8                      
+     I              HTNBF8                          H#NBF8                      
+     I              HTNBR8                          H#NBR8                      
+     I              HTCHAR                          H#CHAR                      
+     I              HTTERM                          H#TERM                      
+     I              HTKBD                           H#KBD                       
+     I              HTLIN                           H#LIN                       
+     I              HTSKN                           H#SKN                       
+     I              HTJAN                           H#JAN                       
+     I              HTHNT                           H#HNT                       
+     I              HTHNTN                          H#HNTN                      
+     I              HTFIL                           H#FIL                       
+     I              HTHTSU                          H#HTSU                      
+     I              HTTNKA                          H#TNKA                      
+     I              HTIRPK                          H#IRPK                      
+     I              HTIRKT                          H#IRKT                      
+     I              HTTRKT                          H#TRKT                      
+     I              HTTRCT                          H#TRCT                      
+     I              HTTRST                          H#TRST                      
+     I              HTTRUT                          H#TRUT                      
+     I              HTHNC                           H#HNC                       
+     I              HTJAC                           H#JAC                       
+     I              HTSYD                           H#SYD                       
+     I              HTJCNT                          H#JCNT                      
+     I              HTNYS                           H#NYS                       
+     I              HTPOS                           H#POS                       
+     I              HTJUS                           H#JUS                       
+     I              HTHKS                           H#HKS                       
+     I              HTKPS                           H#KPS                       
+     I              HTSKS                           H#SKS                       
+     I              HTKB01                          H#KB01                      
+     I              HTKB02                          H#KB02                      
+     I              HTKB03                          H#KB03                      
+     I              HTKB04                          H#KB04                      
+     I              HTKB05                          H#KB05                      
+     I              HTKB06                          H#KB06                      
+     I              HTKB07                          H#KB07                      
+     I              HTKB08                          H#KB08                      
+     I              HTKB09                          H#KB09                      
+     I              HTKB10                          H#KB10                      
+     I              HTKB11                          H#KB11                      
+     I              HTKB12                          H#KB12                      
+     I              HTKB13                          H#KB13                      
+     I              HTKB14                          H#KB14                      
+     I              HTKB15                          H#KB15                      
+     I              HTKB16                          H#KB16                      
+     I              HTKB17                          H#KB17                      
+     I              HTKBP8                          H#KBP8                      
+     I              HTKBP9                          H#KBP9                      
+     I              HTKB20                          H#KB20                      
+     I              HTCDT                           H#CDT                       
+     I              HTCTM                           H#CTM                       
+     I              HTOPC                           H#OPC                       
+     I              HTWID                           H#WID                       
+     I              HTDST1                          H#DST1                      
+     I              HTDST2                          H#DST2                      
+     I              HTTRNO                          H#TRNO                      
+     I              HTRKKB                          H#RKKB                      
+     I              HTJODN                          H#JODN                      
+     I              HTJUM                           H#JUM                       
+     I              HTJNND                          H#JNND                      
+     I              HTJSOK                          H#JSOK                      
+     I              HTJBND                          H#JBND                      
+     I              HTJLIN                          H#JLIN                      
+     I              HTJSKN                          H#JSKN                      
+      * ﾛｰｶﾙ ﾃﾞｰﾀｴﾘｱ GET                                                        
+      /COPY QCPYSRC,@LDA                                                        
+      *   暦日変換                                                              
+      /COPY QCPYSRC,@0010P                                                      
+      *   ﾒｯｾｰｼﾞ 取得                                                           
+      /COPY QCPYSRC,@0040P                                                      
+      *   漢字切断                                                              
+      /COPY QCPYSRC,@0050P                                                      
+      *   漢字統合                                                              
+      /COPY QCPYSRC,@0060P                                                      
+      *   ｾｷｭﾘﾃｨ & 業務 ﾛｯｸ ﾁｪｯｸ                                                
+      /COPY QCPYSRC,@2010P                                                      
+      *  ﾎﾟｯﾌﾟ 照会                                                             
+      /COPY QCPYSRC,@POP                                                        
+     I*                                                                         
+     I* PARM =====================================================              
+     I            DS                                                            
+     I                                        1 200 W@PARM                      
+     I                                        1   5 P@010                       
+     I                                        6  130P@020                       
+     I                                       14  210P@020T                      
+     I                                       22  290P@110                       
+     I                                       30  370P@120                       
+     I                                       38  44 P@030                       
+     I                                       45  48 P@040                       
+     I                                       49  49 P@050                       
+     I                                       38  49 P@TRC                       
+     I                                       50  56 P@030T                      
+     I                                       57  60 P@040T                      
+     I                                       61  61 P@050T                      
+     I                                       50  61 P@TRCT                      
+     I                                       62  71 P@070                       
+     I                                       72  81 P@070T                      
+     I                                       82  94 P@080                       
+     I                                       95 107 P@0801                      
+     I                                      108 120 P@0802                      
+     I                                      121 121 P@090                       
+     I                                      122 1290P@130                       
+     I                                      130 1370P@140                       
+     I                                      138 138 P@150                       
+     I                                      139 139 P@160                       
+     I                                      140 140 P@170                       
+     I                                      141 143 P@SOK                       
+     I                                      144 146 P@ZBK                       
+     I* ===========================================================             
+     I           SDS                                                            
+     I                                        1  10 @PGID                       
+     I                                      244 253 @WSID                       
+     IHTTR@       DS                                                            
+     I                                        1   7 HTTRCT                      
+     I                                        8  11 HTTRST                      
+     I                                       12  12 HTTRUT                      
+     I            DS                                                            
+     I                                        1  12 @@TR                        
+     I                                        1   1 @@TRK                       
+     I                                        2   8 @@TRC                       
+     I                                        9  12 @@TRS                       
+     C****************************************************************          
+     C*  パラメータリスト記述　                                      *          
+     C****************************************************************          
+     C           *ENTRY    PLIST                                                
+     C                     PARM           P@PARM200         ＰＡＲＭ            
+     C                     PARM           P@OUT   1         ＰＡＲＭ            
+     C****************************************************************          
+     C*  キーリスト記述　　　                                        *          
+     C****************************************************************          
+      *  受注データ                                                             
+     C           HTKEY     KLIST                                                
+     C                     KFLD           HTBNDC                                
+     C                     KFLD           HTHNC                                 
+     C                     KFLD           HTODNO                                
+     C           HTKEY2    KLIST                                                
+     C                     KFLD           HTBNDC                                
+      *  名称マスタ                                                             
+     C           KMKEY     KLIST                                                
+     C                     KFLD           KMMSK                                 
+     C                     KFLD           KMMSC                                 
+      *  取引先Ｍ                                                               
+     C           TRKEY     KLIST                                                
+     C                     KFLD           TRTRK                                 
+     C                     KFLD           TRTRC                                 
+     C                     KFLD           TRTRS                                 
+     C                     KFLD           TRTRU                                 
+     C           JUKEY     KLIST                                                
+     C                     KFLD           JUJDN                                 
+     C                     KFLD           JUAKN                                 
+     C                     KFLD           JUJGY                                 
+     C           NYKEY     KLIST                                                
+     C                     KFLD           NYBNDC                                
+     C                     KFLD           NYODNO                                
+     C                     KFLD           NYHNC                                 
+     C                     KFLD           NYSKN                                 
+     C                     KFLD           NYTRKT                                
+     C                     KFLD           NYTRCT                                
+     C                     KFLD           NYTRST                                
+     C                     KFLD           NYTRUT                                
+     C           NSKEY     KLIST                                                
+     C                     KFLD           NSUYMD                                
+     C                     KFLD           NSNYNO                                
+     C           @TKEY     KLIST                                                
+     C                     KFLD           HTJODN                                
+     C                     KFLD           HTJUM                                 
+     C                     KFLD           HTJNND                                
+     C                     KFLD           HTJSOK                                
+     C                     KFLD           HTJBND                                
+     C                     KFLD           HTJLIN                                
+     C                     KFLD           HTJSKN     
+                           
+     C                     KFLD           @@CDT   90                            
+     C                     KFLD           @@CTM   70                            
+     C           @TKEY2    KLIST                                                
+     C                     KFLD           HTJODN                                
+     C                     KFLD           HTJUM                                 
+     C                     KFLD           HTJNND                                
+     C                     KFLD           HTJSOK                                
+     C                     KFLD           HTJBND                                
+     C                     KFLD           HTJLIN                                
+     C                     KFLD           HTJSKN    
+                            
+     C           H#KKEY    KLIST                                                
+     C                     KFLD           HTJODN                                
+     C                     KFLD           HTJUM                                 
+     C                     KFLD           HTJNND                                
+     C                     KFLD           HTJSOK                                
+     C                     KFLD           HTJBND                                
+     C                     KFLD           HTJLIN                                
+     C                     KFLD           HTJSKN                                
+     C           TRKEYQ    KLIST                                                
+     C                     KFLD           TRTRKQ                                
+     C                     KFLD           TRTRCQ                                
+     C                     KFLD           TRTRSQ                                
+     C                     KFLD           TRTRUQ                                
+     C                     KFLD           TRSPTE                                
+      *                                                                         
+      ****************************************************************          
+      *  ￥ＢＡＳＥ　　　　メイン・ルーチン                          *          
+      ****************************************************************          
+      * 初期処理                                                                
+     C                     EXSR #INIT                                           
+      * 中心処理                                                                
+     C           FEND      DOWEQ'0'                        ?DOWEQ               
+     C                     EXSR #MAIN                                           
+     C                     END                             ｣DOWEQ               
+      * 終了処理                                                                
+     C                     EXSR #END                                            
+      ****************************************************************          
+      *  ＃ＩＮＩＴ　　　　初期処理                                  *          
+      ****************************************************************          
+     C           #INIT     BEGSR                                                
+      * PARM SET                                                                
+     C                     MOVELP@PARM    W@PARM                                
+      * 帳票ＦＬＤ初期化                                                        
+     C                     CLEARHEAD                                            
+     C                     CLEARITEM                                            
+      * フラグクリア                                                            
+     C                     MOVE '0'       FEND    1                             
+     C                     MOVE '0'       SEXTR   1                             
+     C                     MOVE '0'       FST     1                             
+      *                                                                         
+     C                     MOVE *ALL'-'   SEN1                                  
+     C                     SETON                     74                         
+     C                     SETON                     11                         
+     C                     SETON                     12                         
+     C                     SETON                     13                         
+     C                     SETON                     14                         
+      * 見出し項目セット                                                        
+     C                     MOVE LDWID     WID               ﾜｰｸｽﾃｰｼｮﾝID         
+      *                                                                         
+      *                                                                         
+      * 下限セット                                                              
+     C                     MOVELP@010     HTBNDC                                
+     C                     MOVEL*BLANK    HTHNC                                 
+     C                     MOVEL*BLANK    HTODNO                                
+     C           HTKEY     SETLLHTREC                                           
+      *                                                                         
+     C                     EXSR #READ                                           
+      *                                                                         
+     C           \INIT     ENDSR                                                
+      ****************************************************************          
+      *  ＃ＭＡＩＮ　　　　中心処理                                  *          
+      ****************************************************************          
+     C           #MAIN     BEGSR                                                
+      * 抽出処理                                                                
+     C                     EXSR #EXTR                                           
+      * 出力処理                                                                
+     C           SEXTR     IFEQ '1'                        ?IFEQ                
+     C                     EXSR #WRITE                                          
+     C                     END                             ｣IFEQ                
+      * 読込処理                                                                
+     C                     EXSR #READ                                           
+      *                                                                         
+     C           \MAIN     ENDSR                                                
+      *****************************************************************         
+      *  ＃ＥＮＤ　　　　　終了処理                                   *         
+      *****************************************************************         
+     C           #END      BEGSR                                                
+      * DATA FLG                                                                
+     C                     MOVE FST       P@OUT                                 
+      * ON LR                                                                   
+     C                     MOVE '1'       *INLR                                 
+     C                     RETRN                                                
+      *                                                                         
+     C           \END      ENDSR                                                
+      *****************************************************************         
+      *  ＃ＲＥＡＤ　　　　読込処理                                   *         
+      *****************************************************************         
+     C           #READ     BEGSR                                                
+      * 読込                                                                    
+     C           P@010     IFEQ *BLANK                                          
+     C                     READ HTREC                    99                     
+     C                     ELSE                                                 
+     C           HTKEY2    READEHTREC                    99                     
+     C                     END                                                  
+     C   99                MOVE '1'       FEND                                  
+      *                                                                         
+     C           \READ     ENDSR                                                
+      *****************************************************************         
+      *  ＃ＥＸＴＲ　　　　抽出処理                                   *         
+      *****************************************************************         
+     C           #EXTR     BEGSR                                                
+      * 抽出 FLG ON                                                             
+     C                     MOVE '1'       SEXTR                                 
+     C           HTTR@     IFLT P@TRC                                           
+     C                     MOVE '0'       SEXTR                                 
+     C                     END                                                  
+     C           HTTR@     IFGT P@TRCT                                          
+     C                     MOVE '0'       SEXTR                                 
+     C                     END                                                  
+     C           HTSYD     IFLT P@020                                           
+     C                     MOVE '0'       SEXTR                                 
+     C                     END                                                  
+     C           HTSYD     IFGT P@020T                                          
+     C                     MOVE '0'       SEXTR                                 
+     C                     END                                                  
+     C           HTODNO    IFLT P@070                                           
+     C                     MOVE '0'       SEXTR                                 
+     C                     END                                                  
+     C           HTODNO    IFGT P@070T                                          
+     C                     MOVE '0'       SEXTR                                 
+     C                     END                                                  
+     C                     MOVELHTNND     @8      80                            
+     C           @8        IFLT P@110                                           
+     C                     MOVE '0'       SEXTR                                 
+     C                     END                                                  
+     C           @8        IFGT P@120                                           
+     C                     MOVE '0'       SEXTR                                 
+     C                     END                                                  
+     C           P@080     IFEQ *BLANK                                          
+     C           P@0801    ANDEQ*BLANK                                          
+     C           P@0802    ANDEQ*BLANK                                          
+     C                     ELSE                                                 
+     C           HTHNC     IFEQ *BLANK                                          
+     C                     MOVE '0'       SEXTR                                 
+     C                     ELSE                                                 
+     C           P@080     IFEQ HTHNC                                           
+     C           P@0801    OREQ HTHNC                                           
+     C           P@0802    OREQ HTHNC                                           
+     C                     ELSE                                                 
+     C                     MOVE '0'       SEXTR                                 
+     C                     END                                                  
+     C                     END                                                  
+     C                     END                                                  
+      * 区分毎のチェック                                                        
+     C           SEXTR     IFEQ '1'                                             
+      * 未予約                                                                  
+     C           P@090     IFEQ '1'                                             
+     C                     EXSR #CHK1                                           
+     C                     END                                                  
+      * エラー                                                                  
+     C           P@090     IFEQ '2'                                             
+     C                     EXSR #CHK2                                           
+     C                     END                                                  
+      * 予約済分                                                                
+     C           P@090     IFEQ '3'                                             
+     C                     EXSR #CHK3                                           
+     C                     END                                                  
+      * 予約送信済分                                                            
+     C           P@090     IFEQ '4'                                             
+     C                     EXSR #CHK4                                           
+     C                     END                                                  
+      * 強制完了分                                                              
+     C           P@090     IFEQ '5'                                             
+     C                     EXSR #CHK5                                           
+     C                     END                                                  
+      * 直送分                                                                  
+     C           P@090     IFEQ '6'                                             
+     C                     EXSR #CHK6                                           
+     C                     END                                                  
+A1403 * 再変換（エラーなし分）                                                  
+A1403C           P@090     IFEQ 'Z'                                             
+A1403C                     EXSR #CHKZ                                           
+A1403C                     END                                                  
+      *                                                                         
+     C                     END                                                  
+      *                                                                         
+     C           \EXTR     ENDSR                                                
+      *****************************************************************         
+      *  ＃ＣＨＫ１　　　　未予約分                                   *         
+      *****************************************************************         
+     C           #CHK1     BEGSR                                                
+      * 完了分                                                                  
+     C           HTKB20    IFNE *BLANK                                          
+     C                     MOVEL'0'       SEXTR                                 
+     C                     GOTO \CHK1                                           
+     C                     END                                                  
+      * エラー有りは除外                                                        
+     C           HTKB12    IFNE *BLANK                                          
+     C                     MOVEL'0'       SEXTR                                 
+     C                     GOTO \CHK1                                           
+     C                     END                                                  
+      * 残有                                                                    
+     C                     Z-ADDHTHTSU    @@@ZAN  90                            
+     C                     ADD  HTPOS     @@@ZAN                                
+     C                     ADD  HTKPS     @@@ZAN                                
+     C                     SUB  HTNYS     @@@ZAN                                
+     C           @@@ZAN    IFLE *ZERO                                           
+     C                     MOVEL'0'       SEXTR                                 
+     C                     GOTO \CHK1                                           
+     C                     END                                                  
+     C           \CHK1     ENDSR                                                
+      *****************************************************************         
+      *  ＃ＣＨＫ２　　　　エラー分                                   *         
+      *****************************************************************         
+     C           #CHK2     BEGSR                                                
+      * 完了分                                                                  
+     C           HTKB20    IFNE *BLANK                                          
+     C                     MOVEL'0'       SEXTR                                 
+     C                     GOTO \CHK2                                           
+     C                     END                                                  
+      * エラー有り                                                              
+     C           HTKB12    IFEQ *BLANK                                          
+     C                     MOVEL'0'       SEXTR                                 
+     C                     GOTO \CHK2                                           
+     C                     END                                                  
+     C           \CHK2     ENDSR                                                
+      *****************************************************************         
+      *  ＃ＣＨＫ３　　　　予約済分                                   *         
+      *****************************************************************         
+     C           #CHK3     BEGSR                                                
+      * 完了分                                                                  
+     C           HTKB20    IFNE *BLANK                                          
+     C           HTKB17    IFEQ *BLANK                                          
+     C                     MOVEL'0'       SEXTR                                 
+     C                     GOTO \CHK3                                           
+     C                     END                                                  
+     C                     END                                                  
+      * 予約数                                                                  
+     C           HTNYS     IFEQ *ZERO                                           
+     C                     MOVEL'0'       SEXTR                                 
+     C                     GOTO \CHK3                                           
+     C                     END                                                  
+     C           \CHK3     ENDSR                                                
+      *****************************************************************         
+      *  ＃ＣＨＫ４　　　　送信済分                                   *         
+      *****************************************************************         
+     C           #CHK4     BEGSR                                                
+      * 完了分                                                                  
+     C           HTKB20    IFNE *BLANK                                          
+     C           HTKB17    IFEQ *BLANK                                          
+     C                     MOVEL'0'       SEXTR                                 
+     C                     GOTO \CHK4                                           
+     C                     END                                                  
+     C                     END                                                  
+      * 予約数                                                                  
+     C           HTNYS     IFEQ *ZERO                                           
+     C                     MOVEL'0'       SEXTR                                 
+     C                     GOTO \CHK4                                           
+     C                     END                                                  
+      * ＣＡＰ受注数                                                            
+     C           HTJUS     IFEQ *ZERO                                           
+     C                     MOVEL'0'       SEXTR                                 
+     C                     GOTO \CHK4                                           
+     C                     END                                                  
+      * 納品予約                                                                
+     C                     SETOF                     93                         
+     C                     MOVEL'0'       SJUSEL                                
+     C                     MOVELHTBNDC    NYBNDC                                
+     C                     MOVELHTODNO    NYODNO                                
+     C                     MOVELHTHNC     NYHNC                                 
+     C                     MOVELHTSKN     NYSKN                                 
+     C                     MOVELHTTRKT    NYTRKT                                
+     C                     MOVELHTTRCT    NYTRCT                                
+     C                     MOVELHTTRST    NYTRST                                
+     C                     MOVELHTTRUT    NYTRUT                                
+     C           NYKEY     SETLLNYREC2                                          
+     C           NYKEY     READENYREC2                   93                     
+     C           *IN93     DOWEQ'0'                                             
+      * 受注データ参照                                                          
+     C           NYJNO     IFNE *BLANK                                          
+     C                     MOVELNYJNO     JUJDN                                 
+     C                     MOVELNYJGY     JUJGY                                 
+     C                     MOVELNYJGY     JUJGY                                 
+     C           JUKEY     CHAINJUREC                94                         
+     C  N94                DO                                                   
+     C                     MOVEL'1'       SJUSEL  1                             
+     C                     MOVELJUSGD1    @8                                    
+     C                     MOVE JUSGD2    @8                                    
+     C           @8        IFLT P@130                                           
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C           @8        IFGT P@140                                           
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C           P@150     IFEQ '1'                                             
+     C           JUUP08    IFNE '1'                                             
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C                     END                                                  
+     C           P@150     IFEQ '2'                                             
+     C           JUUP08    IFEQ '1'                                             
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C                     END                                                  
+     C           P@160     IFEQ '1'                                             
+     C           JUUP09    IFNE '1'                                             
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C                     END                                                  
+     C           P@160     IFEQ '2'                                             
+     C           JUUP09    IFEQ '1'                                             
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C                     END                                                  
+     C           P@170     IFEQ '1'                                             
+     C           JUUP10    IFNE '1'                                             
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C                     END                                                  
+     C           P@170     IFEQ '2'                                             
+     C           JUUP10    IFEQ '1'                                             
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C                     END                                                  
+     C           P@SOK     IFNE *BLANK                                          
+     C           JUSOK     IFNE P@SOK                                           
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C                     END                                                  
+     C           P@ZBK     IFNE *BLANK                                          
+     C           JUZBK     IFNE P@ZBK                                           
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C                     END                                                  
+     C           SJUSEL    IFEQ '1'                                             
+     C                     GOTO \CHK4                                           
+     C                     END                                                  
+     C                     END                                                  
+     C                     END                                                  
+     C           NYKEY     READENYREC2                   93                     
+     C                     END                                                  
+     C           \CHK4     ENDSR                                                
+      *****************************************************************         
+      *  ＃ＣＨＫ５　　　　強制完了分                                 *         
+      *****************************************************************         
+     C           #CHK5     BEGSR                                                
+      * 完了分                                                                  
+     C           HTKB17    IFNE '2'                                             
+     C                     MOVEL'0'       SEXTR                                 
+     C                     GOTO \CHK5                                           
+     C                     END                                                  
+     C           \CHK5     ENDSR                                                
+      *****************************************************************         
+      *  ＃ＣＨＫ６　　　　直送完了分                                 *         
+      *****************************************************************         
+     C           #CHK6     BEGSR                                                
+      * 完了分                                                                  
+     C           HTKB17    IFEQ '1'                                             
+     C           HTKB17    OREQ '3'                                             
+     C                     ELSE                                                 
+     C                     MOVEL'0'       SEXTR                                 
+     C                     GOTO \CHK6                                           
+     C                     END                                                  
+     C           \CHK6     ENDSR                                                
+A1403 *****************************************************************         
+  |   *  ＃ＣＨＫＺ　　　　再変換（エラーなし分）                     *         
+  |   *****************************************************************         
+  |  C           #CHKZ     BEGSR                                                
+  |   * 完了分                                                                  
+  |  C           HTKB20    IFNE *BLANK                                          
+  |  C                     MOVEL'0'       SEXTR                                 
+  |  C                     GOTO \CHKZ                                           
+  |  C                     END                                                  
+  |   * エラー有り                                                              
+  |  C           HTKB12    IFNE *BLANK                                          
+  |  C                     MOVEL'0'       SEXTR                                 
+  |  C                     GOTO \CHKZ                                           
+  |  C                     END                                                  
+  |   *                                                                         
+A1403C           \CHKZ     ENDSR                                                
+      *****************************************************************         
+      *  ＃ＷＲＩＴＥ　　　出力処理                                   *         
+      *****************************************************************         
+     C           #WRITE    BEGSR                                                
+      *  ベンダーブレイク                                                       
+     C           FST       IFEQ '1'                                             
+     C           HTBNDC    IFNE W@BNDC                                          
+     C                     SETON                     74                         
+     C                     SETON                     11                         
+     C                     SETON                     12                         
+     C                     SETON                     13                         
+     C                     SETON                     14                         
+     C                     END                                                  
+     C           HTHNC     IFNE W@HNC                                           
+     C                     SETON                     111213                     
+     C                     SETON                     14                         
+     C                     END                                                  
+     C           HTJAN     IFNE W@JAN                                           
+     C                     SETON                     111213                     
+     C                     SETON                     14                         
+     C                     END                                                  
+     C           HTHNTN    IFNE W@HNTN                                          
+     C                     SETON                     111213                     
+     C                     SETON                     14                         
+     C                     END                                                  
+     C           HTSKN     IFNE W@SKN                                           
+     C                     SETON                     111213                     
+     C                     SETON                     14                         
+     C                     END                                                  
+     C           HTODNO    IFNE W@ODNO                                          
+     C                     SETON                     111213                     
+     C                     SETON                     14                         
+     C                     END                                                  
+     C           HTHNC     IFNE W@HNC                                           
+     C           HTJAN     ORNE W@JAN                                           
+     C           HTHNTN    ORNE W@HNTN                                          
+     C           HTSKN     ORNE W@SKN                                           
+     C           HTODNO    ORNE W@ODNO                                          
+     C  N74                WRITEBLANK                                           
+     C                     END                                                  
+     C                     END                                                  
+      * 見出し出力                                                              
+     C   74                EXSR #HEAD                                           
+      * 項目転送                                                                
+     C                     EXSR #MOVE                                           
+      * 一件目 FLG                                                              
+     C                     MOVE '1'       FST                                   
+     C                     MOVELHTHNC     W@HNC  13                             
+     C                     MOVELHTBNDC    W@BNDC 10                             
+     C                     MOVELHTJAN     W@JAN  13                             
+     C                     MOVELHTHNTN    W@HNTN 25                             
+     C                     MOVELHTSKN     W@SKN  10                             
+     C                     MOVELHTODNO    W@ODNO 10                             
+      *                                                                         
+     C           \WRITE    ENDSR                                                
+      *****************************************************************         
+      *  ＃ＨＥＡＤ　　　　見出し処理                                 *         
+      *****************************************************************         
+     C           #HEAD     BEGSR                                                
+      * 出力                                                                    
+     C                     MOVELP@090     H010A                                 
+     C           P@090     IFEQ '1'                                             
+     C                     MOVEL@T,1      H020A                                 
+     C                     END                                                  
+     C           P@090     IFEQ '2'                                             
+     C                     MOVEL@T,2      H020A                                 
+     C                     END                                                  
+     C           P@090     IFEQ '3'                                             
+     C                     MOVEL@T,3      H020A                                 
+     C                     END                                                  
+     C           P@090     IFEQ '4'                                             
+     C                     MOVEL@T,4      H020A                                 
+     C                     END                                                  
+     C           P@090     IFEQ '5'                                             
+     C                     MOVEL@T,5      H020A                                 
+     C                     END                                                  
+     C           P@090     IFEQ '6'                                             
+     C                     MOVEL@T,6      H020A                                 
+     C                     END                                                  
+     C           P@090     IFEQ '9'                                             
+     C                     MOVEL@T,7      H020A                                 
+     C                     END                                                  
+A1403C           P@090     IFEQ 'Z'                                             
+A1403C                     MOVEL@T,8      H020A                                 
+A1403C                     END                                                  
+     C                     MOVELHTBNDC    H010                                  
+     C                     MOVEL'VN'      KMMSK                                 
+     C                     MOVELHTBNDC    KMMSC     P                           
+     C           KMKEY     CHAINKMREC                90                         
+     C   90                MOVEL*BLANK    H020                                  
+     C  N90                MOVELKMMSJ     H020                                  
+     C                     WRITEHEAD                                            
+     C                     MOVE '0'       *IN74                                 
+      *                                                                         
+     C           \HEAD     ENDSR                                                
+      *****************************************************************         
+      *  ＃ＭＯＶＥ　　　　転送                                       *         
+      *****************************************************************         
+     C           #MOVE     BEGSR                                                
+     C           H#KKEY    CHAINHTREC2               92                         
+     C   92                DO                                                   
+     C                     MOVELHTHNC     I010                                  
+     C                     MOVELHTJAN     I020                                  
+     C                     MOVELHTHNTN    I030                                  
+     C                     MOVELHTSKN     I040                                  
+     C                     MOVELHTJSOK    ISOK    5                             
+     C                     MOVELHTTRCT    I050                                  
+     C                     MOVELHTTRST    I060                                  
+     C                     MOVELHTTRUT    I070                                  
+     C                     MOVEL'1'       TRTRK                                 
+     C                     MOVELHTTRCT    TRTRC                                 
+     C                     MOVELHTTRST    TRTRS                                 
+     C                     MOVELHTTRUT    TRTRU                                 
+     C           TRKEY     CHAINTRREC                90                         
+     C   90                MOVEL*BLANK    I080                                  
+     C   90                MOVELHTSOK     I080                                  
+     C  N90                MOVELTRTR2     I080                                  
+     C****                 MOVELHTSOKN    I080                                  
+     C                     MOVELHTODNO    I100                                  
+     C                     Z-ADDHTSYD     I110                                  
+     C                     MOVE HTNNDE    @6      60                            
+     C                     Z-ADD@6        I120                                  
+     C                     MOVE HTNND     @6      60                            
+     C                     Z-ADD@6        I130                                  
+     C***                  MOVE HTNBR2    @42     42                            
+     C***                  Z-ADD@42       I140                                  
+     C           HTNBR1    ADD  HTNBR2    @40     40                            
+     C                     ADD  HTNBR3    @40                                   
+     C                     ADD  HTNBR4    @40                                   
+     C                     ADD  HTNBR5    @40                                   
+     C                     ADD  HTNBR6    @40                                   
+     C                     ADD  HTNBR7    @40                                   
+     C                     ADD  HTNBR8    @40                                   
+     C                     MOVE @40       @42     42                            
+     C                     Z-ADD@42       I150                                  
+     C                     MOVELHTUM      I160                                  
+     C                     MOVE HTIRPK    I170                                  
+     C                     MOVE HTIRKT    I180                                  
+     C                     MOVE HTTNKA    I190                                  
+     C                     END                                                  
+     C  N92                DO                                                   
+     C                     MOVELH#HNC     I010                                  
+     C                     MOVELH#JAN     I020                                  
+     C                     MOVELH#HNTN    I030                                  
+     C                     MOVELH#SKN     I040                                  
+     C                     MOVELH#TRCT    I050                                  
+     C                     MOVELH#TRST    I060                                  
+     C                     MOVELH#JSOK    ISOK    5                             
+     C                     MOVELH#TRUT    I070                                  
+     C                     MOVEL'1'       TRTRK                                 
+     C                     MOVELH#TRCT    TRTRC                                 
+     C                     MOVELH#TRST    TRTRS                                 
+     C                     MOVELH#TRUT    TRTRU                                 
+     C           TRKEY     CHAINTRREC                90                         
+     C   90                MOVEL*BLANK    I080                                  
+     C   90                MOVELH#SOK     I080                                  
+     C  N90                MOVELTRTR2     I080                                  
+     C                     MOVELH#ODNO    I100                                  
+     C                     Z-ADDH#SYD     I110                                  
+     C                     MOVE H#NNDE    @6      60                            
+     C                     Z-ADD@6        I120                                  
+     C                     MOVE H#NND     @6      60                            
+     C                     Z-ADD@6        I130                                  
+     C           H#NBR1    ADD  H#NBR2    @40     40                            
+     C                     ADD  H#NBR3    @40                                   
+     C                     ADD  H#NBR4    @40                                   
+     C                     ADD  H#NBR5    @40                                   
+     C                     ADD  H#NBR6    @40                                   
+     C                     ADD  H#NBR7    @40                                   
+     C                     ADD  H#NBR8    @40                                   
+     C                     MOVE @40       @42     42                            
+     C                     Z-ADD@42       I150                                  
+     C                     MOVELH#UM      I160                                  
+     C                     MOVE H#IRPK    I170                                  
+     C                     MOVE H#IRKT    I180                                  
+     C                     MOVE H#TNKA    I190                                  
+     C                     END                                                  
+      * エラー編集                                                              
+     C                     EXSR #MOVE2                                          
+      * 完了区分                                                                
+     C                     MOVEL*BLANK    I196                                  
+     C           HTKB17    IFEQ '1'                                             
+     C                     MOVEL'1'       I196                                  
+     C                     END                                                  
+     C           HTKB17    IFEQ '2'                                             
+     C                     MOVEL'2'       I196                                  
+     C                     END                                                  
+     C           HTKB17    IFEQ '3'                                             
+     C                     MOVEL'3'       I196                                  
+     C                     END                                                  
+     C                     MOVE HTHTSU    I201                                  
+     C                     Z-ADDI201      @I201   60                            
+     C                     ADD  HTPOS     @I201                                 
+     C                     ADD  HTKPS     @I201                                 
+     C           @I201     SUB  HTNYS     I201A                                 
+     C                     WRITEITEM                                            
+     C                     CLEARITEM                                            
+      *2 行目                                                                   
+     C**                   Z-ADDHTPOS     I202                                  
+     C**                   Z-ADDHTNYS     I203                                  
+     C**                   Z-ADDHTSKS     I204                                  
+     C   99N99             WRITEITEM2                                           
+     C   99N99             CLEARITEM2                                           
+      * PO チェンジ情報                                                         
+     C                     SETOF                     93                         
+     C                     MOVEL'0'       SWPO    1                             
+     C                     Z-ADD*ZERO     @@CDT                                 
+     C                     Z-ADD*ZERO     @@CTM                                 
+     C           @TKEY     SETLLDTZLMX1                                         
+     C                     SETOF                     8182                       
+     C           @TKEY2    READEDTZLMX1                  93                     
+     C           *IN93     DOWEQ'0'                                             
+     C   74                EXSR #HEAD                                           
+     C           *IN81     IFEQ '1'                                             
+     C           @TRKKB    IFEQ '1'                                             
+     C                     EXSR #MAE                                            
+     C                     END                                                  
+     C           @TRKKB    IFEQ '2'                                             
+     C   99N99             WRITECHG1                                            
+     C                     EXSR #ATO                                            
+     C                     WRITECHG3                                            
+     C                     END                                                  
+     C                     END                                                  
+     C           *IN82     IFEQ '1'                                             
+     C                     MOVELNYNYNO    I205                                  
+     C                     Z-ADDNYNOD     I206                                  
+     C                     Z-ADDNYNOT     I207                                  
+     C                     Z-ADDNYNYS     I208                                  
+     C           @I201     SUB  I208      @I201                                 
+     C                     Z-ADD@I201     I209                                  
+     C                     SETOF                     32                         
+     C                     MOVELNYNOD     NSUYMD                                
+     C                     MOVELNYNYNO    NSNYNO                                
+     C           NSKEY     CHAINNSREC                95                         
+     C  N95                DO                                                   
+     C                     SETON                     32                         
+     C                     Z-ADDNSUTIM    I211                                  
+     C                     END                                                  
+      * 受注データ参照                                                          
+     C                     SETOF                     31                         
+     C                     SETOF                     333435                     
+     C                     MOVEL'0'       SJUSEL                                
+     C           NYJNO     IFNE *BLANK                                          
+     C                     MOVELNYJNO     JUJDN                                 
+     C                     MOVELNYJGY     JUJGY                                 
+     C                     MOVELNYJGY     JUJGY                                 
+     C           JUKEY     CHAINJUREC                94                         
+     C  N94                DO                                                   
+     C                     MOVEL'1'       SJUSEL  1                             
+     C                     MOVELJUSGD1    @8                                    
+     C                     MOVE JUSGD2    @8                                    
+     C           @8        IFLT P@130                                           
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C           @8        IFGT P@140                                           
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C           P@150     IFEQ '1'                                             
+     C           JUUP08    IFNE '1'                                             
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C                     END                                                  
+     C           P@150     IFEQ '2'                                             
+     C           JUUP08    IFEQ '1'                                             
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C                     END                                                  
+     C           P@160     IFEQ '1'                                             
+     C           JUUP09    IFNE '1'                                             
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C                     END                                                  
+     C           P@160     IFEQ '2'                                             
+     C           JUUP09    IFEQ '1'                                             
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C                     END                                                  
+     C           P@170     IFEQ '1'                                             
+     C           JUUP10    IFNE '1'                                             
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C                     END                                                  
+     C           P@170     IFEQ '2'                                             
+     C           JUUP10    IFEQ '1'                                             
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C                     END                                                  
+     C           P@SOK     IFNE *BLANK                                          
+     C           JUSOK     IFNE P@SOK                                           
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C                     END                                                  
+     C           P@ZBK     IFNE *BLANK                                          
+     C           JUZBK     IFNE P@ZBK                                           
+     C                     MOVE '0'       SJUSEL                                
+     C                     END                                                  
+     C                     END                                                  
+     C           SJUSEL    IFEQ '1'                                             
+     C                     SETON                     31                         
+     C                     MOVELJUJDN     I230                                  
+     C                     MOVELJUJGY     I240                                  
+     C                     MOVE JUKJD1    @2      20                            
+     C                     MOVE JUKJD2    @2B     20                            
+     C                     MOVEL@2        I250                                  
+     C                     MOVE @2B       I250                                  
+     C           I250      IFNE *ZERO                                           
+     C                     SETON                     33                         
+     C                     END                                                  
+     C                     MOVE JUSGD1    @2      20                            
+     C                     MOVE JUSGD2    @2B     20                            
+     C                     MOVEL@2        I260                                  
+     C                     MOVE @2B       I260                                  
+     C           I260      IFNE *ZERO                                           
+     C                     SETON                     34                         
+     C                     END                                                  
+     C                     MOVE JUSKD1    @2      20                            
+     C                     MOVE JUSKD2    @2B     20                            
+     C                     MOVEL@2        I270                                  
+     C                     MOVE @2B       I270                                  
+     C           I270      IFNE *ZERO                                           
+     C                     SETON                     35                         
+     C                     END                                                  
+     C                     Z-ADDJUJUS     I280                                  
+     C                     Z-ADDJUHISZ    I290                                  
+     C                     ADD  JUHIST    I290                                  
+     C                     Z-ADDJUSKS     I300                                  
+     C                     MOVELJUUP08    I310                                  
+     C                     MOVELJUUP09    I320                                  
+     C                     MOVELJUUP10    I330                                  
+     C                     MOVELJUSOK     I340                                  
+     C                     MOVELJUZBK     I350                                  
+     C                     END                                                  
+     C                     END                                                  
+     C                     END                                                  
+     C           P@090     IFEQ '4'                                             
+     C*****      SJUSEL    IFEQ '1'                                             
+     C           NYKB05    IFEQ '9'                                             
+     C                     WRITEITEM3                                           
+     C                     END                                                  
+     C                     ELSE                                                 
+     C                     WRITEITEM3                                           
+     C                     END                                                  
+     C                     END                                                  
+     C                     SETOF                     8182                       
+     C           @TKEY2    READEDTZLMX1                  93                     
+     C                     END                                                  
+     C           \MOVE     ENDSR                                                
+      *****************************************************************         
+      *  ＃ MAE    　　　　転送                                       *         
+      *****************************************************************         
+     C           #MAE      BEGSR                                                
+     C                     MOVEL@THNC     B010                                  
+     C                     MOVEL@TJAN     B020                                  
+     C                     MOVEL@THNTN    B030                                  
+     C                     MOVEL@TSOK     ISOK                                  
+     C                     MOVEL@TSKN     B040                                  
+     C                     MOVEL@TTRCT    B050                                  
+     C                     MOVEL@TTRST    B060                                  
+     C                     MOVEL@TTRUT    B070                                  
+     C                     MOVEL'1'       TRTRK                                 
+     C                     MOVEL@TTRCT    TRTRC                                 
+     C                     MOVEL@TTRST    TRTRS                                 
+     C                     MOVEL@TTRUT    TRTRU                                 
+     C           TRKEY     CHAINTRREC                90                         
+     C   90                MOVEL*BLANK    B080                                  
+     C  N90                MOVELTRTR2     B080                                  
+     C                     MOVE @TNNDE    @6      60                            
+     C                     Z-ADD@6        B120                                  
+     C                     MOVE @TNND     @6      60                            
+     C                     Z-ADD@6        B130                                  
+     C                     MOVEL@TUM      B160                                  
+     C                     MOVE @TIRPK    B170                                  
+     C                     MOVE @TIRKT    B180                                  
+     C                     MOVE @TTNKA    B190                                  
+     C                     MOVE @THTSU    B201                                  
+T0141C                     ADD  @TPOS     B201              POﾁｪﾝｼﾞ 数          
+T0141C**                   SUB  @TNYS     B201              予約数              
+T0141C**                   ADD  @TKPS     B201              欠品数              
+     C                     Z-ADD@TCDT     B110                                  
+     C                     MOVEL*BLANK    B100                                  
+     C           @TDST1    IFEQ 'F1'                                            
+     C                     MOVEL@X,1      B100                                  
+     C                     END                                                  
+     C           @TDST1    IFEQ 'F2'                                            
+     C                     MOVEL@X,2      B100                                  
+     C                     END                                                  
+     C           @TDST1    IFEQ 'F3'                                            
+     C                     MOVEL@X,3      B100                                  
+     C                     END                                                  
+      *                                                                         
+     C           @TDST1    IFEQ 'F4'                                            
+     C           @TDST1    OREQ 'F5'                                            
+     C           @TDST1    OREQ 'FX'                                            
+     C                     MOVEL@X,4      B100                                  
+     C                     END                                                  
+     C           @TKB17    IFEQ '3'                                             
+     C                     MOVEL@X,5      B100                                  
+     C                     END                                                  
+      * 完了区分                                                                
+     C                     MOVEL*BLANK    B196                                  
+     C           @TKB17    IFEQ '1'                                             
+     C                     MOVEL'1     '  B196                                  
+     C                     END                                                  
+     C           @TKB17    IFEQ '2'                                             
+     C                     MOVEL'2     '  B196                                  
+     C                     END                                                  
+     C           @TKB17    IFEQ '3'                                             
+     C                     MOVEL'3      ' B196                                  
+     C                     END                                                  
+     C   99N99             WRITEITEMM                                           
+     C           \MAE      ENDSR                                                
+      *****************************************************************         
+      *  ＃ＡＴＯ　　　　　転送                                       *         
+      *****************************************************************         
+     C           #ATO      BEGSR                                                
+     C                     MOVEL@THNC     C010                                  
+     C                     MOVEL@TJAN     C020                                  
+     C                     MOVEL@THNTN    C030                                  
+     C                     MOVEL@TSKN     C040                                  
+     C                     MOVEL@TSOK     CSOK    5                             
+     C                     MOVEL@TTRCT    C050                                  
+     C                     MOVEL@TTRST    C060                                  
+     C                     MOVEL@TTRUT    C070                                  
+     C                     MOVEL'1'       TRTRK                                 
+     C                     MOVEL@TTRCT    TRTRC                                 
+     C                     MOVEL@TTRST    TRTRS                                 
+     C                     MOVEL@TTRUT    TRTRU                                 
+     C                     MOVEL*BLANK    C080                                  
+     C           TRKEY     CHAINTRREC                90                         
+     C   90                MOVEL@TSOK     C080                                  
+     C  N90                MOVELTRTR2     C080                                  
+     C                     MOVE @TNNDE    @6      60                            
+     C                     Z-ADD@6        C120                                  
+     C                     MOVE @TNND     @6      60                            
+     C                     Z-ADD@6        C130                                  
+     C                     MOVEL@TUM      C160                                  
+     C                     MOVE @TIRPK    C170                                  
+     C                     MOVE @TIRKT    C180                                  
+     C                     MOVE @TTNKA    C190                                  
+     C                     MOVE @THTSU    C201                                  
+T0141C                     ADD  @TPOS     C201              POﾁｪﾝｼﾞ 数          
+T0141C**                   SUB  @TNYS     C201              予約数              
+T0141C**                   ADD  @TKPS     C201              欠品数              
+     C                     Z-ADD@TCDT     C110                                  
+     C                     MOVEL*BLANK    C100                                  
+     C           @TDST1    IFEQ 'F1'                                            
+     C                     MOVEL@X,1      C100                                  
+     C                     END                                                  
+     C           @TDST1    IFEQ 'F2'                                            
+     C                     MOVEL@X,2      C100                                  
+     C                     END                                                  
+     C           @TDST1    IFEQ 'F3'                                            
+     C                     MOVEL@X,3      C100                                  
+     C                     END                                                  
+      *                                                                         
+     C           @TDST1    IFEQ 'F4'                                            
+     C           @TDST1    OREQ 'F5'                                            
+     C           @TDST1    OREQ 'FX'                                            
+     C                     MOVEL@X,4      C100                                  
+     C                     END                                                  
+     C           @TKB17    IFEQ '3'                                             
+     C                     MOVEL@X,5      C100                                  
+     C                     END                                                  
+      * 完了区分                                                                
+     C                     MOVEL*BLANK    C196                                  
+     C           @TKB17    IFEQ '1'                                             
+     C                     MOVEL'1     '  C196                                  
+     C                     END                                                  
+     C           @TKB17    IFEQ '2'                                             
+     C                     MOVEL'2     '  C196                                  
+     C                     END                                                  
+     C           @TKB17    IFEQ '3'                                             
+     C                     MOVEL'3      ' C196                                  
+     C                     END                                                  
+     C           B010      IFEQ C010                                            
+     C                     MOVEL*BLANK    C010                                  
+     C                     END                                                  
+     C           B020      IFEQ C020                                            
+     C                     MOVEL*BLANK    C020                                  
+     C                     END                                                  
+     C           B030      IFEQ C030                                            
+     C                     MOVEL*BLANK    C030                                  
+     C                     END                                                  
+     C           B040      IFEQ C040                                            
+     C                     MOVEL*BLANK    C040                                  
+     C                     END                                                  
+     C           B050      IFEQ C050                                            
+     C                     MOVEL*BLANK    C050                                  
+     C                     END                                                  
+     C           C050      IFEQ *BLANK                                          
+     C                     MOVEL*BLANK    C051                                  
+     C                     MOVEL*BLANK    C061                                  
+     C                     ELSE                                                 
+     C                     MOVEL'-'       C051                                  
+     C                     MOVEL'-'       C061                                  
+     C                     END                                                  
+     C           B060      IFEQ C060                                            
+     C                     MOVEL*BLANK    C060                                  
+     C                     END                                                  
+     C           B070      IFEQ C070                                            
+     C                     MOVEL*BLANK    C070                                  
+     C                     END                                                  
+     C           B080      IFEQ C080                                            
+     C                     MOVEL*BLANK    C080                                  
+     C                     END                                                  
+      *                                                                         
+     C           ISOK      IFEQ CSOK                                            
+     C                     MOVEL*BLANK    C080                                  
+     C                     END                                                  
+     C           ISOK      IFNE CSOK                                            
+     C                     MOVEL'VN'      KMMSK                                 
+     C                     MOVEL@TBNDC    KMMSC     P                           
+     C           KMKEY     CHAINKMREC                90                         
+     C  N90                DO                                                   
+     C                     MOVELKMSKK1    @@TR                                  
+     C                     MOVEL@@TRK     TRTRKQ                                
+     C                     MOVEL@@TRC     TRTRCQ                                
+     C                     MOVEL@@TRS     TRTRSQ                                
+     C                     MOVEL*BLANK    TRTRUQ                                
+     C                     MOVELCSOK      TRSPTE            先方社店 ｺｰﾄﾞ  EOS  
+     C           TRKEYQ    CHAINTRREC2               93                         
+     C  N93                DO                                                   
+     C                     MOVELTRTRC     C050                                  
+     C                     MOVEL'-'       C051                                  
+     C                     MOVELTRTRS     C060                                  
+     C                     MOVEL'-'       C061                                  
+     C                     MOVELTRTRU     C070                                  
+     C                     MOVELTRTR2     C080                                  
+     C                     END                                                  
+     C   93                DO                                                   
+     C                     MOVEL*BLANK    C050      P                           
+     C                     MOVEL' '       C051                                  
+     C                     MOVEL*BLANK    C060                                  
+     C                     MOVEL' '       C061                                  
+     C                     MOVEL*BLANK    C070                                  
+     C                     MOVEL*BLANK    C080                                  
+     C                     MOVELCSOK      C080                                  
+     C                     END                                                  
+     C                     END                                                  
+     C                     END                                                  
+     C           B120      IFEQ C120                                            
+     C                     SETOF                     16                         
+     C                     ELSE                                                 
+     C                     SETON                     16                         
+     C                     END                                                  
+     C           B130      IFEQ C130                                            
+     C                     SETOF                     17                         
+     C                     ELSE                                                 
+     C                     SETON                     17                         
+     C                     END                                                  
+     C           B150      IFEQ C150                                            
+     C                     SETOF                     18                         
+     C                     MOVEL' '       C151                                  
+     C                     ELSE                                                 
+     C                     SETON                     18                         
+     C                     MOVEL'%'       C151                                  
+     C                     END                                                  
+     C           B160      IFEQ C160                                            
+     C                     MOVEL*BLANK    C160                                  
+     C                     END                                                  
+     C           B201      IFEQ C201                                            
+     C                     SETOF                     19                         
+     C                     ELSE                                                 
+     C                     SETON                     19                         
+     C                     END                                                  
+     C           B170      IFEQ C170                                            
+     C                     SETOF                     20                         
+     C                     ELSE                                                 
+     C                     SETON                     20                         
+     C                     END                                                  
+     C           B180      IFEQ C180                                            
+     C                     SETOF                     21                         
+     C                     ELSE                                                 
+     C                     SETON                     21                         
+     C                     END                                                  
+     C           B190      IFEQ C190                                            
+     C                     SETOF                     22                         
+     C                     ELSE                                                 
+     C                     SETON                     22                         
+     C                     END                                                  
+     C           B196      IFEQ C196                                            
+     C                     MOVEL*BLANK    C196                                  
+     C                     END                                                  
+     C           \ATO      ENDSR                                                
+      *****************************************************************         
+      *  ＃ＭＯＶＥ２　　　転送                                       *         
+      *****************************************************************         
+     C           #MOVE2    BEGSR                                                
+     C                     CLEAR@ER                                             
+     C                     Z-ADD*ZERO     I       20                            
+     C                     SELEC                           >SELEC               
+     C           HTKB02    WHEQ '1'                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     SETOF                     91                         
+     C                     Z-ADD1         H       20                            
+     C           'H'       LOKUP@ER,H                    91                     
+     C  N91                MOVEL'H'       @ER,I            EOS 法人未登録       
+     C           HTKB02    WHEQ '2'                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'T'       LOKUP@ER,H                    91                     
+     C  N91                MOVEL'T'       @ER,I             店ＣＤ未登録        
+     C           HTKB02    WHEQ '3'                                             
+02.23C           HTKB03    ANDEQ' '                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'U'       LOKUP@ER,H                    91                     
+     C  N91                MOVEL'U'       @ER,I             売場未登録          
+     C           HTKB02    WHEQ '4'                                             
+02.23C           HTKB03    ANDEQ' '                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'C'       LOKUP@ER,H                    91                     
+     C  N91                MOVEL'C'       @ER,I             識別子未登録        
+     C           HTKB02    WHEQ '5'                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'V'       LOKUP@ER,H                    91                     
+     C  N91                MOVEL'V'       @ER,I             売場未登録          
+     C           HTKB02    WHEQ '6'                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'W'       LOKUP@ER,H                    91                     
+     C  N91                MOVEL'W'       @ER,I             売場未登録          
+     C                     ENDSL                           <SELEC               
+      *                                                                         
+ TGTGC                     SELEC                           >SELEC               
+ TGTGC           HTKB03    WHEQ '1'                                             
+     C           HTKB02    IFEQ '5'                                             
+     C           HTKB02    OREQ '6'                                             
+     C                     ELSE                                                 
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'E'       LOKUP@ER,H                    91                     
+ TGTGC  N91                MOVEL'E'       @ER,I            EOS 変換 M 未登録    
+     C                     END                                                  
+ TGTGC           HTKB03    WHEQ '2'                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'B'       LOKUP@ER,H                    91                     
+ TGTGC  N91                MOVEL'B'       @ER,I             在庫権限無し        
+ TGTGC           HTKB03    WHEQ '3'                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'G'       LOKUP@ER,H                    91                     
+ TGTGC  N91                MOVEL'G'       @ER,I             他会社変換エラー    
+ BMBMC           HTKB03    WHEQ '4'                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'R'       LOKUP@ER,H                    91                     
+ BMBMC  N91                MOVEL'R'       @ER,I             ﾘﾍﾞｰﾄｴﾗｰ            
+ BMBMC           HTKB03    WHEQ '5'                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'N'       LOKUP@ER,H                    91                     
+ BMBMC  N91                MOVEL'N'       @ER,I             単価算出            
+ XBOXC           HTKB03    WHEQ '9'                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'Y'       LOKUP@ER,H                    91                     
+ XBOXC  N91                MOVEL'Y'       @ER,I             作業日過去          
+ TGTGC                     ENDSL                           <SELEC               
+     C                     MOVEA'000000'  *IN,31                                
+     C           HTKB02    COMP *BLANK               3131   取引先変換 ｴﾗｰ      
+     C           HTKB03    COMP *BLANK               3232   EOS 変換未登録      
+     C           HTKB04    COMP *BLANK               3333   代表・ダミー        
+     C           HTKB05    COMP *BLANK               3434   前回と不一致        
+     C           HTKB06    COMP *BLANK               3535   JAN 複数            
+      *                                                                         
+     C**         *IN31     IFEQ '1'                                             
+     C**                   ADD  1         I                                     
+     C**         I         IFGT 9                                               
+     C**                   Z-ADD9         I                                     
+     C**                   END                                                  
+ XBOXC**                   MOVEL'T'       @ER,I             作業日過去          
+     C**                   END                                                  
+      *                                                                         
+     C           *IN32     IFEQ '1'                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'E'       LOKUP@ER,H                    91                     
+ XBOXC  N91                MOVEL'E'       @ER,I             作業日過去          
+     C                     END                                                  
+     C           *IN33     IFEQ '1'                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'M'       LOKUP@ER,H                    91                     
+ XBOXC  N91                MOVEL'M'       @ER,I             作業日過去          
+     C                     END                                                  
+     C           *IN34     IFEQ '1'                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'S'       LOKUP@ER,H                    91                     
+ XBOXC  N91                MOVEL'S'       @ER,I             作業日過去          
+     C                     END                                                  
+     C           *IN35     IFEQ '1'                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'J'       LOKUP@ER,H                    91                     
+ XBOXC  N91                MOVEL'J'       @ER,I             作業日過去          
+     C                     END                                                  
+     C           HTKB07    IFEQ '1'                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'V'       LOKUP@ER,H                    91                     
+ XBOXC  N91                MOVEL'V'       @ER,I             作業日過去          
+     C                     END                                                  
+     C           HTKB08    IFEQ '1'                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'X'       LOKUP@ER,H                    91                     
+ XBOXC  N91                MOVEL'X'       @ER,I             作業日過去          
+     C                     END                                                  
+     C           HTKB09    IFEQ '1'                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'P'       LOKUP@ER,H                    91                     
+ XBOXC  N91                MOVEL'P'       @ER,I             戻し                
+     C                     END                                                  
+     C           HTKB09    IFEQ '2'                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'P'       LOKUP@ER,H                    91                     
+ XBOXC  N91                MOVEL'P'       @ER,I             戻し                
+     C                     END                                                  
+     C           HTKB10    IFEQ '1'                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'Q'       LOKUP@ER,H                    91                     
+ XBOXC  N91                MOVEL'Q'       @ER,I             ベンダーマスター    
+     C                     END                                                  
+     C           HTKB11    IFEQ '1'                                             
+     C                     ADD  1         I                                     
+     C           I         IFGT 9                                               
+     C                     Z-ADD9         I                                     
+     C                     END                                                  
+     C                     Z-ADD1         H       20                            
+     C           'Y'       LOKUP@ER,H                    91                     
+ XBOXC  N91                MOVEL'Y'       @ER,I             ベンダーマスター    
+     C                     END                                                  
+     C                     MOVEA@ER       I195                                  
+     C           \MOVE2    ENDSR                                                
+**  @T                                                                          
+ 未予約                                                                         
+ エラー                                                                         
+ 予約済分                                                                       
+ 予約送信済                                                                     
+ 強制完了分                                                                     
+ 直送                                                                           
+ 全件                                                                           
+ 再変換分                                                                       
+**  @X                                                                          
+ 直送完了                                                                       
+ 強制完了                                                                       
+ 内容変更                                                                       
+ 復活                                                                           
+ 直受完了                                                                       

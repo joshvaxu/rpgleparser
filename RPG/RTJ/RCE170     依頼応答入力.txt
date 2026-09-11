@@ -1,0 +1,1372 @@
+      *====================================================================*
+      *                                                                    *
+      *           SUB-SYSTEM  : 手配・納品・引取                         *
+      *                                                                    *
+      *           PGMID       :  RCE170             RCE170-20061110        *
+      *           TEXT        : 依頼応答入力　　                         *
+      *           NAME        :  NSW   K.HAYASHI                           *
+      *           DATE        :  2007/02/02                                *
+      *           UPDATE      :  2007/03/31 BY H.MATSUMOTO   UT2-001174    *
+      *                       :  2007/05/26 BY K.HAJI        UT2-002551    *
+      *                       :  2007/06/05 BY K.HAJI        ITa-000221    *
+      *                       :  2007/06/13 BY K.HAJI        UT2-002635    *
+      *                                                                    *
+      *====================================================================*
+     H DATFMT(*ISO) DATEDIT(*YMD) TIMFMT(*ISO)
+     F*====================================================================*
+     F*                 ファイル
+     F*====================================================================*
+     F*<<手配依頼見出ファイル(LF00)>>
+     FRFC0400   UF A E           K DISK    RENAME(RFC04P:RFC04R) INFSR(*PSSR)
+     F                                     COMMIT
+     F*<<手配依頼明細ファイル(LF00)>>
+     FRFC0500   IF   E           K DISK    RENAME(RFC05P:RFC05R)
+     F*<<依頼応答見出ファイル(LF00)>>
+     FRFC0600   UF A E           K DISK    RENAME(RFC06P:RFC06R) INFSR(*PSSR)
+     F                                     COMMIT
+     F*<<依頼応答明細ファイル(LF00)>>
+     FRFC0700   UF A E           K DISK    RENAME(RFC07P:RFC07R) INFSR(*PSSR)
+     F                                     COMMIT
+     F*<<伝票見出ファイル(LF00)>>
+     FRFC0100   UF   E           K DISK    RENAME(RFC01P:RFC01R) INFSR(*PSSR)
+     F                                     COMMIT
+     F*<<伝票明細ファイル(LF05)>>
+     FRFC0205   IF   E           K DISK    RENAME(RFC02P:RFC02R)
+     F*<<部門マスター(LF01)>>
+     FRMR0101   IF   E           K DISK    RENAME(RMR01P:RMR01R)
+     F*<<社員マスター(LF00)>>
+     FRMR1500   IF   E           K DISK    RENAME(RMR15P:RMR15R)
+     F*<<名称マスター(LF00)>>
+     FRMR3100   IF   E           K DISK    RENAME(RMR31P:RMR31R)
+     F*<<排他制御マスター(LF01)>>
+     FRMR4101   IF   E           K DISK    RENAME(RMR41P:RMR41R)
+     F*<<メッセージマスター(PF)>>
+     FRMR42P    IF   E           K DISK    RENAME(RMR42P:RMR42R)
+     D*====================================================================*
+     D*                 配列／テーブル
+     D*====================================================================*
+     D*<<伝票行番号ワーク>>
+     D                 DS
+     D  ATDMGN                        2  0 DIM(10)
+     D    ADMGN                       2  0 OVERLAY(ATDMGN:1) INZ
+     D*<<応答数量ワーク>>
+     D                 DS
+     D  ATOTSU                        7  2 DIM(10)
+     D    AOTSU                       7  2 OVERLAY(ATOTSU:1) INZ
+     D*====================================================================*
+     D*                 定数／変数／データ構造
+     D*====================================================================*
+     D*<<明細１最大数>>
+     D  #WM1MAX        C                    8                                   明細１最大数
+     D*<<パラメータの設定>>
+     D  P1             S               *
+     D  RCVARY         S           1024    BASED(P1) DIM(1024)                  受信配列
+     D  P2             S               *
+     D  SNDARY         S           1024    BASED(P2) DIM(1024)                  送信配列
+     D*<<プログラム状況データ構造>>
+     D                SDS
+     D  WPGM             *PROC                                                  プログラム
+     D  WSTAT            *STATUS                                                状況
+     D  WREID                 40     46                                         例外エラーＩＤ
+     D  WREMG                 91    170                                         例外メッセージ
+     D  WJBID                244    253                                         ＪＯＢＩＤ
+     D  WUSER                254    263                                         ＵＳＥＲ
+     D  WJBNO                264    269                                         ＪＯＢ番号
+     D*<<ジョブ日付>>
+     D                 DS
+     D  #WDATE                 1      8  0 INZ                                  ジョブ日付
+     D   #WYYMM                3      6  0                                       YYMM
+     D                 DS
+     D*<<電文処理ソース取込>>
+     D/COPY QRPGLESRC,RCE170D
+     C*====================================================================*
+     C*                 パラメータ　リスト
+     C*====================================================================*
+     C*<<受渡しパラメータ>>
+     C     *ENTRY        PLIST
+     C                   PARM                    P1                             受信データ
+     C                   PARM                    P2                             送信データ
+     C                   PARM                    P1CNT             4 0          受信件数
+     C                   PARM                    P2CNT             4 0          送信件数
+     C*<<数値文字変換処理>>
+     C     PSS160        PLIST
+     C                   PARM                    P#CHAR           24            文字
+     C                   PARM                    P#DEC            22 5          数値
+     C                   PARM                    P#KETA1           2 0          整数部桁数
+     C                   PARM                    P#KETA2           1 0          小数部桁数
+     C                   PARM                    P#CHGK            1            数値文字変換区分
+     C                   PARM                    P#CHKK            2            チェック区分
+     C                   PARM                    P#ENDK            1            終了区分
+     C                   PARM                    P#EMID           10            エラーメッセージ
+     C*<<排他制御処理>>
+     C     PSS010        PLIST
+     C                   PARM                    P#HTKO           30            排他キー
+     C                   PARM                    P#KSRF            1            開始終了フラグ
+     C                   PARM                    P#YPGA           10            呼出元ＰＧＭ
+     C                   PARM                    P#LSID            9            ログイン識別ＩＤ
+     C                   PARM                    P#LGSN            9            ログイン社員番号
+     C                   PARM                    P#KDOD            8 0          起動日
+     C                   PARM                    P#KITM            6 0          起動時刻
+     C                   PARM                    P#ERFG            1            エラーフラグ
+     C*<<２バイト文字分割処理>>
+     C     PSS050        PLIST
+     C                   PARM                    P#256           256            分割前
+     C                   PARM                    P#128A          128            分割後Ａ
+     C                   PARM                    P#128B          128            分割後Ｂ
+     C                   PARM                    P#LENA            3 0          分割後Ａ桁数
+     C                   PARM                    P#LENB            3 0          分割後Ｂ桁数
+     C                   PARM                    P#BKB             1            分割区分
+     C*====================================================================*
+     C*                 キー　リスト
+     C*====================================================================*
+     C*<<伝票見出ファイル(LF00)>>
+     C     KEYC011       KLIST
+     C                   KFLD                    C01URBC                        売上部門コード
+     C                   KFLD                    C01DMDN                        伝票番号
+     C*<<伝票明細ファイル(LF00)>>
+     C     KEYC021       KLIST
+     C                   KFLD                    C02URBC                        売上部門コード
+     C                   KFLD                    C02DMDN                        伝票番号
+     C                   KFLD                    C02DMGN                        伝票行番号
+     C*<<手配依頼見出ファイル(LF00)>>
+     C     KEYC041       KLIST
+     C                   KFLD                    C04IRAN                        依頼番号
+     C                   KFLD                    C04DMDN                        伝票番号
+     C*<<手配依頼明細ファイル(LF00)>>
+     C     KEYC051       KLIST
+     C                   KFLD                    C05IRAN                        依頼番号
+     C                   KFLD                    C05DMGN                        伝票行番号
+     C*<<依頼応答見出ファイル(LF00)>>
+     C     KEYC061       KLIST
+     C                   KFLD                    C06IRAN                        依頼番号
+     C                   KFLD                    C06IRBC                        依頼先部門コード
+     C*<<依頼応答明細ファイル(LF00)>>
+     C     KEYC071       KLIST
+     C                   KFLD                    C07IRAN                        依頼番号
+     C                   KFLD                    C07IRBC                        依頼先部門コード
+     C                   KFLD                    C07DMGN                        伝票行番号
+     C*<<名称マスター(LF00)>>
+     C     KEYR311       KLIST
+     C                   KFLD                    R31KBSA                        区分種別
+     C                   KFLD                    R31KBNC                        区分コード
+     C*<<名称マスター(LF02)>>
+     C     KEYR312       KLIST
+     C                   KFLD                    R31KBSA                        区分種別
+     C                   KFLD                    R31MSNM                        名称（正）
+     C*====================================================================*
+     C*                 メイン処理
+     C*====================================================================*
+     C*<<初期設定>>
+     C                   EXSR      SBINIT                                       初期設定
+     C*<<受信電文展開>>
+     C                   EXSR      SBRECV                                       受信電文展開
+     C*
+     C                   IF        *IN30 = *OFF
+     C*<<受信電文展開後の共通処理>>
+     C                   EXSR      SBRCOM                                       受信後共通処理
+     C*<<振分処理>>
+     C  N30              SELECT
+     C                   WHEN      R#KNUK  =  '15'
+     C                   EXSR      SB1000                                       見出明細取得
+     C                   WHEN      R#KNUK  =  '25'
+     C                   EXSR      SB2000                                       見出明細チェック
+     C                   WHEN      R#KNUK  =  '90'
+     C                   EXSR      SB3000                                       更新
+     C                   WHEN      R#KNUK  =  '91'
+     C                   EXSR      SB4000                                       確認
+     C                   ENDSL
+     C                   ENDIF
+     C*<<送信電文展開前の共通処理>>
+     C                   EXSR      SBSCOM                                       送信前共通処理
+     C*<<エラー／メッセージ処理>>
+     C                   EXSR      SBERMS                                       エラー／メッセージ
+     C*<<送信電文展開>>
+     C                   EXSR      SBSEND                                       送信電文展開
+     C*<<終了処理>>
+     C                   EXSR      SBEND                                        終了処理
+     C*====================================================================*
+     C*    SBINIT       初期設定処理
+     C*====================================================================*
+     C     SBINIT        BEGSR
+     C*<<標識クリア>>
+     C                   CLEAR                   *IN                            標識クリア
+     C*<<ワーククリア>>
+     C                   MOVEL     *BLANK        #WMSID           10            メッセージＩＤ
+     C                   MOVEL     *BLANK        #WBLANK           1
+     C*<<指標クリア>>
+     C                   Z-ADD     *ZERO         K                 3 0          指標
+     C*<<日付取得>>
+     C                   Z-ADD     *DATE         #WDATE            8 0          ジョブ日付
+     C*<<時刻取得>>
+     C                   TIME                    #WTIME            6 0          システム時刻
+     C*<<明細件数セット>>
+     C                   IF        R#SORK <> '5'
+     C                   Z-ADD     #WM1MAX       M#1CNT                         明細件数
+     C                   ENDIF
+     C*
+     C                   MOVEA     *HIVAL        ATDMGN                          T伝票行番号
+     C                   MOVEA     *HIVAL        ATOTSU                          T応答数量
+     C*
+     C                   Z-ADD     *ZERO         #W1MAX            2 0           W明細最大件数
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBRECV       受信電文展開
+     C*====================================================================*
+     C     SBRECV        BEGSR
+     C*
+     C/COPY QRPGLESRC,RCE170D
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBRCOM       受信電文展開後の共通処理
+     C*====================================================================*
+     C     SBRCOM        BEGSR
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB0000       初期化
+     C*====================================================================*
+     C     SB0000        BEGSR
+     C*<<表示区分初期セット>>
+     C                   EXSR      SB0100
+     C*<<明細初期化>>
+     C                   EXSR      SB0200
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB0100       表示区分初期セット
+     C*====================================================================*
+     C     SB0100        BEGSR
+     C*
+     C                   MOVEL     '0'           T#IRAN7                        依頼番号
+     C                   MOVEL     '0'           T#IRBC7                        依頼先部門コード
+     C                   MOVEL     '0'           T#DMSK7                        伝票種別ド
+     C                   MOVEL     '0'           T#BMNC7                        部門コード
+     C                   MOVEL     '0'           T#DMDN7                        伝票番号
+     C                   MOVEL     '0'           T#IMSN7                        依頼元担当者社員番
+     C                   MOVEL     '0'           T#C17017                       依頼元担当者社員名
+     C                   MOVEL     '0'           T#IRAD7                        依頼日コード
+     C                   MOVEL     '0'           T#IRTM7                        依頼時刻
+     C                   MOVEL     '0'           T#C17027                       依頼元部門コード
+     C                   MOVEL     '0'           T#IMBN7                        依頼元部門名
+     C                   MOVEL     '0'           T#IRIK7                        依頼区分
+     C                   MOVEL     '0'           T#C17037                       依頼区分名
+     C                   MOVEL     '0'           T#HISK7                        配車区分備考
+     C                   MOVEL     '0'           T#C17047                       配車区分名
+     C                   MOVEL     '0'           T#IMBK7                        依頼見出備考
+     C                   MOVEL     '0'           T#TKSC7                        得意先コード
+     C                   MOVEL     '0'           T#TSNM7                        得意先名
+     C                   MOVEL     '0'           T#GNBC7                        現場コード
+     C                   MOVEL     '0'           T#GBNM7                        現場名
+     C                   MOVEL     '0'           T#NYSD7                        入出庫日
+     C                   MOVEL     '0'           T#NKTM7                        入出庫時刻
+     C                   MOVEL     '0'           T#NWBK7                        入出庫日備考
+     C                   MOVEL     '0'           T#OHBK7                        応答見出備考
+     C                   MOVEL     '0'           T#C17057                       応答処理区分
+     C*
+     C                   MOVEL     *BLANK        T#DMSK                         伝票種別
+     C                   MOVEL     *BLANK        T#BMNC                         部門コード
+     C                   MOVEL     *BLANK        T#DMDN                         伝票番号
+     C                   MOVEL     *BLANK        T#IMSN                         依頼元担当者社員番
+     C                   MOVEL     *BLANK        T#C1701                        依頼元担当者社員名
+     C                   MOVEL     *BLANK        T#IRAD                         依頼日コード
+     C                   MOVEL     *BLANK        T#IRTM                         依頼時刻
+     C                   MOVEL     *BLANK        T#C1702                        依頼元部門コード
+     C                   MOVEL     *BLANK        T#IMBN                         依頼元部門名
+     C                   MOVEL     *BLANK        T#IRIK                         依頼区分
+     C                   MOVEL     *BLANK        T#C1703                        依頼区分名
+     C                   MOVEL     *BLANK        T#HISK                         配車区分備考
+     C                   MOVEL     *BLANK        T#C1704                        配車区分名
+     C                   MOVEL     *BLANK        T#IMBK                         依頼見出備考
+     C                   MOVEL     *BLANK        T#TKSC                         得意先コード
+     C                   MOVEL     *BLANK        T#TSNM                         得意先名
+     C                   MOVEL     *BLANK        T#GNBC                         現場コード
+     C                   MOVEL     *BLANK        T#GBNM                         現場名
+     C                   MOVEL     *BLANK        T#NYSD                         入出庫日
+     C                   MOVEL     *BLANK        T#NKTM                         入出庫時刻
+     C                   MOVEL     *BLANK        T#NWBK                         入出庫日備考
+     C                   MOVEL     *BLANK        T#C1705                        応答処理区分
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB0200       明細初期化
+     C*====================================================================*
+     C     SB0200        BEGSR
+     C*
+     C                   CLEAR                   M1ARAY                         明細配列クリア
+     C*
+     C                   Z-ADD     *ZERO         K                              指標
+     C                   DO        #WM1MAX       K
+     C*  <<明細表示区分初期セット>>
+     C                   EXSR      SB0210
+     C*
+     C                   ENDDO
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB0210       明細表示区分初期化
+     C*====================================================================*
+     C     SB0210        BEGSR
+     C*
+     C                   MOVEL     '1'           M1ERUK(K)                      エラー有無区分
+     C                   MOVEL     '0'           M1HYOK(K)                      表示区分
+     C                   MOVEL     '0'           M1DMGNH(K)                     伝票行番号表示区分
+     C*<<行番号>>
+     C                   Z-ADD     K             P#DEC                          数値
+     C                   Z-ADD     2             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'S1'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG2
+     C                   MOVEL(P)  P#CHAR        M1GYGN(K)                      行番号　
+     C                   MOVEL     '0'           M1GYGNH(K)                     行番号  表示区分
+     C*
+     C                   MOVEL     *BLANK        M1KSEC(K)                      機性型コードエラー
+     C                   MOVEL     '0'           M1KSECH(K)                     機性型コード表示区
+     C                   MOVEL     *BLANK        M1KSNM(K)                      機種名
+     C                   MOVEL     '0'           M1KSNMH(K)                     機種名  表示区分
+     C                   MOVEL     *BLANK        M1SNNM(K)                      性能名
+     C                   MOVEL     '0'           M1SNNMH(K)                     性能名  表示区分
+     C                   MOVEL     *BLANK        M1KTNM(K)                      型式名
+     C                   MOVEL     '0'           M1KTNMH(K)                     型式名  表示区分
+     C                   MOVEL     *BLANK        M1USKD(K)                      使用開始日
+     C                   MOVEL     '0'           M1USKDH(K)                     使用開始日表示区分
+     C                   MOVEL     *BLANK        M1HTYD(K)                      引取予定日
+     C                   MOVEL     '0'           M1HTYDH(K)                     引取予定日表示区分
+     C                   MOVEL     *BLANK        M1USSD(K)                      使用終了日
+     C                   MOVEL     '0'           M1USSDH(K)                     使用終了日表示区分
+     C                   MOVEL     *BLANK        M1IDBK(K)                      依頼明細備考
+     C                   MOVEL     '0'           M1IDBKH(K)                     依頼明細備考表示区
+     C                   MOVEL     '1'           M1ODBKE(K)                     応答明細備考エラー
+     C                   MOVEL     '0'           M1ODBKH(K)                     応答明細備考表示区
+     C                   MOVEL     '1'           M1OTSUE(K)                     応答数量エラー
+     C                   MOVEL     '0'           M1OTSUH(K)                     応答数量表示区分
+     C                   MOVEL     *BLANK        M1IRSU(K)                      依頼数量エラー  
+     C                   MOVEL     '0'           M1IRSUH(K)                     依頼数量表示区分
+     C                   MOVEL     *BLANK        M1TINM(K)                      単位名
+     C                   MOVEL     '0'           M1TINMH(K)                     単位名表示区分
+     C                   MOVEL     *BLANK        M1IKBK(K)                      依頼確定備考
+     C                   MOVEL     '0'           M1IKBKH(K)                     依頼確定備考表示区
+     C                   MOVEL     *BLANK        M1IKSR(K)                      依頼確定数量
+     C                   MOVEL     '0'           M1IKSRH(K)                     依頼確定数量表示区
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB1000       見出明細チェック
+     C*====================================================================*
+     C     SB1000        BEGSR
+     C*<<排他開始>>
+     C                   EXSR      SB1100
+     C*<<見出情報>>
+     C                   EXSR      SB1200
+     C*<<明細情報>>
+     C                   IF        (*IN30 = *OFF AND *IN99 = *OFF) OR
+     C                             (*IN30 AND *IN99)
+     C                   EXSR      SB1300
+     C                   ENDIF
+     C*<<排他解除>>
+     C   30              EXSR      SB1400
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB1100       排他開始
+     C*====================================================================*
+     C     SB1100        BEGSR
+     C*
+     C                   SETOFF                                       3099
+     C*<<依頼応答見出ファイル読込>>
+     C                   MOVEL     T#IRAN        C06IRAN                        依頼番号
+     C                   MOVEL     T#IRBC        C06IRBC                        依頼先部門コード
+     C     KEYC061       CHAIN(N)  RFC06R                             90        依頼応答見出Ｆ
+ 1S  C                   IF        *IN90
+     C                   MOVEL     '2'           T#IRAN6                        エラー有無区分
+     C  N30              MOVEL     'COMMON-002'  #WMSID
+     C  N30              SETON                                        30
+ 1   C                   ELSE
+     C*  <<キャンセル確認区分= '1' >>
+     C                   IF        C06CKKK = '1'                                キャンセル確認区分
+     C*    <<排他開始>>
+     C     'RFC04'       CAT       T#IRAN        P#HTKO                         排他キー
+     C                   MOVEL     'S'           P#KSRF                         開始終了フラグ
+     C                   MOVEL     R#TLID        P#YPGA                         呼出元ＰＧＭ
+     C                   MOVEL     R#LSID        P#LSID                         ログイン識別ＩＤ
+     C                   MOVEL     R#LGSN        P#LGSN                         ログイン社員番号
+     C                   MOVEL     R#KDOD        P#KDOD                         起動日
+     C                   MOVEL     R#KITM        P#KITM                         起動時刻
+     C                   MOVEL     '1'           P#ERFG                         エラーフラグ
+     C                   CALL      'RSS010'      PSS010
+     C                   IF        P#ERFG = '2'
+     C                   MOVEL     '2'           T#IRAN6                        エラー有無区分
+     C  N30              MOVEL     'COMMON-055'  #WMSID
+     C  N30              SETON                                        3099
+     C                   ENDIF
+     C                   ENDIF
+     C                   ENDIF
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB1200       見出情報
+     C*====================================================================*
+     C     SB1200        BEGSR
+     C*
+     C*<<表示区分セット>>
+     C                   EXSR      SB0100
+     C*<<手配依頼見出情報取得>>
+     C                   EXSR      SB1210
+     C*<<依頼応答見出情報取得>>
+     C  N30              EXSR      SB1220
+     C*<<伝票見出情報取得>>
+     C  N30              EXSR      SB1230
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB1210       手配依頼見出ファイル取得
+     C*====================================================================*
+     C     SB1210        BEGSR
+     C*
+     C*<<手配依頼見出ファイル読込>>
+     C     T#IRAN        CHAIN     RFC04R                             90        手配依頼見出Ｆ
+ 1S  C                   IF        *IN90
+     C                   MOVEL     '2'           T#IRAN6                        エラー有無区分
+     C  N30              MOVEL     'COMMON-002'  #WMSID
+     C  N30              SETON                                        30
+ 1   C                   ELSE
+     C                   MOVEL     C04BMNC       T#BMNC                         部門コード
+     C                   MOVEL     C04BMNC       T#C1702                        依頼元部門名
+     C                   MOVEL     C04DMDN       T#DMDN                         伝票番号
+     C                   MOVEL     C04IMSN       T#IMSN                         依頼元担当者
+     C                   EVAL      T#IMBK = %TRIMR(C04IMBK)                     依頼見出備考
+     C*  <<入出庫日>>
+     C                   Z-ADD     C04NYSD       P#DEC                          数値
+     C                   Z-ADD     6             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'D2'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG2
+     C                   MOVEL(P)  P#CHAR        T#NYSD                         入出庫日
+     C                   MOVEL     C04NKTM       T#NKTM                         入出庫時刻
+     C                   EVAL      T#NWBK = %TRIMR(C04NWBK)                     入出庫日備考
+     C*  <<依頼日>>
+     C                   Z-ADD     C04IRAD       P#DEC                          数値
+     C                   Z-ADD     6             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'D2'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG2
+     C                   MOVEL(P)  P#CHAR        T#IRAD                         依頼日
+     C*  <<依頼時刻>>
+     C                   Z-ADD     C04IRTM       P#DEC                          数値
+     C                   Z-ADD     6             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'T1'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG2
+     C                   MOVEL(P)  P#CHAR        T#IRTM                         依頼時刻
+     C*  <<依頼元部門名>>
+     C     C04BMNC       CHAIN(N)  RMR01R                             90
+     C  N90              EVAL      T#IMBN  = %TRIMR(R01BMRM)                    依頼元部門名
+     C*  <<依頼元担当社員名>>
+     C     C04IMSN       CHAIN(N)  RMR15R                             90
+     C  N90              EVAL      T#C1701 = %TRIMR(R15SHNM)                    依頼元担当社員名
+ 1E  C                   ENDIF
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB1220       依頼応答見出ファイル取得
+     C*====================================================================*
+     C     SB1220        BEGSR
+     C*
+     C*<<依頼応答見出ファイル読込>>
+     C                   MOVEL     T#IRAN        C06IRAN                        依頼番号
+     C                   MOVEL     T#IRBC        C06IRBC                        依頼先部門コード
+     C     KEYC061       CHAIN(N)  RFC06R                             90        依頼応答見出Ｆ
+ 1S  C                   IF        *IN90
+     C                   MOVEL     '2'           T#IRAN6                        エラー有無区分
+     C  N30              MOVEL     'COMMON-002'  #WMSID
+     C  N30              SETON                                        30
+ 1   C                   ELSE
+     C                   MOVEL     C06IRIK       T#IRIK                         依頼区分
+     C                   MOVEL     C06HISK       T#HISK                         配車区分
+     C                   EVAL      T#OHBK = %TRIMR(C06OHBK)                     応答見出備考
+     C*  <<依頼区分名>>
+     C                   MOVEL(P)  'IRIK'        R31KBSA                        区分種別
+     C                   MOVEL(P)  C06IRIK       R31KBNC                        区分コード
+     C     KEYR311       CHAIN(N)  RMR31R                             90
+     C                   IF        *IN90 = *OFF
+     C*    <<２バイト文字分割：依頼区分名>>
+     C                   EVAL      P#256 = %TRIMR(R31MSNM)                      分割前
+     C                   MOVEL(P)  *BLANK        P#128A                         分割後Ａ
+     C                   MOVEL(P)  *BLANK        P#128B                         分割後Ｂ
+     C                   Z-ADD     6             P#LENA                         分割後Ａ桁数
+     C                   Z-ADD     *ZERO         P#LENB                         分割後Ｂ桁数
+     C                   MOVEL(P)  '2'           P#BKB                          分割区分
+     C                   CALL      'RSS050'      PSS050
+     C                   EVAL      T#C1703 = %TRIMR(P#128A)                     依頼区分名
+     C                   ENDIF
+     C*  <<配車区分名>>
+     C                   MOVEL(P)  'HISK'        R31KBSA                        区分種別
+     C                   MOVEL(P)  C06HISK       R31KBNC                        区分コード
+     C     KEYR311       CHAIN(N)  RMR31R                             90
+     C                   IF        *IN90 = *OFF
+     C*    <<２バイト文字分割：配車区分名>>
+     C                   EVAL      P#256 = %TRIMR(R31MSNM)                      分割前
+     C                   MOVEL(P)  *BLANK        P#128A                         分割後Ａ
+     C                   MOVEL(P)  *BLANK        P#128B                         分割後Ｂ
+     C                   Z-ADD     8             P#LENA                         分割後Ａ桁数
+     C                   Z-ADD     *ZERO         P#LENB                         分割後Ｂ桁数
+     C                   MOVEL(P)  '2'           P#BKB                          分割区分
+     C                   CALL      'RSS050'      PSS050
+     C                   EVAL      T#C1704 = %TRIMR(P#128A)                     配車区分名
+     C                   ENDIF
+     C*  <<応答処理区分>>
+     C                   IF        C06OJKK <> '9'
+     C                   MOVEL     '0'           T#C1705                        応答処理区分
+     C                   ELSE
+     C                   IF        C06CKKK <> '0'
+     C                   MOVEL     '1'           T#C1705                        応答処理区分
+     C                   ELSE
+     C                   MOVEL     '2'           T#C1705                        応答処理区分
+     C                   ENDIF
+     C                   ENDIF
+ 1E  C                   ENDIF
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB1230       伝票見出ファイル取得
+     C*====================================================================*
+     C     SB1230        BEGSR
+     C*
+     C*<<伝票見出ファイル読込>>
+     C                   MOVEL     C04BMNC       C01URBC                        売上部門コード
+     C                   MOVEL     C04DMDN       C01DMDN                        伝票番号
+     C     KEYC011       CHAIN(N)  RFC01R                             90        伝票見出Ｆ
+ 1S  C                   IF        *IN90
+     C                   IF        C04IRJK <> '9'                               依頼状況区分
+     C                   MOVEL     '2'           T#IRAN6                        エラー有無区分
+     C  N30              MOVEL     'COMMON-002'  #WMSID
+     C  N30              SETON                                        30
+     C                   ELSE
+     C                   MOVEL     '3'           T#IRAN6                        警告
+     C  N31              MOVEL     'RCE170-006'  #WMSID
+     C  N31              SETON                                        31
+     C                   ENDIF
+ 1   C                   ELSE
+     C                   MOVEL     C01DMSK       T#DMSK                         伝票種別
+     C                   MOVEL     C01TKSC       T#TKSC                         得意先コード
+     C                   EVAL      T#TSNM = %TRIMR(C01TSNM)                     得意先名
+     C                   MOVEL     C01GNBC       T#GNBC                         現場コード
+     C                   EVAL      T#GBNM = %TRIMR(C01GBNM)                     現場名
+ 1E  C                   ENDIF
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB1300       明細情報
+     C*====================================================================*
+     C     SB1300        BEGSR
+     C*
+     C                   Z-ADD     *ZERO         #WPOSS            2 0           W位置
+     C*<<明細初期化>>
+     C                   EXSR      SB0200
+     C*
+     C                   Z-ADD     *ZERO         K
+     C*
+     C*<<手配依頼明細ファイル読込>>
+     C     T#IRAN        SETLL     RFC05R                             91        手配依頼明細Ｆ
+     C                   DOW       *IN91 = *OFF
+     C     T#IRAN        READE     RFC05R                                 91
+     C                   IF        *IN91 = *OFF
+     C                   ADD       1             K
+     C*  <<行番号>>
+     C                   Z-ADD     K             P#DEC                          数値
+     C                   Z-ADD     2             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'S1'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG2
+     C                   MOVEL(P)  P#CHAR        M1GYGN(K)                      行番号
+     C*  <<伝票行番号>>
+     C                   Z-ADD     C05DMGN       P#DEC                          数値
+     C                   Z-ADD     2             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'S1'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG2
+     C                   MOVEL(P)  P#CHAR        M1DMGN(K)                      伝票行番号
+     C*  <<依頼数量>>
+     C                   Z-ADD     C05IRSU       P#DEC                          数値
+     C                   Z-ADD     5             P#KETA1                        整数部桁数
+     C                   Z-ADD     2             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'S1'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG2
+     C     '.00'         SCAN      P#CHAR:1      #WPOSS                   50
+     C   50              EVAL      M1IRSU(K) = %SUBST(P#CHAR:1:#WPOSS-1)
+     C  N50              MOVEL(P)  P#CHAR        M1IRSU(K)                      依頼数量
+     C                   EVAL      M1IDBK(K) = %TRIMR(C05IDBK)                  依頼明細備考
+     C*  <<依頼応答明細情報>>
+     C                   EXSR      SB1310
+     C*  <<伝票明細情報>>
+     C                   EXSR      SB1320
+     C                   ENDIF
+     C*
+     C                   ENDDO
+     C*
+     C*<< 該当レコードなし>>
+     C                   IF        K = *ZERO
+     C                   MOVEL     '2'           T#IRAN6                        エラー有無区分
+     C  N30              MOVEL     'COMMON-002'  #WMSID
+     C  N30              SETON                                        30
+     C                   ELSE
+     C                   Z-ADD     K             M#1CNT
+     C                   ENDIF
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB1310       依頼応答明細情報
+     C*====================================================================*
+     C     SB1310        BEGSR
+     C*
+     C*<<依頼応答明細ファイル読込>>
+     C                   MOVEL     T#IRAN        C07IRAN                        依頼番号
+     C                   MOVEL     T#IRBC        C07IRBC                        依頼先部門コード
+     C                   MOVEL     C05DMGN       C07DMGN
+     C     KEYC071       CHAIN(N)  RFC07R                             90        依頼応答明細Ｆ
+ 1S  C                   IF        *IN90
+     C                   MOVEL     '2'           T#IRAN6                        エラー有無区分
+     C  N30              MOVEL     'COMMON-002'  #WMSID
+     C  N30              SETON                                        30
+ 1   C                   ELSE
+     C*  <<応答数量>>
+     C                   Z-ADD     C07OTSU       P#DEC                          数値
+     C                   Z-ADD     5             P#KETA1                        整数部桁数
+     C                   Z-ADD     2             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'S1'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG2
+     C     '.00'         SCAN      P#CHAR:1      #WPOSS                   50
+     C   50              EVAL      M1OTSU(K) = %SUBST(P#CHAR:1:#WPOSS-1)
+     C  N50              MOVEL(P)  P#CHAR        M1OTSU(K)                      応答数量
+     C                   EVAL      M1ODBK(K) = %TRIMR(C07ODBK)                  応答明細備考
+     C*  <<依頼確定数量>>
+     C                   Z-ADD     C07IKSR       P#DEC                          数値
+     C                   Z-ADD     5             P#KETA1                        整数部桁数
+     C                   Z-ADD     2             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'S1'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG2
+     C     '.00'         SCAN      P#CHAR:1      #WPOSS                   50
+     C   50              EVAL      M1IKSR(K) = %SUBST(P#CHAR:1:#WPOSS-1)
+     C  N50              MOVEL(P)  P#CHAR        M1IKSR(K)                      依頼確定数量
+     C                   EVAL      M1IKBK(K) = %TRIMR(C07IKBK)                  依頼確定備考
+ 1   C                   ENDIF
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB1320       伝票明細情報
+     C*====================================================================*
+     C     SB1320        BEGSR
+     C*
+     C*<<伝票明細ファイル読込>>
+     C                   MOVEL     C05BMNC       C02URBC                        売上部門コード
+     C                   MOVEL     C05DMDN       C02DMDN                        伝票番号
+     C                   MOVEL     C05DMGN       C02DMGN                        伝票行番号
+     C     KEYC021       CHAIN     RFC02R                             90        伝票明細Ｆ
+     C*  <<読めない場合>>
+ 1S  C                   IF        *IN90
+     C                   IF        C04IRJK <> '9'                               依頼状況区分
+     C                   MOVEL     '2'           T#IRAN6                        エラー有無区分
+     C  N30              MOVEL     'COMMON-002'  #WMSID
+     C  N30              SETON                                        30
+     C                   ELSE
+     C                   MOVEL     *BLANK        M1KSEC(K)                      受注機性型コード
+     C                   EVAL      M1KSNM(K) =                                  機種名
+     C                                     %TRIMR('伝票情報が存在しません')
+     C                   EVAL      M1SNNM(K) = %TRIMR(#WBLANK)                  性能名
+     C                   EVAL      M1KTNM(K) = %TRIMR(#WBLANK)                  型式名
+     C                   MOVEL     *BLANK        M1USKD(K)                      使用開始日
+     C                   MOVEL     *BLANK        M1HTYD(K)                      引取予定日
+     C                   MOVEL     *BLANK        M1USSD(K)                      使用終了日
+     C                   EVAL      M1TINM(K) = %TRIMR(#WBLANK)                  単位名
+     C                   ENDIF
+     C*  <<読めた場合>>
+ 1   C                   ELSE
+     C                   MOVEL     C02ZCKC       M1KSEC(K)                      受注機性型コード
+     C                   EVAL      M1KSNM(K) = %TRIMR(C02KSNM)                  機種名
+     C                   EVAL      M1SNNM(K) = %TRIMR(C02SNNM)                  性能名
+     C                   EVAL      M1KTNM(K) = %TRIMR(C02KTNM)                  型式名
+     C*  <<使用開始日>>
+     C                   Z-ADD     C02USKD       P#DEC                          数値
+     C                   Z-ADD     6             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'D2'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG2
+     C                   MOVEL(P)  P#CHAR        M1USKD(K)                      使用開始日
+     C*  <<引取予定日>>
+     C                   Z-ADD     C02HTYD       P#DEC                          数値
+     C                   Z-ADD     6             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'D2'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG2
+     C                   MOVEL(P)  P#CHAR        M1HTYD(K)                      引取予定日
+     C*  <<使用終了日>>
+     C                   Z-ADD     C02USSD       P#DEC                          数値
+     C                   Z-ADD     6             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'D2'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG2
+     C                   MOVEL(P)  P#CHAR        M1USSD(K)                      使用終了日
+     C                   EVAL      M1TINM(K) = %TRIMR(C02TINM)                  単位名
+ 1   C                   ENDIF
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB1400       排他終了
+     C*====================================================================*
+     C     SB1400        BEGSR
+     C*
+     C     'RFC04'       CAT       T#IRAN        P#HTKO                         排他キー
+     C                   MOVEL     'E'           P#KSRF                         開始終了フラグ
+     C                   MOVEL     R#TLID        P#YPGA                         呼出元ＰＧＭ
+     C                   MOVEL     R#LSID        P#LSID                         ログイン識別ＩＤ
+     C                   MOVEL     R#LGSN        P#LGSN                         ログイン社員番号
+     C                   MOVEL     R#KDOD        P#KDOD                         起動日
+     C                   MOVEL     R#KITM        P#KITM                         起動時刻
+     C                   MOVEL     '1'           P#ERFG                         エラーフラグ
+     C                   CALL      'RSS010'      PSS010
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB2000       依頼確定チェック
+     C*====================================================================*
+     C     SB2000        BEGSR
+     C*
+     C*<<排他チェック>>
+     C                   EXSR      SB2100
+     C*<<見出情報>>
+     C                   EXSR      SB2200
+     C*<<明細情報>>
+     C  N30              EXSR      SB2300
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB2100       排他チェック
+     C*====================================================================*
+     C     SB2100        BEGSR
+     C*
+     C     'RFC04'       CAT       T#IRAN        R41HTKO                        排他キー
+     C     R41HTKO       CHAIN(N)  RMR41R                             90
+     C                   IF        *IN90
+     C                   MOVEL     '2'           T#IRAN6                        エラー有無区分
+     C  N30              MOVEL     'COMMON-050'  #WMSID
+     C  N30              SETON                                        30
+     C                   ELSE
+     C                   IF        R#LSID <> R41LSID  OR                        ログイン識別ＩＤ
+     C                             R#LGSN <> R41LGSN  OR                        ログイン社員番号
+     C                             R#KDOD <> R41KDOD  OR                        起動日
+     C                             R#KITM <> R41KITM  OR                        起動時刻
+     C                             R#TLID <> R41YPGA                            呼出元ＰＧＭ
+     C                   MOVEL     '2'           T#IRAN6                        エラー有無区分
+     C  N30              MOVEL     'COMMON-050'  #WMSID
+     C  N30              SETON                                        30
+     C                   ENDIF
+     C                   ENDIF
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB2200       見出情報
+     C*====================================================================*
+     C     SB2200        BEGSR
+     C*
+     C*<<表示区分セット>>
+     C                   EXSR      SB0100
+     C*<<手配依頼見出情報>>
+     C                   EXSR      SB1210
+     C*<<依頼応答見出情報>>
+     C  N30              EXSR      SB2210
+     C*<<伝票見出情報>>
+     C  N30              EXSR      SB1230
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB2210       依頼応答見出情報
+     C*====================================================================*
+     C     SB2210        BEGSR
+     C*
+     C*<<依頼応答見出ファイル読込>>
+     C                   MOVEL     T#IRAN        C06IRAN                        依頼番号
+     C                   MOVEL     T#IRBC        C06IRBC                        依頼先部門コード
+     C     KEYC061       CHAIN     RFC06R                             90        依頼応答見出Ｆ
+ 1S  C                   IF        *IN90
+     C                   MOVEL     '2'           T#IRAN6                        エラー有無区分
+     C  N30              MOVEL     'COMMON-002'  #WMSID
+     C  N30              SETON                                        30
+ 1   C                   ELSE
+     C                   MOVEL     C06IRIK       T#IRIK                         依頼区分
+     C                   MOVEL     C06HISK       T#HISK                         配車区分
+     C*  <<依頼区分名>>
+     C                   MOVEL(P)  'IRIK'        R31KBSA                        区分種別
+     C                   MOVEL(P)  C06IRIK       R31KBNC                        区分コード
+     C     KEYR311       CHAIN(N)  RMR31R                             90
+     C                   IF        *IN90 = *OFF
+     C*    <<２バイト文字分割：依頼区分名>>
+     C                   EVAL      P#256 = %TRIMR(R31MSNM)                      分割前
+     C                   MOVEL(P)  *BLANK        P#128A                         分割後Ａ
+     C                   MOVEL(P)  *BLANK        P#128B                         分割後Ｂ
+     C                   Z-ADD     6             P#LENA                         分割後Ａ桁数
+     C                   Z-ADD     *ZERO         P#LENB                         分割後Ｂ桁数
+     C                   MOVEL(P)  '2'           P#BKB                          分割区分
+     C                   CALL      'RSS050'      PSS050
+     C                   EVAL      T#C1703 = %TRIMR(P#128A)                     依頼区分名
+     C                   ENDIF
+     C*  <<配車区分名>>
+     C                   MOVEL(P)  'HISK'        R31KBSA                        区分種別
+     C                   MOVEL(P)  C06HISK       R31KBNC                        区分コード
+     C     KEYR311       CHAIN(N)  RMR31R                             90
+     C                   IF        *IN90 = *OFF
+     C*    <<２バイト文字分割：配車区分名>>
+     C                   EVAL      P#256 = %TRIMR(R31MSNM)                      分割前
+     C                   MOVEL(P)  *BLANK        P#128A                         分割後Ａ
+     C                   MOVEL(P)  *BLANK        P#128B                         分割後Ｂ
+     C                   Z-ADD     8             P#LENA                         分割後Ａ桁数
+     C                   Z-ADD     *ZERO         P#LENB                         分割後Ｂ桁数
+     C                   MOVEL(P)  '2'           P#BKB                          分割区分
+     C                   CALL      'RSS050'      PSS050
+     C                   EVAL      T#C1704 = %TRIMR(P#128A)                     配車区分名
+     C                   ENDIF
+     C*  <<応答処理区分>>
+     C                   IF        C06OJKK <> '9'
+     C                   MOVEL     '0'           T#C1705                        応答処理区分
+     C                   ELSE
+     C                   IF        C06CKKK <> '0'
+     C                   MOVEL     '1'           T#C1705                        応答処理区分
+     C                   ELSE
+     C                   MOVEL     '2'           T#C1705                        応答処理区分
+     C                   ENDIF
+     C                   ENDIF
+ 1E  C                   ENDIF
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB2300       明細情報
+     C*====================================================================*
+     C     SB2300        BEGSR
+     C*
+     C                   Z-ADD     M#1CNT        #W1MAX            2 0          明細件数
+     C*
+     C                   Z-ADD     *ZERO         K                              指標
+     C*<<明細配列読込>>
+DO1S C                   DO        #W1MAX        K
+     C*  <<エラー／表示区分／表示項目初期化>>
+     C                   EXSR      SB0210
+     C*  <<伝票行番号>>
+ 1S  C                   IF        M1DMGN(K) <> *BLANK
+     C                   MOVEL(P)  M1DMGN(K)     P#CHAR                         文字
+     C                   Z-ADD     2             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'S1'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG1
+ 2S  C                   IF        P#EMID <> *BLANK
+     C                   MOVEL     '2'           M1ERUK                         エラー有無区分
+     C  N30              MOVEL     P#EMID        #WMSID                         メッセージＩＤ
+     C  N30              SETON                                        30
+ 2   C                   ELSE
+     C                   Z-ADD     P#DEC         ADMGN(K)                      W伝票番号
+ 2E  C                   ENDIF
+ 1E  C                   ENDIF
+     C*<<応答数量>>
+ 1S  C                   IF        M1OTSU(K) = *BLANK
+     c*****DLT-STR UT2-001174
+     C*                  MOVEL     '2'           M1OTSUE(K)                     応答数量　　エラー
+     C* N30              MOVEL     'COMMON-031'  #WMSID
+     C* N30              SETON                                        30
+     c*****DLT-END UT2-001174
+ 1   C                   ELSE
+     C*  <<妥当性チェック>>
+     C                   MOVEL(P)  M1OTSU(K)     P#CHAR                         文字
+     C                   Z-ADD     5             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'S1'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG1
+ 2S  C                   IF        P#EMID <> *BLANK
+     C                   MOVEL(P)  M1OTSU(K)     P#CHAR                         文字
+     C                   Z-ADD     3             P#KETA1                        整数部桁数
+     C                   Z-ADD     2             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'S1'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG1
+ 3S  C                   IF        P#EMID <> *BLANK
+     C                   MOVEL     '2'           M1OTSUE(K)                     エラー有無区分
+     C  N30              MOVEL     'RCE170-004'  #WMSID                         メッセージＩＤ
+     C  N30              SETON                                        30
+ 3E  C                   ENDIF
+ 2E  C                   ENDIF
+     C*  <<変換>>
+     C                   MOVEL(P)  M1OTSU(K)     P#CHAR                         文字
+     C                   Z-ADD     5             P#KETA1                        整数部桁数
+     C                   Z-ADD     2             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'S1'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG1
+ 2S  C                   IF        P#EMID <> *BLANK
+     C                   MOVEL     '2'           M1OTSUE(K)                     エラー有無区分
+     C  N30              MOVEL     P#EMID        #WMSID                         メッセージＩＤ
+     C  N30              SETON                                        30
+ 2   C                   ELSE
+     c*****DLT-STR UT2-001174
+ 1S  C*                  IF        P#DEC = *ZERO
+     C*                  MOVEL     '2'           M1OTSUE(K)                     応答数量　　エラー
+     C* N30              MOVEL     'COMMON-031'  #WMSID
+     C* N30              SETON                                        30
+ 1   C*                  ELSE
+     C*****DLT-END UT2-001174
+     C                   Z-ADD     P#DEC         AOTSU(K)                       応答数量　
+     C*****DLT-STR UT2-001174
+ 2E  C*                  ENDIF
+     C*****DLT-END UT2-001174
+ 2E  C                   ENDIF
+ 1E  C                   ENDIF
+     C*
+     C*  <<手配依頼明細ファイル読込>>
+     C                   EXSR      SB2310
+     C*  <<依頼応答明細ファイル読込>>
+     C                   EXSR      SB2320
+     C*  <<伝票明細ファイル読込>>
+     C                   EXSR      SB2330
+     C*
+DO1E C                   ENDDO
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB2310       手配依頼明細ファイル読込
+     C*====================================================================*
+     C     SB2310        BEGSR
+     C*
+     C                   MOVEL(P)  T#IRAN        C05IRAN                        依頼番号
+     C                   MOVEL(P)  ADMGN(K)      C05DMGN                        伝票行番号
+     C     KEYC051       CHAIN     RFC05R                             90
+ 2S  C                   IF        *IN90
+     C                   MOVEL     '2'           M1ERUK(K)                      エラー有無区分
+     C  N30              MOVEL     'COMMON-002'  #WMSID
+     C  N30              SETON                                        30
+ 2   C                   ELSE
+     C*  <<依頼数量>>
+     C                   Z-ADD     C05IRSU       P#DEC                          数値
+     C                   Z-ADD     5             P#KETA1                        整数部桁数
+     C                   Z-ADD     2             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'S1'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG2
+     C     '.00'         SCAN      P#CHAR:1      #WPOSS                   50    '0.00'文字列検索
+     C   50              EVAL      M1IRSU(K) = %SUBST(P#CHAR:1:#WPOSS-1)        依頼数量
+     C  N50              MOVEL(P)  P#CHAR        M1IRSU(K)                      依頼数量
+     C                   EVAL      M1IDBK(K) = %TRIMR(C05IDBK)                  依頼明細備考
+     C*  <<妥当性チェック>>
+     C                   IF        AOTSU(K) < 0  OR  AOTSU(K) > C05IRSU
+     C                   MOVEL     '2'           M1OTSUE(K)                     エラー有無区分
+     C  N30              MOVEL     'RCE170-005'  #WMSID
+     C  N30              SETON                                        30
+     C                   ENDIF
+ 2E  C                   ENDIF
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB2320       依頼応答明細ファイル読込
+     C*====================================================================*
+     C     SB2320        BEGSR
+     C*
+     C                   MOVEL     T#IRAN        C07IRAN                        依頼番号
+     C                   MOVEL     T#IRBC        C07IRBC                        依頼先部門コード
+     C                   MOVEL     ADMGN(K)      C07DMGN                        伝票行番号
+     C     KEYC071       CHAIN(N)  RFC07R                             90        伝票見出Ｆ
+ 1S  C                   IF        *IN90
+     C                   MOVEL     '2'           M1ERUK(K)                      エラー有無区分
+     C  N30              MOVEL     'COMMON-002'  #WMSID
+     C  N30              SETON                                        30
+ 1   C                   ELSE
+     C*  <<依頼確定数量>>
+     C                   Z-ADD     C07IKSR       P#DEC                          数値
+     C                   Z-ADD     5             P#KETA1                        整数部桁数
+     C                   Z-ADD     2             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'S1'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG2
+     C     '.00'         SCAN      P#CHAR:1      #WPOSS                   50     '0.00'文字列検索
+     C   50              EVAL      M1IKSR(K) = %SUBST(P#CHAR:1:#WPOSS-1)        依頼確定数量
+     C  N50              MOVEL(P)  P#CHAR        M1IKSR(K)                      依頼確定数量
+     C                   EVAL      M1IKBK(K) = %TRIMR(C07IKBK)                  依頼確定備考
+ 1   C                   ENDIF
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB2330       伝票明細ファイル読込
+     C*====================================================================*
+     C     SB2330        BEGSR
+     C*
+     C                   MOVEL(P)  C05BMNC       C02URBC                        配車区分
+     C                   MOVEL(P)  C05DMDN       C02DMDN                        区分種別
+     C                   MOVEL(P)  ADMGN(K)      C02DMGN                        区分コード
+     C     KEYC021       CHAIN     RFC02R                             90        伝票明細Ｆ
+ 2S  C                   IF        *IN90
+     C                   MOVEL     '2'           M1ERUK(K)                      エラー有無区分
+     C  N30              MOVEL     'COMMON-002'  #WMSID
+     C  N30              SETON                                        30
+ 2   C                   ELSE
+     C                   MOVEL(P)  C02ZCKC       M1KSEC(K)                      機性型コード
+     C                   EVAL      M1KSNM(K) = %TRIMR(C02KSNM)                  機種名
+     C                   EVAL      M1SNNM(K) = %TRIMR(C02SNNM)                  性能名
+     C                   EVAL      M1KTNM(K) = %TRIMR(C02KTNM)                  型式名
+     C*  <<使用開始日>>
+     C                   Z-ADD     C02USKD       P#DEC                          数値
+     C                   Z-ADD     6             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'D2'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG2
+     C                   MOVEL(P)  P#CHAR        M1USKD(K)                      使用開始日
+     C*  <<取引予定日>>
+     C                   Z-ADD     C02HTYD       P#DEC                          数値
+     C                   Z-ADD     6             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'D2'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG2
+     C                   MOVEL(P)  P#CHAR        M1HTYD(K)                      引取予定日
+     C*  <<使用終了日>>
+     C                   Z-ADD     C02USSD       P#DEC                          数値
+     C                   Z-ADD     6             P#KETA1                        整数部桁数
+     C                   Z-ADD     0             P#KETA2                        小数部桁数
+     C                   MOVEL(P)  'D2'          P#CHKK                         チェック区分
+     C                   EXSR      SBCHG2
+     C                   MOVEL(P)  P#CHAR        M1USSD(K)                      使用終了日
+     C                   EVAL      M1TINM(K) = %TRIMR(C02TINM)                  単位名
+ 2E  C                   ENDIF
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB3000       更新処理
+     C*====================================================================*
+     C     SB3000        BEGSR
+     C*
+     C*<<チェック>>
+     C                   EXSR      SB2000
+     C*<<応答更新処理>>
+     C  N30              EXSR      SB3100
+     C*<<排他解除>>
+     C                   EXSR      SB1400                                       
+     C*<<コミット>>
+     C  N30              COMMIT
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB3100       応答更新処理
+     C*====================================================================*
+     C     SB3100        BEGSR
+     C*
+     C*<<手配依頼見出ファイル更新>>
+     C                   EXSR      SB3110
+     C*<<依頼応答見出ファイル更新>>
+     C                   EXSR      SB3120
+     C*<<依頼応答明細ファイル更新>>
+     C                   EXSR      SB3130
+     C*<<伝票見出ファイル更新>>
+     C                   EXSR      SB3140
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB3110       手配依頼見出ファイル更新
+     C*====================================================================*
+     C     SB3110        BEGSR
+     C*
+     C*<<履歴更新>>
+     C                   MOVEL     '1'           C04JYTK                        状態区分
+     C*
+     C                   MOVEL     R#LGSN        C04KUID                        更新ユーザーＩＤ
+     C                   MOVEL     WPGM          C04KPID                        更新ＰＧＭＩＤ
+     C                   Z-ADD     *DATE         C04KSND                        更新日
+     C                   TIME                    C04KNTM                        更新時刻
+     C*                  -------------------
+     C                   UPDATE    RFC04R                                       手配依頼見出Ｆ
+     C*                  -------------------
+     C*<<履歴追加>>
+     C                   MOVEL     *BLANK        C04JYTK                        状態区分
+     C                   ADD       1             C04RERN                        履歴番号
+     C*
+     C                   MOVEL     '2'           C04IRJK                        依頼状況区分
+     C*
+     C                   MOVEL     R#LGSN        C04TUID                        登録ユーザーＩＤ
+     C                   MOVEL     WPGM          C04TPID                        登録ＰＧＭＩＤ
+     C                   Z-ADD     *DATE         C04TRKD                        登録日
+     C                   TIME                    C04TRTM                        登録時刻
+     C                   MOVEL     *BLANK        C04KUID                        更新ユーザーＩＤ
+     C                   MOVEL     *BLANK        C04KPID                        更新ＰＧＭＩＤ
+     C                   Z-ADD     *ZERO         C04KSND                        更新日
+     C                   Z-ADD     *ZERO         C04KNTM                        更新時刻
+     C*                  -------------------
+     C                   WRITE     RFC04R                                        *手配依頼見出Ｆ
+     C*                  -------------------
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB3120       依頼応答見出ファイル更新
+     C*====================================================================*
+     C     SB3120        BEGSR
+     C*
+     C*<<履歴更新>>
+     C                   MOVEL     '1'           C06JYTK                        状態区分
+     C*
+     C                   MOVEL     R#LGSN        C06KUID                        更新ユーザーＩＤ
+     C                   MOVEL     WPGM          C06KPID                        更新ＰＧＭＩＤ
+     C                   Z-ADD     *DATE         C06KSND                        更新日
+     C                   TIME                    C06KNTM                        更新時刻
+     C*                  -------------------
+     C                   UPDATE    RFC06R                                        *依頼応答見出Ｆ
+     C*                  -------------------
+     C*<<履歴追加>>
+     C                   MOVEL     *BLANK        C06JYTK                        状態区分
+     C                   ADD       1             C06RERN                        履歴番号
+     C*
+     C                   EVAL      C06OHBK = %TRIMR(T#OHBK)                     応答見出備考
+     C                   MOVEL     *DATE         C06OUTD                        応答日
+     C                   TIME                    C06OTTM                        応答時刻
+     C                   MOVEL     '2'           C06OJKK                        応答状況区分
+     C*
+     C                   MOVEL     R#LGSN        C06TUID                        登録ユーザーＩＤ
+     C                   MOVEL     WPGM          C06TPID                        登録ＰＧＭＩＤ
+     C                   Z-ADD     *DATE         C06TRKD                        登録日
+     C                   TIME                    C06TRTM                        登録時刻
+     C                   MOVEL     *BLANK        C06KUID                        更新ユーザーＩＤ
+     C                   MOVEL     *BLANK        C06KPID                        更新ＰＧＭＩＤ
+     C                   Z-ADD     *ZERO         C06KSND                        更新日
+     C                   Z-ADD     *ZERO         C06KNTM                        更新時刻
+     C*                  -------------------
+     C                   WRITE     RFC06R                                        *依頼応答見出Ｆ
+     C*                  -------------------
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB3130       依頼応答明細ファイル更新
+     C*====================================================================*
+     C     SB3130        BEGSR
+     C*
+     C                   Z-ADD     *ZERO         K                              指標
+     C*<<明細配列読込>>
+DO1S C                   DO        #W1MAX        K                              繰り返し
+     C*  <<依頼応答明細ファイル読込>>
+     C                   MOVEL     T#IRAN        C07IRAN                        依頼番号
+     C                   MOVEL     T#IRBC        C07IRBC                        依頼先部門コード
+     C                   MOVEL     ADMGN(K)      C07DMGN                        伝票行番号
+     C     KEYC071       CHAIN     RFC07R                             90        依頼応答見出Ｆ
+ 1S  C                   IF        *IN90
+     C                   MOVEL     '2'           M1ERUK(K)                      エラー有無区分
+     C  N30              MOVEL     'COMMON-002'  #WMSID
+     C  N30              SETON                                        30
+ 1   C                   ELSE
+     C*<<履歴更新>>
+     C                   MOVEL     '1'           C07JYTK                        状態区分
+     C*
+     C                   MOVEL     R#LGSN        C07KUID                        更新ユーザーＩＤ
+     C                   MOVEL     WPGM          C07KPID                        更新ＰＧＭＩＤ
+     C                   Z-ADD     *DATE         C07KSND                        更新日
+     C                   TIME                    C07KNTM                        更新時刻
+     C*                  -------------------
+     C                   UPDATE    RFC07R                                        *依頼応答見出Ｆ
+     C*                  -------------------
+     C*<<履歴追加>>
+     C                   MOVEL     *BLANK        C07JYTK                        状態区分
+     C                   ADD       1             C07RERN                        履歴番号
+     C*
+     C                   Z-ADD     AOTSU(K)      C07OTSU                        応答数量
+     C                   EVAL      C07ODBK = %TRIMR(M1ODBK(K))                  応答明細備考
+     C*
+     C                   MOVEL     R#LGSN        C07TUID                        登録ユーザーＩＤ
+     C                   MOVEL     WPGM          C07TPID                        登録ＰＧＭＩＤ
+     C                   Z-ADD     *DATE         C07TRKD                        登録日
+     C                   TIME                    C07TRTM                        登録時刻
+     C                   MOVEL     *BLANK        C07KUID                        更新ユーザーＩＤ
+     C                   MOVEL     *BLANK        C07KPID                        更新ＰＧＭＩＤ
+     C                   Z-ADD     *ZERO         C07KSND                        更新日
+     C                   Z-ADD     *ZERO         C07KNTM                        更新時刻
+     C*                  -------------------
+     C                   WRITE     RFC07R                                        *依頼応答見出Ｆ
+     C*                  -------------------
+ 1   C                   ENDIF
+     C*
+DO1E C                   ENDDO
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB3140       更新処理
+     C*====================================================================*
+     C     SB3140        BEGSR
+     C*
+     C*<<伝票見出ファイル読込>>
+     C                   MOVEL     T#BMNC        C01URBC                        売上部門コード
+     C                   MOVEL     T#DMDN        C01DMDN                        伝票番号
+     C     KEYC011       CHAIN     RFC01R                             90        伝票見出Ｆ
+ 1S  C                   IF        *IN90
+     C                   MOVEL     '2'           T#DMDN6                        エラー有無区分
+     C  N30              MOVEL     'COMMON-002'  #WMSID
+     C  N30              SETON                                        30
+ 1   C                   ELSE
+     C*  <<更新>>
+     C                   MOVEL     '2'           C01THJK                        手配状況区分
+     C*
+     C                   MOVEL     R#LGSN        C01KUID                        更新ユーザーＩＤ
+     C                   MOVEL     WPGM          C01KPID                        更新ＰＧＭＩＤ
+     C                   Z-ADD     *DATE         C01KSND                        更新日
+     C                   TIME                    C01KNTM                        更新時刻
+     C*                  -------------------
+     C                   UPDATE    RFC01R                                        *伝票見出Ｆ
+     C*                  -------------------
+ 1E  C                   ENDIF
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB4000       確認更新処理
+     C*====================================================================*
+     C     SB4000        BEGSR
+     C*
+     C*<<排他チェック>>
+     C                   EXSR      SB2100
+     C*<<見出情報チェック>>
+     C                   EXSR      SB1200
+     C*<<明細情報チェック>>
+     C                   EXSR      SB1300
+     C*<<確認更新処理>>
+     C  N30              EXSR      SB4100
+     C*<<排他解除>>
+     C                   EXSR      SB1400                                       
+     C*<<コミット>>
+     C  N30              COMMIT
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SB4100       確認更新処理
+     C*====================================================================*
+     C     SB4100        BEGSR
+     C*
+     C                   MOVEL     T#IRAN        C06IRAN                        依頼番号
+     C                   MOVEL     T#IRBC        C06IRBC                        依頼先部門コード
+     C     KEYC061       CHAIN     RFC06R                             90        依頼応答見出Ｆ
+ 1S  C                   IF        *IN90
+     C                   MOVEL     '2'           T#IRAN6                        エラー有無区分
+     C  N30              MOVEL     'COMMON-002'  #WMSID
+     C  N30              SETON                                        30
+ 1   C                   ELSE
+     C*  <<更新>>
+     C                   MOVEL     '0'           C06CKKK                        キャンセル確認区分
+     C*
+     C                   MOVEL     R#LGSN        C06KUID                        更新ユーザーＩＤ
+     C                   MOVEL     WPGM          C06KPID                        更新ＰＧＭＩＤ
+     C                   Z-ADD     *DATE         C06KSND                        更新日
+     C                   TIME                    C06KNTM                        更新時刻
+     C*                  -------------------
+     C                   UPDATE    RFC06R                                        *依頼応答見出Ｆ
+     C*                  -------------------
+ 1   C                   ENDIF
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBCLAR       画面項目クリア処理
+     C*====================================================================*
+     C     SBCLAR        BEGSR
+     C*<<初期表示項目退避>>
+     C                   IF        R#SORK = '1'
+     C                   MOVEL     T#IRAN        X#IRAN           13            依頼番号
+     C                   MOVEL     T#IRBC        X#IRBC            7            依頼先部門コード
+     C                   ENDIF
+     C*<<初期値セット>>
+     C                   EXSR      SB0000                                       初期化
+     C*<<初期表示項目戻し>>
+     C                   MOVEL     X#IRAN        T#IRAN                         依頼番号
+     C                   MOVEL     X#IRBC        T#IRBC                         依頼先部門コード
+     C*<<エラー有無区分セット>>
+     C                   MOVEL     '4'           S#ERUK                         エラー有無区分
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBCHG1       数値文字変換処理呼出（文字→数値）
+     C*====================================================================*
+     C     SBCHG1        BEGSR
+     C*
+     C                   Z-ADD     *ZERO         P#DEC                          数値
+     C                   MOVEL(P)  '1'           P#CHGK                         数値文字変換区分
+     C                   MOVEL(P)  '1'           P#ENDK                         終了区分
+     C                   MOVEL     *BLANK        P#EMID                         エラーメッセージ
+     C                   CALL      'RSS160'      PSS160
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBCHG2       数値文字変換処理呼出（数値→文字）
+     C*====================================================================*
+     C     SBCHG2        BEGSR
+     C*
+     C                   MOVEL(P)  *BLANK        P#CHAR                         文字
+     C                   MOVEL(P)  '2'           P#CHGK                         数値文字変換区分
+     C                   MOVEL(P)  '1'           P#ENDK                         終了区分
+     C                   MOVEL     *BLANK        P#EMID                         エラーメッセージ
+     C                   CALL      'RSS160'      PSS160
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBSCOM       送信電文展開前の共通処理
+     C*====================================================================*
+     C     SBSCOM        BEGSR
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBERMS       エラー／メッセージ処理
+     C*====================================================================*
+     C     SBERMS        BEGSR
+     C*
+     C   30              MOVEL     '2'           S#ERUK                         エラー有無区分
+     C                   MOVEL     #WMSID        S#MSID                         メッセージＩＤ
+     C*<<メッセージマスター>>
+     C                   IF        #WMSID <> *BLANK
+     C     #WMSID        CHAIN     RMR42R                             90
+     C                   IF        *IN90  =  *OFF
+     C                   EVAL      S#MSGO = %TRIMR(R42MSGO)                     メッセージ
+     C                   ENDIF
+     C                   ENDIF
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBSEND       送信電文展開
+     C*====================================================================*
+     C     SBSEND        BEGSR
+     C*
+     C/COPY QRPGLESRC,RCE170D
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBEND        終了処理
+     C*====================================================================*
+     C     SBEND         BEGSR
+     C*<<終了前処理>>
+     C  N10              EXSR      SBEND1                                       終了前処理
+     C*
+     C                   SETON                                        LR
+     C                   RETURN
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    SBEND1       終了前処理
+     C*====================================================================*
+     C     SBEND1        BEGSR
+     C*  <<数値文字変換処理ダミーＣＡＬＬ>>
+     C                   MOVEL(P)  *BLANK        P#CHAR                         文字
+     C                   Z-ADD     *ZERO         P#DEC                          数値
+     C                   Z-ADD     *ZERO         P#KETA1                        整数部桁数
+     C                   Z-ADD     *ZERO         P#KETA2                        小数部桁数
+     C                   MOVEL(P)  *BLANK        P#CHGK                         数値文字変換区分
+     C                   MOVEL(P)  *BLANK        P#CHKK                         チェック区分
+     C                   MOVEL(P)  '0'           P#ENDK                         終了区分
+     C                   MOVEL(P)  *BLANK        P#EMID                         エラーメッセージ
+     C                   CALL      'RSS160'      PSS160
+     C*
+     C                   ENDSR
+     C*====================================================================*
+     C*    *PSSR        例外エラー処理
+     C*====================================================================*
+     C     *PSSR         BEGSR
+     C*<<初回／２回目の標識コントロール>>
+     C   11              SETON                                            10
+     C                   SETON                                            11
+     C*
+     C                   MOVEL     'E'           S#ERUK                         エラー有無区分
+     C                   MOVEL     WREID         S#MSID                         メッセージＩＤ
+     C                   MOVEL     WREMG         S#MSGO                         メッセージ
+     C*<<ロールバック>>
+     C                   ROLBK
+     C*<<送信電文展開>>
+     C                   EXSR      SBSEND
+     C*<<終了処理>>
+     C                   EXSR      SBEND
+     C*
+     C                   ENDSR

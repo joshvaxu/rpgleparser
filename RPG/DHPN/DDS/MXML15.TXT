@@ -1,0 +1,29 @@
+      *****************************************************************         
+      * USER-NAME    :  ÉnÉsÉlÉbÉg                                    *         
+      * FILE-NAME    :  ëóÇËèÛñæç◊ÉfÅ[É^Å@ÇkÇeÇPÇTÅ@Å@Å@Å@Å@Å@Å@Å@Å@ ?*         
+      * FILE-ID      :  ÇcÇnÇlÇkÇPÇT                                  *         
+      * SOFT-HOUSE   :  áäÇhÇbÇq                                      *         
+      * AUTHOR       :  K.N                                           *         
+      * CREATE       :  97/03/14                                      *         
+      * AUTHOR       :  X.XXXXXX                                      *         
+      * UPDATE       :  __/__/__                                      *         
+      *****************************************************************         
+     A          R OMREC                     PFILE(DOMP00)                       
+      * <KEY>                                                                   
+     A          K OMTRKL                                                        
+     A          K OMTRCL                                                        
+     A          K OMTRSL                                                        
+     A          K OMTRUL                                                        
+     A          K OMADN                                                         
+     A          K OMTNO2                                                        
+     A          K OMHSD                                                         
+      *****************************************************************         
+     A          R OMRECA                    PFILE(DOMPADD)                      
+      * <KEY>                                                                   
+     A          K OMTRKL                                                        
+     A          K OMTRCL                                                        
+     A          K OMTRSL                                                        
+     A          K OMTRUL                                                        
+     A          K OMADN                                                         
+     A          K OMTNO2                                                        
+     A          K OMHSD                                                         

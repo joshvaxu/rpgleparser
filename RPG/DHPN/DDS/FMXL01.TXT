@@ -1,0 +1,27 @@
+      *****************************************************************         
+      * USER-NAME    :  ÉnÉsÉlÉbÉg                                    *         
+      * FILE-NAME    :  É~ÉbÉNÉXÉtÉ@ÉCÉãÅ@ÇkÇeÇOÇPÅ@Å@Å@Å@Å@Å@Å@Å@Å@ ?*         
+      * FILE-ID      :  ÇeÇlÇwÇkÇOÇP                                  *         
+      * SOFT-HOUSE   :  áäÇhÇbÇq                                      *         
+      * AUTHOR       :  M.MATSUMOTO                                   *         
+      * CREATE       :    /  /                                        *         
+      * AUTHOR       :  X.XXXXXX                                      *         
+      * UPDATE       :    /  /                                        *         
+      *****************************************************************         
+     A          R SEREC                     PFILE(FSEP00)                       
+      *                                                                         
+     A          K SESTYM                                                        
+     A          K SETBS                                                         
+     A          K SERNB                                                         
+      *                                                                         
+     A          O SEDEL                     COMP(NE ' ')                        
+     A          O SERCD                     COMP(NE '1')                        
+      *                                                                         
+     A          R BUREC                     PFILE(FBUP00)                       
+      *                                                                         
+     A          K BUSTYM                                                        
+     A          K BUTBS                                                         
+     A          K BURNB                                                         
+      *                                                                         
+     A          O BUDEL                     COMP(NE ' ')                        
+     A          O BUKB01                    COMP(EQ '1')                        

@@ -1,0 +1,1046 @@
+      *****************************************************************         
+      * USER-NAME    :  ハピネット                                    *         
+      * PGM-NAME     :  計画№ポップ照会　　　　　　　　　　　　　　 ?*         
+      * PGM-ID       :  ＨＡＰ００１０Ｒ                              *         
+      * SOFT-HOUSE   :  ㈱ＩＣＲ                                      *         
+      * AUTHOR       :  X.XXXXXX                                      *         
+      * CREATE       :    /  /                                        *         
+      * AUTHOR       :  X.XXXXXX                                      *         
+      * UPDATE       :    /  /                                        *         
+      *****************************************************************         
+     H            Y/                                    1                       
+      *==============================================================*          
+      *                     Ｆ　Ｉ　Ｌ　Ｅ                           *          
+      *==============================================================*          
+      * 画面ファイル                                                            
+     FHAP0010SCF  E                    WORKSTN                                  
+     F                                              KINFDS WSINF                
+      * 各種名称マスタ                                                          
+     FMKML01  IF  E           K        DISK                                     
+      * ミックスファイル                                                        
+     FFMXL01  IF  E           K        DISK                                     
+      *==============================================================*          
+      *                     Ａ　Ｒ　Ｒ　Ａ　Ｙ                                  
+      *==============================================================*          
+      * < 画面 >                                                                
+     E                    NO          9  1 0             : 番号                 
+     E                    CD          9  9               : コード               
+     E                    JR          9 12               : 名称                 
+      * < 非表示 >                                                              
+     E                    SYM         9  6               : 開始年月     H       
+     E                    TBS         9  2               : 対象部門識別 H       
+     E                    RNB         9  1               : 連番         H       
+      *                                                                         
+     E                    JM          9 42               : 漢字・名称 H         
+     E                    AM          9 20               : カナ・名称 H         
+     E                    AR          9 10               : カナ・略称 H         
+      *                                                                         
+     E************        @INF    1   1 26               : ｺﾏﾝﾄﾞ 説明           
+     E                    @INF    1   1 10               : ｺﾏﾝﾄﾞ 説明           
+      *==============================================================*          
+      *                     Ｄ　Ｓ                                              
+      *==============================================================*          
+     ISEREC       51                                                            
+     IBUREC       52                                                            
+      * < 罫線 >                                                                
+     IS#KBFR      DS                                                            
+     I                                        1   1 X2F                         
+     I                                        2   2 KBFR                        
+      * < カーソル制御  >                                                       
+     IWSINF       DS                                                            
+     I                                      370 370 WSLIN1                      
+     I                                      371 371 WSCOL1                      
+     I            DS                                                            
+     I                                    B   1   20WSLINE                      
+     I                                        1   1 WSB1                        
+     I                                        2   2 WSLIN2                      
+     I                                    B   3   40WSCOLM                      
+     I                                        3   3 WSB2                        
+     I                                        4   4 WSCOL2                      
+      *                                                                         
+      *  ･-------------------------------------------------                     
+      *  |  コントロールフラグの定義                                            
+      *  |        WEND     画面終了 ﾌﾗｸﾞ                                        
+      *  |        WDSP     画面制御                                             
+      *  |        WLOP     画面処理 ﾄﾘｶﾞｰ                                       
+      *  |        WERR     画面 ERROR  制御                                     
+      *  |        WWRN     画面 ﾜｰﾆﾝｸﾞ 制御                                     
+      *  |        WINP     画面入力 ﾌﾗｸﾞ                                        
+      *  ･-------------------------------------------------                     
+     ICTLFLG      DS                                                            
+     I                                        1   1 WEND                        
+     I                                        2   2 WDSP                        
+     I                                        3   3 WLOP                        
+     I                                        4   4 WEXT                        
+     I                                        5   5 WINP                        
+     I                                        6   6 WFST                        
+     I                                        7   7 WWRN                        
+     I                                        8   8 WERR                        
+      *---------------------------------------------------------------*         
+      *   メッセージ取得パラメータ                                              
+      /COPY QCPYSRC,@0040P                                                      
+      *   漢字切断                                                              
+      /COPY QCPYSRC,@0050P                                                      
+      *   暦日変換                                                              
+      /COPY QCPYSRC,@0010P                                                      
+      *   ポップ照会共通パラメータ                                              
+      /COPY QCPYSRC,@POP1                                                       
+      * < 計画№ >                                                              
+     I                                        3   8 @PSTYM                      
+     I                                        9  10 @PTBS                       
+     I                                       11  11 @PRNB                       
+      *---------------------------------------------------------------*         
+      * < 日付 ﾜｰｸ >                                                            
+     I            DS                                                            
+     I                                        1   80W@DAT8                      
+     I                                        3   80W@DAT6                      
+     I                                        5   80W@DAT4                      
+     I                                        1   40W@DATY                      
+     I                                        5   60W@DATM                      
+     I                                        7   80W@DATD                      
+      *==========*                                                              
+      *  画　面  *                                                              
+      *==========*                                                              
+      * < № >                                                                  
+     I            DS                                                            
+     I                                        1   90NO                          
+     I                                        1   10NO1                         
+     I                                        2   20NO2                         
+     I                                        3   30NO3                         
+     I                                        4   40NO4                         
+     I                                        5   50NO5                         
+     I                                        6   60NO6                         
+     I                                        7   70NO7                         
+     I                                        8   80NO8                         
+     I                                        9   90NO9                         
+      * < コード >                                                              
+     I            DS                                                            
+     I                                        1  81 CD                          
+     I                                        1   9 G1CD1                       
+     I                                       10  18 G1CD2                       
+     I                                       19  27 G1CD3                       
+     I                                       28  36 G1CD4                       
+     I                                       37  45 G1CD5                       
+     I                                       46  54 G1CD6                       
+     I                                       55  63 G1CD7                       
+     I                                       64  72 G1CD8                       
+     I                                       73  81 G1CD9                       
+      * < 漢字・略称 >                                                          
+     I            DS                                                            
+     I                                        1 108 JR                          
+     I                                        1  12 G1JR1                       
+     I                                       13  24 G1JR2                       
+     I                                       25  36 G1JR3                       
+     I                                       37  48 G1JR4                       
+     I                                       49  60 G1JR5                       
+     I                                       61  72 G1JR6                       
+     I                                       73  84 G1JR7                       
+     I                                       85  96 G1JR8                       
+     I                                       97 108 G1JR9                       
+      * < 開始年月・非表示 >                                                    
+     I            DS                                                            
+     I                                        1  54 SYM                         
+     I                                        1   6 G1SYM1                      
+     I                                        7  12 G1SYM2                      
+     I                                       13  18 G1SYM3                      
+     I                                       19  24 G1SYM4                      
+     I                                       25  30 G1SYM5                      
+     I                                       31  36 G1SYM6                      
+     I                                       37  42 G1SYM7                      
+     I                                       43  48 G1SYM8                      
+     I                                       49  54 G1SYM9                      
+      * < 対象部門識別・非表示 >                                                
+     I            DS                                                            
+     I                                        1  18 TBS                         
+     I                                        1   2 G1TBS1                      
+     I                                        3   4 G1TBS2                      
+     I                                        5   6 G1TBS3                      
+     I                                        7   8 G1TBS4                      
+     I                                        9  10 G1TBS5                      
+     I                                       11  12 G1TBS6                      
+     I                                       13  14 G1TBS7                      
+     I                                       15  16 G1TBS8                      
+     I                                       17  18 G1TBS9                      
+      * < 連番・非表示 >                                                        
+     I            DS                                                            
+     I                                        1   9 RNB                         
+     I                                        1   1 G1RNB1                      
+     I                                        2   2 G1RNB2                      
+     I                                        3   3 G1RNB3                      
+     I                                        4   4 G1RNB4                      
+     I                                        5   5 G1RNB5                      
+     I                                        6   6 G1RNB6                      
+     I                                        7   7 G1RNB7                      
+     I                                        8   8 G1RNB8                      
+     I                                        9   9 G1RNB9                      
+      * < 漢字・名称 >                                                          
+     I            DS                                                            
+     I                                        1 378 JM                          
+     I                                        1  42 G1JM1                       
+     I                                       43  84 G1JM2                       
+     I                                       85 126 G1JM3                       
+     I                                      127 168 G1JM4                       
+     I                                      169 210 G1JM5                       
+     I                                      211 252 G1JM6                       
+     I                                      253 294 G1JM7                       
+     I                                      295 336 G1JM8                       
+     I                                      337 378 G1JM9                       
+      * < カナ・名称 >                                                          
+     I            DS                                                            
+     I                                        1 180 AM                          
+     I                                        1  20 G1AM1                       
+     I                                       21  40 G1AM2                       
+     I                                       41  60 G1AM3                       
+     I                                       61  80 G1AM4                       
+     I                                       81 100 G1AM5                       
+     I                                      101 120 G1AM6                       
+     I                                      121 140 G1AM7                       
+     I                                      141 160 G1AM8                       
+     I                                      161 180 G1AM9                       
+      * < カナ・略称 >                                                          
+     I            DS                                                            
+     I                                        1  90 AR                          
+     I                                        1  10 G1AR1                       
+     I                                       11  20 G1AR2                       
+     I                                       21  30 G1AR3                       
+     I                                       31  40 G1AR4                       
+     I                                       41  50 G1AR5                       
+     I                                       51  60 G1AR6                       
+     I                                       61  70 G1AR7                       
+     I                                       71  80 G1AR8                       
+     I                                       81  90 G1AR9                       
+      * < コード >                                                              
+     I            DS                                                            
+     I                                        1   9 G@CD                        
+     I                                        1   4 G@CD1                       
+     I                                        5   5 G@CD2                       
+     I                                        6   7 G@CD3                       
+     I                                        8   8 G@CD4                       
+     I                                        9   9 G@CD5                       
+      * < 計画№・ミックス >                                                    
+     IS@KEY       DS                                                            
+     I                                        1   6 S@STYM                      
+     I                                        7   8 S@TBS                       
+     I                                        9   9 S@RNB                       
+      * < 計画№・ワーク >                                                      
+     IW@KEY       DS                                                            
+     I                                        1   6 W@STYM                      
+     I                                        7   8 W@TBS                       
+     I                                        9   9 W@RNB                       
+      *==============================================================*          
+      *                     ＰＡＲＭ　ＬＩＳＴ                                  
+      *==============================================================*          
+     C           *ENTRY    PLIST                                                
+     C                     PARM           @POP                                  
+      *<< 罫線表示 >>                                                           
+     C           PLISTK    PLIST                                                
+     C                     PARM           P@LID  10                             
+     C                     PARM           P@FID  10                             
+     C                     PARM           P@FMT  10                             
+     C                     PARM           P@CTL   3                             
+     C                     PARM           P@RTN   1                             
+      *==============================================================*          
+      *                    ＫＬＩＳＴ                                           
+      *==============================================================*          
+      * < 画面検索 ｷｰ >                                                         
+     C           MXKEY     KLIST                                                
+     C                     KFLD           MXSTYM            開始年月            
+     C                     KFLD           MXTBS             対象部門識別        
+     C                     KFLD           MXRNB             連番                
+      * < TOP ｷｰ >                                                              
+     C           T@KEY     KLIST                                                
+     C                     KFLD           T@STYM            開始年月            
+     C                     KFLD           T@TBS             対象部門識別        
+     C                     KFLD           T@RNB             連番                
+      * < END ｷｰ >                                                              
+     C           E@KEY     KLIST                                                
+     C                     KFLD           E@STYM            開始年月            
+     C                     KFLD           E@TBS             対象部門識別        
+     C                     KFLD           E@RNB             連番                
+      * < 各種名称 ﾏｽﾀ >                                                        
+     C           KMKEY     KLIST                                                
+     C                     KFLD           KMMSK             名称区分            
+     C                     KFLD           KMMSC             名称 ｺｰﾄﾞ           
+      *                                                                         
+     C           *LIKE     DEFN SESTYM    MXSTYM            開始年月            
+     C           *LIKE     DEFN SETBS     MXTBS             対象部門識別        
+     C           *LIKE     DEFN SERNB     MXRNB             連番                
+      *                                                                         
+     C           *LIKE     DEFN SESTYM    T@STYM            開始年月            
+     C           *LIKE     DEFN SETBS     T@TBS             対象部門識別        
+     C           *LIKE     DEFN SERNB     T@RNB             連番                
+     C           *LIKE     DEFN SESTYM    E@STYM            開始年月            
+     C           *LIKE     DEFN SETBS     E@TBS             対象部門識別        
+     C           *LIKE     DEFN SERNB     E@RNB             連番                
+      * < ﾜｰｸ >                                                                 
+     C           *LIKE     DEFN G@STYM    WGSTYM            開始年月 S          
+     C           *LIKE     DEFN SESTYM    G@SYM             開始年月 A          
+      *                                                                         
+     C                     Z-ADD*ZERO     M       20        指標 & ｶｳﾝﾄ         
+      *==============================================================*          
+      *                     ＭＡＩＮ　ＲＯＵＴＩＮＥ                            
+      *==============================================================*          
+      *                                                                         
+     C                     EXSR #INIT                      : 初期処理           
+      *                                                                         
+     C  N30                EXSR #MAIN                      : 中心処理           
+      *                                                                         
+     C                     EXSR #END                       : 終了処理           
+      *==============================================================*          
+      *            #INIT    初　期　設　定                                      
+      *==============================================================*          
+      *  +-------------------------------------------------                     
+      *  |     コントロールフラグや必要な初期設定を行う        |                
+      *  +-------------------------------------------------                     
+     C           #INIT     BEGSR                                                
+      *                                                                         
+      *==============*                                                          
+      *  ﾌｧｲﾙ ｸﾛｰｽﾞ  *                                                          
+      *==============*                                                          
+     C           @POCD1    IFEQ *ALL'/'                    ?IFEQ                
+     C                     SETON                     30                         
+     C                     GOTO \INIT                                           
+     C                     END                             ｣IFEQ                
+      * < 画面Ｆオープン >                                                      
+     C*****                OPEN HAP0010S               41                       
+      *                                                                         
+      * < 罫線１６進セット >                                                    
+     C                     BITOF'01234567'X00     1                             
+     C                     MOVE X00       X2F                                   
+     C                     BITON'24567'   X2F                                   
+     C                     MOVE 'F'       KBFR                                  
+      * < カーソル制御１６進セット >                                            
+     C                     BITOF'01234567'WSB1                                  
+     C                     BITOF'01234567'WSB2                                  
+      *                                                                         
+      * < 制御 ﾌﾗｸﾞ 初期設定 >                                                  
+     C                     MOVEA*ALL'0'   *IN                                   
+     C                     MOVE *ALL'0'   CTLFLG            ｺﾝﾄﾛｰﾙ FLG          
+     C                     MOVE '1'       WDSP              画面処理            
+     C                     MOVE '1'       WLOP              ループをする        
+     C                     MOVEL@INF,1    INF               コマンド説明        
+     C                     MOVE '0'       WFLG    1        : ﾃﾞｰﾀ 有無          
+      * < ﾜｰｸﾌｨｰﾙﾄﾞ ｸﾘｱ >                                                       
+     C                     MOVE *BLANK    T@STYM            開始年月            
+     C                     MOVE *BLANK    T@TBS             対象部門識別        
+     C                     MOVE *BLANK    T@RNB             連番                
+     C                     MOVE *BLANK    E@STYM            開始年月            
+     C                     MOVE *BLANK    E@TBS             対象部門識別        
+     C                     MOVE *BLANK    E@RNB             連番                
+     C                     MOVE *ZERO     WGSTYM            開始年月            
+     C                     MOVE *BLANK    W@KEY             ﾜｰｸ                 
+      *==============*                                                          
+      *  画面セット  *                                                          
+      *==============*                                                          
+      *                                                                         
+     C                     MOVE @PSTYM    G1STYM            検索キー            
+      * ( ﾊﾟﾗﾒｰﾀ ｾｯﾄ )                                                          
+     C                     MOVE '5'       @00101            CHECK 区分          
+     C                     MOVE *ZERO     @00102            日付１              
+     C                     MOVELG1STYM    W@DAT6            日付 ﾜｰｸ 6          
+     C                     MOVE 01        W@DAT6            日付 ﾜｰｸ 6          
+     C                     MOVE W@DAT6    @00102            日付１              
+     C                     MOVE *ZERO     @00103            日付２              
+     C                     MOVE *BLANK    @00104            元号１              
+     C                     MOVE *BLANK    @00105            元号２              
+     C                     MOVE *ZERO     @00106            結果日付            
+     C                     MOVE *BLANK    @00107            結果元号            
+      * ( 日付 ﾁｪｯｸ )                                                           
+     C                     CALL 'ZZZ0010R'                                      
+     C                     PARM           @0010                                 
+      * ( ﾘﾀｰﾝ )                                                                
+     C                     MOVEL@00106    G@STYM                                
+      *                                                                         
+     C                     EXSR #M1010                     : 画面 ｸﾘｱ           
+      *                                                                         
+      * < ｷｰｾｯﾄ >                                                               
+     C                     MOVE G@STYM    MXSTYM            開始年月            
+     C                     MOVE @PTBS     MXTBS             対象部門識別        
+     C                     MOVE @PRNB     MXRNB             連番                
+      *                                                                         
+     C                     Z-ADD*ZERO     M                 指標 &ｶｳﾝﾄ          
+     C                     MOVE '0'       WFST              初回 ﾌﾗｸﾞ           
+      *                                                                         
+     C           MXKEY     SETLLFMXL01                                          
+     C                     EXSR #F1000                                          
+      *                                                                         
+     C           *IN99     DOWEQ'0'                        ?DOWEQ               
+     C           M         ANDLT9                                               
+     C                     EXSR #E1000                     : 抽出処理           
+     C           WEXT      IFEQ '1'                        ~?IFEQ               
+     C                     ADD  1         M                 指標 &ｶｳﾝﾄ          
+     C                     EXSR #M1020                     : 転送処理           
+     C                     END                             _｣IFEQ               
+     C                     EXSR #F1000                                          
+     C                     END                             ｣DOWEQ               
+      *                                                                         
+     C                     EXSR #R1000                     : 前・次頁           
+      *                                                                         
+     C           \INIT     ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｆ１０００     ミックスファイル　読込処理                           
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | INPUT   :   ミックスファイル                                         
+      *  |                                                                      
+      *  | PROCESS :   ミックスファイル読込                                     
+      *  |                                                                      
+      *  | OUTPUT  :                                                            
+      *  ･-------------------------------------------------                     
+     C           #F1000    BEGSR                                                
+      *                                                                         
+     C                     SETOF                     5152                       
+     C                     READ FMXL01                   99                     
+      *                                                                         
+     C  N99                DO                                                   
+     C   51                MOVE SESTYM    S@STYM                                
+     C   51                MOVE SETBS     S@TBS                                 
+     C   51                MOVE SERNB     S@RNB                                 
+     C   52                MOVE BUSTYM    S@STYM                                
+     C   52                MOVE BUTBS     S@TBS                                 
+     C   52                MOVE BURNB     S@RNB                                 
+     C                     END                                                  
+      *                                                                         
+     C           \F1000    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｆ２０００     ミックスファイル　読込処理                           
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | INPUT   :   ミックスファイル                                         
+      *  |                                                                      
+      *  | PROCESS :   ミックスファイル読込                                     
+      *  |                                                                      
+      *  | OUTPUT  :                                                            
+      *  ･-------------------------------------------------                     
+     C           #F2000    BEGSR                                                
+      *                                                                         
+     C                     SETOF                     5152                       
+     C                     READPFMXL01                   99                     
+      *                                                                         
+     C  N99                DO                                                   
+     C   51                MOVE SESTYM    S@STYM                                
+     C   51                MOVE SETBS     S@TBS                                 
+     C   51                MOVE SERNB     S@RNB                                 
+     C   52                MOVE BUSTYM    S@STYM                                
+     C   52                MOVE BUTBS     S@TBS                                 
+     C   52                MOVE BURNB     S@RNB                                 
+     C                     END                                                  
+      *                                                                         
+     C           \F2000    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｅ１０００     ミックスファイル　抽出処理                           
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | INPUT   :   ミックスファイル                                         
+      *  |                                                                      
+      *  | PROCESS :   データ抽出処理をする。                                   
+      *  |                                                                      
+      *  | OUTPUT  :                                                            
+      *  ･-------------------------------------------------                     
+     C           #E1000    BEGSR                                                
+      * ( 抽出 ﾌﾗｸﾞ ｸﾘｱ )                                                       
+     C                     MOVE '0'       WEXT                                  
+      * ( 初回 & ﾌﾞﾚｲｸ )                                                        
+     C           WFST      IFEQ '0'                        ?IFEQ                
+     C           S@KEY     ORNE W@KEY                                           
+     C                     MOVE '1'       WEXT             : 抽出 ﾌﾗｸﾞ          
+     C                     MOVE '1'       WFST             : 初回 ﾌﾗｸﾞ          
+     C                     END                             ｣IFEQ                
+      *                                                                         
+     C                     MOVE S@KEY     W@KEY            : ﾜｰｸﾍﾎｶﾝ            
+      *                                                                         
+     C           \E1000    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｍ１０１０     転送処理       ( 画面クリア )                        
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | INPUT   :   画面ファイル                                             
+      *  |                                                                      
+      *  | PROCESS :   フィールドをクリアする。                                 
+      *  |                                                                      
+      *  | OUTPUT  :                                                            
+      *  ･-------------------------------------------------                     
+     C           #M1010    BEGSR                                                
+      * < 画面クリア >                                                          
+     C                     Z-ADD0         NO                ＮＯ                
+     C                     MOVE *BLANK    CD                コード              
+     C                     MOVE *BLANK    JR                名称                
+     C                     MOVE *BLANK    SYM               開始年月            
+     C                     MOVE *BLANK    TBS               対象部門識別        
+     C                     MOVE *BLANK    RNB               連番                
+     C                     MOVE *BLANK    AR                カナ・略称          
+     C                     MOVE *BLANK    JM                漢字・名称          
+     C                     MOVE *BLANK    AM                カナ・名称          
+     C                     Z-ADD0         G1BANG            番号                
+      *                                                                         
+     C           \M1010    ENDSR                                                
+      *==============================================================*          
+      *   ＃Ｍ１０２０     転送処理       ( ミックスファイル )                  
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | INPUT   :   清算計画ファイル                                         
+      *  |                                                                      
+      *  | PROCESS :   項目を転送する。                                         
+      *  |                                                                      
+      *  | OUTPUT  :                                                            
+      *  ･-------------------------------------------------                     
+     C           #M1020    BEGSR                                                
+      * < 項目転送 >                                                            
+     C                     Z-ADDM         NO,M              ＮＯ                
+     C   51                MOVE SESTYM    SYM,M             開始年月            
+     C   51                MOVE SETBS     TBS,M             対象部門識別        
+     C   51                MOVE SERNB     RNB,M             連番                
+     C   52                MOVE BUSTYM    SYM,M             開始年月            
+     C   52                MOVE BUTBS     TBS,M             対象部門識別        
+     C   52                MOVE BURNB     RNB,M             連番                
+      * ( 計画№ )                                                              
+     C   51                MOVE SESTYM    G@CD1             開始年月            
+     C   52                MOVE BUSTYM    G@CD1             開始年月            
+     C                     MOVE '-'       G@CD2                                 
+     C   51                MOVE SETBS     G@CD3             対象部門識別        
+     C   52                MOVE BUTBS     G@CD3             対象部門識別        
+     C                     MOVE '-'       G@CD4                                 
+     C   51                MOVE SERNB     G@CD5             連番                
+     C   52                MOVE BURNB     G@CD5             連番                
+      *                                                                         
+     C                     MOVE G@CD      CD,M              計画№              
+      * ( 各種名称 ﾏｽﾀ )                                                        
+     C                     MOVE *BLANK    JR,M                                  
+     C                     MOVE *BLANK    AR,M                                  
+     C                     MOVE *BLANK    JM,M                                  
+     C                     MOVE *BLANK    AM,M                                  
+     C                     MOVE 'WB'      KMMSK             名称区分            
+     C                     MOVE *BLANK    KMMSC             名称 ｺｰﾄﾞ           
+     C                     MOVELTBS,M     KMMSC             名称 ｺｰﾄﾞ           
+     C           KMKEY     CHAINKMREC                90                         
+     C           *IN90     IFEQ '0'                        ?IFEQ                
+     C                     MOVELKMMSJR    JR,M              名称                
+     C                     MOVELKMMSAR    AR,M              カナ・略称          
+     C                     MOVELKMMSJ     JM,M              漢字・名称          
+     C                     MOVELKMMSA     AM,M              カナ・名称          
+     C                     END                             ｣IFEQ                
+      *                                                                         
+     C           \M1020    ENDSR                                                
+      *==============================================================*          
+      *  ＃Ｒ１０００　　　前・次頁                                             
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | INPUT   :                                                            
+      *  |                                                                      
+      *  | PROCESS :  ROLL UP ･ DOWN  使用可？                                  
+      *  |                                                                      
+      *  | OUTPUT  :                                                            
+      *  ･-------------------------------------------------                     
+     C           #R1000    BEGSR                                                
+      *                                                                         
+      * < ROLL DOWN 使用可 ? >                                                  
+     C                     MOVE '0'       WFST             : 初回 ﾌﾗｸﾞ          
+     C                     MOVE '0'       WEXT             : 抽出 ﾌﾗｸﾞ          
+     C                     MOVE '0'       WFLG             : ﾃﾞｰﾀ 有無          
+      *                                                                         
+     C           NO,1      IFEQ *ZERO                                           
+     C                     MOVE G@STYM    MXSTYM            開始年月            
+     C                     MOVE *LOVAL    MXTBS             対象部門識別        
+     C                     MOVE *LOVAL    MXRNB             連番                
+     C                     ELSE                                                 
+     C                     MOVE SYM,1     MXSTYM            開始年月            
+     C                     MOVE TBS,1     MXTBS             対象部門識別        
+     C                     MOVE RNB,1     MXRNB             連番                
+     C                     END                                                  
+     C           MXKEY     SETLLFMXL01                                          
+     C                     EXSR #F2000                                          
+     C           *IN99     DOWEQ'0'                        ?DOWEQ               
+     C           WFLG      ANDEQ'0'                                             
+     C                     EXSR #E1000                     : 抽出処理           
+     C           WEXT      IFEQ '1'                        ~?IFEQ               
+     C                     MOVE '1'       WFLG             : ﾃﾞｰﾀ 有無          
+     C                     END                             _｣IFEQ               
+     C                     EXSR #F2000                                          
+     C                     END                             ｣DOWEQ               
+      *                                                                         
+     C           WFLG      IFEQ '0'                        ?IFEQ                
+     C                     SETON                     11    : 使用不可           
+     C                     ELSE                            +                    
+     C                     SETOF                     11    : 使用可             
+     C                     END                             ｣IFEQ                
+      *                                                                         
+      * < ROLL UP 使用可 ? >                                                    
+     C                     MOVE '0'       WFST             : 初回 ﾌﾗｸﾞ          
+     C                     MOVE '0'       WEXT             : 抽出 ﾌﾗｸﾞ          
+     C                     MOVE '0'       WFLG             : ﾃﾞｰﾀ 有無          
+      *                                                                         
+     C           NO,9      IFNE *ZERO                                           
+      *                                                                         
+     C                     MOVE SYM,9     MXSTYM            開始年月            
+     C                     MOVE TBS,9     MXTBS             対象部門識別        
+     C                     MOVE RNB,9     MXRNB             連番                
+     C           MXKEY     SETGTFMXL01                                          
+     C                     EXSR #F1000                                          
+     C           *IN99     DOWEQ'0'                        ?DOWEQ               
+     C           WFLG      ANDEQ'0'                                             
+     C                     EXSR #E1000                     : 抽出処理           
+     C           WEXT      IFEQ '1'                        ~?IFEQ               
+     C                     MOVE '1'       WFLG             : ﾃﾞｰﾀ 有無          
+     C                     END                             _｣IFEQ               
+     C                     EXSR #F1000                                          
+     C                     END                             ｣DOWEQ               
+      *                                                                         
+     C           WFLG      IFEQ '0'                        ?IFEQ                
+     C                     SETON                     10    : 使用不可           
+     C                     ELSE                            +                    
+     C                     SETOF                     10    : 使用可             
+     C                     END                             ｣IFEQ                
+      *                                                                         
+     C                     END                             ｣IFEQ                
+      *                                                                         
+     C           NO,9      IFEQ *ZERO                      ?IFEQ                
+     C                     SETON                     10    : 使用不可           
+     C                     END                             ｣IFEQ                
+      *                                                                         
+      * < ｶｰｿﾙ  PC >                                                            
+     C           NO,1      IFNE *ZERO                      ?IFNE                
+     C                     SETON                     32    : 選択 PC            
+     C                     ELSE                            +                    
+     C                     SETOF                     32                         
+     C                     END                             ｣IFNE                
+      *                                                                         
+     C           \R1000    ENDSR                                                
+      *==============================================================*          
+      *            #MAIN    画　面　処　理                                      
+      *==============================================================*          
+     C           #MAIN     BEGSR                                                
+      *                                                                         
+     C                     EXSR #KSN                       : 罫線表示           
+      * < ﾜｰｸ ｾｯﾄ >                                                             
+     C                     Z-ADDG@STYM    WGSTYM           : 開始年月           
+      *                                                                         
+     C                     WRITEWINDOW1                                         
+      * < 画面ループ処理 >                                                      
+     C           WLOP      DOWEQ'1'                        ?DOWEQ               
+      *                                                                         
+     C                     EXSR #S1000                     : TOP･ENDｷｰｾｯﾄ       
+      *                                                                         
+     C                     EXFMTG1                                              
+      *                                                                         
+      * < CMD3 （終了） >>                                                      
+     C           *INKC     IFEQ '1'                        ~?IFEQ               
+     C                     MOVE '0'       WDSP              画面処理終了        
+     C                     MOVE '0'       WLOP              ループ抜ける        
+     C                     END                             _｣IFEQ               
+      * < ROLL DOWN >                                                           
+     C           *IN86     IFEQ '1'                        ~?IFEQ               
+     C                     EXSR #R3000                     ﾛｰﾙﾀﾞｳﾝ 処理         
+     C                     END                             _｣IFEQ               
+      * < ROLL UP >                                                             
+     C           *IN85     IFEQ '1'                        ~?IFEQ               
+     C                     EXSR #R2000                     ﾛｰﾙｱｯﾌﾟ 処理         
+     C                     END                             _｣IFEQ               
+      * < ENTER >                                                               
+     C           *INKC     IFEQ '0'                        ~?IFEQ               
+     C           *IN85     ANDEQ'0'                                             
+     C           *IN86     ANDEQ'0'                                             
+      * < 画面 ﾁｪｯｸ >                                                           
+     C                     EXSR #G1000                      画面 ﾁｪｯｸ           
+      * < 検索 ｷｰｾｯﾄ >                                                          
+     C           *IN89     IFEQ '0'                        ~~?IFEQ              
+     C                     EXSR #S2000                      検索キー処理        
+     C                     END                             __｣IFEQ              
+      *                                                                         
+      * < エラーなしループを抜ける >                                            
+     C           WERR      IFEQ '0'                        ~~?IFEQ              
+     C                     MOVE '0'       WDSP              画面処理終了        
+     C                     MOVE '0'       WLOP              ループ抜ける        
+     C                     END                             __｣IFEQ              
+      *                                                                         
+     C                     END                             _｣IFEQ               
+      * < ﾜｰｸ ｾｯﾄ >                                                             
+     C                     Z-ADDG@STYM    WGSTYM           : 開始年月           
+      *                                                                         
+     C                     END                             ｣DOWEQ               
+      *                                                                         
+     C           \MAIN     ENDSR                                                
+      *===============================================================*         
+      *  ＃ＥＮＤ　　　　　プログラム終了                                       
+      *===============================================================*         
+      *  ･-------------------------------------------------                     
+      *  | INPUT   :                                                            
+      *  |                                                                      
+      *  | PROCESS : プログラム終了                                             
+      *  |                                                                      
+      *  | OUTPUT  :                                                            
+      *  ･-------------------------------------------------                     
+     C           #END      BEGSR                                                
+      *                                                                         
+     C           *IN30     IFEQ '1'                        ?IFEQ                
+      * < ﾌｧｲﾙ CLOSE >                                                          
+     C                     MOVE *ALL'/'   @00101                                
+     C                     CALL 'ZZZ0010R'             95   暦日変換            
+     C                     PARM           @0040                                 
+      *                                                                         
+     C                     MOVE *ALL'/'   @00401                                
+     C                     CALL 'ZZZ0040R'             95   ﾒｯｾｰｼﾞ 取得         
+     C                     PARM           @0040                                 
+      *                                                                         
+     C                     END                             ｣IFEQ                
+      * < 罫線消去 >                                                            
+     C                     EXSR #KSN                        罫線消去            
+      * < 画面Ｆオープン >                                                      
+     C******************   CLOSEHAP0010S               41                       
+      * < PROGRAM END >                                                         
+     C   30                SETON                     LR                         
+     C                     RETRN                                                
+      *                                                                         
+     C           \END      ENDSR                                                
+      *==============================================================*          
+      *  ＃Ｓ１０００　　　配列キーセット                                       
+      *==============================================================*          
+     C           #S1000    BEGSR                                                
+      *                                                                         
+      * < 配列のＴＯＰキー，ＥＮＤキーのセット >>                               
+      *                                                                         
+     C           NO,1      IFEQ *ZERO                                           
+     C                     MOVE G@STYM    T@STYM            開始年月            
+     C                     MOVE *LOVAL    T@TBS             対象部門識別        
+     C                     MOVE *LOVAL    T@RNB             連番                
+     C                     ELSE                                                 
+     C                     MOVE SYM,1     T@STYM            開始年月            
+     C                     MOVE TBS,1     T@TBS             対象部門識別        
+     C                     MOVE RNB,1     T@RNB             連番                
+     C                     END                                                  
+      *                                                                         
+     C                     MOVE SYM,9     E@STYM            開始年月            
+     C                     MOVE TBS,9     E@TBS             対象部門識別        
+     C                     MOVE RNB,9     E@RNB             連番                
+      *                                                                         
+     C           \S1000    ENDSR                                                
+      *==============================================================*          
+      *  ＃Ｒ２０００　　　ロールアップ処理                                     
+      *==============================================================*          
+     C           #R2000    BEGSR                                                
+      *                                                                         
+     C           E@STYM    IFNE *BLANK                     ?IFNE                
+      *                                                                         
+     C                     Z-ADD*ZERO     M                 指標 &ｶｳﾝﾄ          
+     C                     MOVE '0'       WFST              初回 ﾌﾗｸﾞ           
+     C           E@KEY     SETGTFMXL01                                          
+     C                     EXSR #F1000                                          
+      *                                                                         
+     C           *IN99     DOWEQ'0'                        ~?DOWEQ              
+     C           M         ANDLT9                                               
+     C                     EXSR #E1000                     : 抽出処理           
+     C           WEXT      IFEQ '1'                        ~~?IFEQ              
+     C                     ADD  1         M                 指標 &ｶｳﾝﾄ          
+     C           M         IFEQ 1                          ~~~?IFEQ             
+     C                     EXSR #M1010                     : 画面 ｸﾘｱ           
+     C                     END                             ___｣IFEQ             
+     C                     EXSR #M1020                     : 項目転送           
+     C                     END                             __｣IFEQ              
+     C                     EXSR #F1000                                          
+     C                     END                             _｣DOWEQ              
+      *                                                                         
+     C                     END                             ｣IFNE                
+      *                                                                         
+     C                     EXSR #R1000                     : 前・次頁           
+      *                                                                         
+     C           \R2000    ENDSR                                                
+      *==============================================================*          
+      *  ＃Ｒ３０００　　　ロールダウン処理                                     
+      *==============================================================*          
+     C           #R3000    BEGSR                                                
+      * < ｸﾘｱ >                                                                 
+     C                     EXSR #M1010                                          
+      * < ９回逆読する >                                                        
+     C           T@STYM    IFNE *BLANK                     ?IFNE                
+      *                                                                         
+     C                     Z-ADD*ZERO     M                 指標 &ｶｳﾝﾄ          
+     C                     MOVE '0'       WFST              初回 ﾌﾗｸﾞ           
+     C           T@KEY     SETLLFMXL01                                          
+     C                     EXSR #F2000                                          
+      *                                                                         
+     C           *IN99     DOWEQ'0'                        ~?DOWEQ              
+     C           M         ANDLT9                                               
+     C                     EXSR #E1000                     : 抽出処理           
+     C           WEXT      IFEQ '1'                        ~~?IFEQ              
+     C                     ADD  1         M                 指標 &ｶｳﾝﾄ          
+     C   51                MOVE SESTYM    T@STYM            開始年月            
+     C   51                MOVE SETBS     T@TBS             対象部門識別        
+     C   51                MOVE SERNB     T@RNB             連番                
+     C   52                MOVE BUSTYM    T@STYM            開始年月            
+     C   52                MOVE BUTBS     T@TBS             対象部門識別        
+     C   52                MOVE BURNB     T@RNB             連番                
+     C                     END                             __｣IFEQ              
+     C                     EXSR #F2000                                          
+     C                     END                             _｣DOWEQ              
+      *                                                                         
+     C           *IN99     IFEQ '1'                        ~?IFEQ               
+     C           M         ANDNE9                                               
+     C                     MOVE *LOVAL    T@STYM            開始年月            
+     C                     MOVE *LOVAL    T@TBS             対象部門識別        
+     C                     MOVE *LOVAL    T@RNB             連番                
+     C                     END                             _｣IFEQ               
+      * < 新 ｷｰ で読む >                                                        
+     C                     Z-ADD*ZERO     M                 指標 &ｶｳﾝﾄ          
+     C                     MOVE '0'       WFST              初回 ﾌﾗｸﾞ           
+     C           T@KEY     SETLLFMXL01                                          
+     C                     EXSR #F1000                                          
+      *                                                                         
+     C           *IN99     DOWEQ'0'                        ~?DOWEQ              
+     C           M         ANDLT9                                               
+     C                     EXSR #E1000                     : 抽出処理           
+     C           WEXT      IFEQ '1'                        ~~?IFEQ              
+     C                     ADD  1         M                 指標 &ｶｳﾝﾄ          
+     C           M         IFEQ 1                          ~~~?IFEQ             
+     C                     EXSR #M1010                     : 画面 ｸﾘｱ           
+     C                     END                             ___｣IFEQ             
+     C                     EXSR #M1020                     : 項目転送           
+     C                     END                             __｣IFEQ              
+     C                     EXSR #F1000                                          
+     C                     END                             _｣DOWEQ              
+     C                     END                             ｣IFNE                
+      *                                                                         
+     C                     EXSR #R1000                     : 前・次頁           
+      *                                                                         
+     C           \R3000    ENDSR                                                
+      *==============================================================*          
+      *  ＃Ｇ１０００　　　画面チェック                                         
+      *==============================================================*          
+     C           #G1000    BEGSR                                                
+      *                                                                         
+      * < ERROR FLG 及び画面の標識  OFF >>                                      
+     C                     MOVE '0'       WWRN                                  
+     C                     MOVE '0'       WERR                                  
+     C                     MOVE *BLANK    @0040                                 
+     C                     MOVEL*BLANK    MSG                                   
+     C                     SETOF                     8889                       
+     C                     SETOF                     2122                       
+     C                     SETOF                     3132                       
+      *                                                                         
+     C                     MOVE WSLIN1    WSLIN2           : ｶｰｿﾙ 制御          
+     C                     MOVE WSCOL1    WSCOL2                                
+      *============*                                                            
+      *  開始年月  *                                                            
+      *============*                                                            
+     C                     MOVE *ZERO     G@STYM                                
+      *                                                                         
+     C           G1STYM    IFNE *ZERO                      ?IFNE                
+      * ( ﾊﾟﾗﾒｰﾀ ｾｯﾄ )                                                          
+     C                     MOVE '5'       @00101            CHECK 区分          
+     C                     MOVE *ZERO     @00102            日付１              
+     C                     MOVELG1STYM    W@DAT6            日付 ﾜｰｸ 6          
+     C                     MOVE 01        W@DAT6            日付 ﾜｰｸ 6          
+     C                     MOVE W@DAT6    @00102            日付１              
+     C                     MOVE *ZERO     @00103            日付２              
+     C                     MOVE *BLANK    @00104            元号１              
+     C                     MOVE *BLANK    @00105            元号２              
+     C                     MOVE *ZERO     @00106            結果日付            
+     C                     MOVE *BLANK    @00107            結果元号            
+      * ( 日付 ﾁｪｯｸ )                                                           
+     C                     CALL 'ZZZ0010R'                                      
+     C                     PARM           @0010                                 
+      * ( ﾘﾀｰﾝ )                                                                
+     C                     MOVEL@00106    G@STYM                                
+     C           @00108    IFNE '00'                       ~?IFNE               
+     C                     MOVE 'HAE0001' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     2122                       
+     C                     END                             _｣IFNE               
+     C                     END                             ｣IFNE                
+      *                                                                         
+      *==============*                                                          
+      *  番号モード  *                                                          
+      *==============*                                                          
+     C           G1BANG    IFNE *ZERO                      ?IFNE                
+      *                                                                         
+     C                     Z-ADDG1BANG    M                                     
+      *                                                                         
+     C           NO,M      IFNE *ZERO                      ~?IFNE               
+     C                     EXSR #U1000                     ﾊﾟﾗﾒｰﾀｰｾｯﾄ           
+     C                     ELSE                            -+                   
+      * ( 選択番号 ｴﾗｰ )                                                        
+     C                     MOVEL'KYE0032' @00401                                
+     C                     EXSR #MSG                                            
+     C                     SETON                     3132                       
+     C                     END                             _｣IFNE               
+      *                                                                         
+     C                     ELSE                            +                    
+      *============*                                                            
+      *  行モード  *                                                            
+      *============*                                                            
+     C                     MOVE '1'       WERR                                  
+      * ( 指標 ｾｯﾄ )                                                            
+     C                     Z-ADDWSLINE    M                                     
+     C                     SUB  7         M                                     
+      *                                                                         
+     C           M         IFGE 1                          ~?IFGE               
+     C           M         ANDLE9                                               
+     C           CD,M      ANDNE*BLANK                                          
+     C                     EXSR #U1000                     ﾊﾟﾗﾒｰﾀｾｯﾄ            
+     C                     MOVE '0'       WERR                                  
+     C                     END                             _｣IFGE               
+      *                                                                         
+     C                     END                             ｣IFNE                
+      *                                                                         
+      * < ERROR ? >                                                             
+     C                     MOVEL@00402    MSG               ﾒｯｾｰｼﾞ              
+      *                                                                         
+     C           @00403    COMP '1'                      88:WRN                 
+     C           @00403    COMP '2'                      89:ERROR               
+     C   88                MOVE '1'       WWRN              WRN  FLG            
+     C   89                MOVE '1'       WERR              ERR  FLG            
+      *                                                                         
+      *                                                                         
+     C           \G1000    ENDSR                                                
+      *==============================================================*          
+      *  ＃Ｕ１０００　　　パラメータ転送処理                                   
+      *==============================================================*          
+      *  ･-------------------------------------------------                     
+      *  | INPUT   :   画面ファイル                                             
+      *  |                                                                      
+      *  | PROCESS :   パラメータを転送する。                                   
+      *  |                                                                      
+      *  | OUTPUT  :                                                            
+      *  ･-------------------------------------------------                     
+     C           #U1000    BEGSR                                                
+      * < 項目転送 >                                                            
+     C                     MOVE *BLANK    @POCD2                                
+     C                     MOVE SYM,M     @PSTYM            開始年月            
+     C                     MOVE TBS,M     @PTBS             対象部門識別        
+     C                     MOVE RNB,M     @PRNB             連番                
+      *                                                                         
+     C                     MOVE *BLANK    @POJR1                                
+     C                     MOVELJR,M      @POJR1            略称                
+      *                                                                         
+     C                     MOVE *BLANK    @POAR1            カナ・略称          
+     C                     MOVELAR,M      @POAR1            カナ・略称          
+      *                                                                         
+     C                     MOVE *BLANK    @POJM1            漢字・名称          
+     C                     MOVELJM,M      @POJM1            漢字・名称          
+      *                                                                         
+     C                     MOVE *BLANK    @POAM1            カナ・名称          
+     C                     MOVELAM,M      @POAM1            カナ・名称          
+      *                                                                         
+     C           \U1000    ENDSR                                                
+      *==============================================================*          
+      *  ＃Ｓ２０００　　　検索キー処理                                         
+      *==============================================================*          
+     C           #S2000    BEGSR                                                
+      *                                                                         
+     C                     EXSR #M1010                     : 画面 ｸﾘｱ           
+      *                                                                         
+     C                     MOVE G@STYM    MXSTYM           : 開始年月           
+     C                     MOVE *LOVAL    MXTBS            : 対象部門識別       
+     C                     MOVE *LOVAL    MXRNB            : 連番               
+      *                                                                         
+     C                     Z-ADD*ZERO     M                 指標 &ｶｳﾝﾄ          
+     C                     MOVE '0'       WFST              初回 ﾌﾗｸﾞ           
+     C           MXKEY     SETLLFMXL01                                          
+     C                     EXSR #F1000                                          
+      *                                                                         
+     C           *IN99     DOWEQ'0'                        ?DOWEQ               
+     C           M         ANDLT9                                               
+     C                     EXSR #E1000                     : 抽出処理           
+     C           WEXT      IFEQ '1'                        ~?IFEQ               
+     C                     ADD  1         M                 指標 &ｶｳﾝﾄ          
+     C                     EXSR #M1020                     : 項目転送           
+     C                     END                             _｣IFEQ               
+     C                     EXSR #F1000                                          
+     C                     END                             ｣DOWEQ               
+      *                                                                         
+     C                     EXSR #R1000                     : 前・次頁           
+      *                                                                         
+     C           \S2000    ENDSR                                                
+      *==============================================================*          
+      *  ＃ＫＳＮ　　　　　罫線表示削除設定                                     
+      *==============================================================*          
+     C           #KSN      BEGSR                                                
+      *                                                                         
+     C                     MOVEL*BLANKS   P@LID                                 
+     C                     MOVEL*BLANKS   P@FID                                 
+     C                     MOVEL*BLANKS   P@FMT                                 
+     C                     MOVEL*BLANKS   P@CTL                                 
+     C                     MOVEL'AX'      P@LID                                 
+     C                     MOVEL'HAP0010S'P@FID                                 
+     C                     MOVEL'G1K     'P@FMT                                 
+     C           WDSP      IFNE '0'                        ?IFNE                
+     C                     MOVEL'OVR'     P@CTL                                 
+     C                     ELSE                            +                    
+     C                     MOVEL'RMV'     P@CTL                                 
+     C                     END                             ｣IFNE                
+     C                     MOVEL'0'       P@RTN                                 
+      *                                                                         
+     C                     CALL 'CDK010 ' PLISTK                                
+      *                                                                         
+     C           \KSN      ENDSR                                                
+      *===============================================================*         
+      *  ＃ＭＳＧ　　　　　メッセージ取得                                       
+      *===============================================================*         
+     C           #MSG      BEGSR                                                
+      * < ﾒｯｾｰｼﾞ 取得 >                                                         
+     C                     CALL 'ZZZ0040R'             95                       
+     C                     PARM           @0040                                 
+      * ( 漢字切断 72-->26 )                                                    
+     C                     MOVE *BLANK    @0050             ｸﾘｱ                 
+     C                     MOVE '1'       @00501                                
+     C                     MOVE '26'      @00502                                
+     C                     MOVEL*BLANK    @00503                                
+     C                     MOVEL@00402    @00503            メッセージ          
+     C                     CALL 'ZZZ0050R'             95                       
+     C                     PARM           @0050                                 
+      *                                                                         
+     C                     MOVEL*BLANK    @00402                                
+     C                     MOVEL@00504    @00402            メッセージ          
+      *                                                                         
+     C           \MSG      ENDSR                                                
+      ****************************************************************          
+      *           プログラム概略仕様                                 *          
+      ****************************************************************          
+      *  機能           :  開始年月マスタのコード検索画面を表示して選択  *      
+      *                    された番号に該当するコードをパラメータで  *          
+      *                    送る。　　　　　　                        *          
+      *                                                              *          
+      *< 特記事項 >                                                  *          
+      *  使用標識                                                    *          
+      *                 : LR      : ﾌﾟﾛｸﾞﾗﾑ 終了                     *          
+      *                 : KC      : CMD  3   終了                    *          
+      *                 : 85      : ROLL UP                          *          
+      *                 : 86      : ROLL DOWN                        *          
+      *                 : 10      : ROLL UP   STOP                   *          
+      *                 : 11      : ROLL DOWN STOP                   *          
+      *                 : 22      :  画面 ｶｰｿﾙ 位置指定      : STYM  *          
+      *                 : 32      :  画面 ｶｰｿﾙ 位置指定      : G1BANG*          
+      *                 : 21      :  画面 ﾌｨｰﾙﾄﾞｴﾗｰ ( 反転 ) : STYM  *          
+      *                 : 31      :  画面 ﾌｨｰﾙﾄﾞｴﾗｰ ( 反転 ) : G1BANG*          
+      *                 : 90      : CHAIN    不成功                  *          
+      *                 : 95      : CALL     不成功                  *          
+      *                 : 99      : READ     不成功                  *          
+      *                           : READP    不成功                  *          
+      *  外部サブルーチン                                            *          
+      *                 : CDK010   : 罫線表示                        *          
+      *                 : ZZZ0040R : メッセージ取得                  *          
+      *                 : ZZZ0050R : 漢字切断                        *          
+      *                 : ZZZ0010R : 暦日変換                        *          
+      *  内部サブルーチン                                            *          
+      *           : #INIT           : 初期設定                       *          
+      *           : #MAIN           : 画面処理                       *          
+      *              : #KSN         : 罫線表示設定                   *          
+      *              : #S1000       : 配列キーセット                 *          
+      *              : #R2000       : ロールアップ処理               *          
+      *              : #R3000       : ロールダウン処理               *          
+      *              : #G1000       : 画面チェック                   *          
+      *              : #S2000       : 検索キー処理                   *          
+      *           : #END            : 終了処理                       *          
+      *              : #KSN         : 罫線削除設定                   *          
+      *                                                              *          
+      *              : #E1000       : 抽出処理                       *          
+      *              : #M1010       : クリア                         *          
+      *              : #M1020       : 項目転送                       *          
+      *              : #R1000       : 前・次頁                       *          
+      *              : #U1000       : パラメータセット               *          
+      *              : #MSG         : メッセージセット               *          
+      *                                                              *          
+      *--------------------------------------------------------------*          
+      *==============================================================*          
+      *                    テーブル                                             
+      *==============================================================*          
+**  @INF : ｺﾏﾝﾄﾞ 説明                                                           
+F3: 終了                                                                        

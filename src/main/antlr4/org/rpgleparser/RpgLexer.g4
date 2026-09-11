@@ -3,6 +3,15 @@
  */
  
 lexer grammar RpgLexer;
+@members {
+    public boolean rpg400 = false;
+
+    boolean alphanumericOrIdChar(int c) {
+        return (c>='0' && c<='9') || (c>='A' && c<='Z') || (c>='a' && c<='z')
+            || c=='#' || c=='@' || c=='$';
+    }
+}
+
 
 // Parser Rules
     //End Source.  Not more parsing after this.
@@ -38,7 +47,9 @@ COMMENT_SPEC_FIXED : .'*' -> popMode,pushMode(FIXED_CommentMode), channel(HIDDEN
     // X specs 
 DS_FIXED : [dD] -> popMode,pushMode(FIXED_DefSpec) ; 
 
-FS_FIXED : [fF] -> popMode,pushMode(FIXED_FileSpec) ;
+FS_FIXED_R400 : [fF] { rpg400 }? -> popMode,pushMode(FIXED_FileSpec_R400) ;
+
+FS_FIXED : [fF] { !rpg400 }? -> popMode,pushMode(FIXED_FileSpec) ;
 
 OS_FIXED : [oO] -> popMode,pushMode(FIXED_OutputSpec) ;
 
@@ -46,11 +57,24 @@ CS_FIXED : [cC] -> popMode,pushMode(FIXED_CalcSpec), pushMode(OnOffIndicatorMode
 
 CS_ExecSQL :[cC] '/' EXEC_SQL -> popMode,pushMode(FIXED_CalcSpec_SQL);
 
-IS_FIXED : [iI] -> popMode,pushMode(FIXED_InputSpec) ;
+IS_FIXED_R400 : [iI] { rpg400 }? -> popMode,pushMode(FIXED_InputSpec_R400) ;
+
+IS_FIXED : [iI] { !rpg400 }? -> popMode,pushMode(FIXED_InputSpec) ;
+
+ES_FIXED_R400 : [eE] { rpg400 }? -> popMode,pushMode(FIXED_Espec_R400) ;
+
+    // DDS (Data Description Specification) line: 'A' in column 6.
+    // Consumed as a single token (rest of line incl. newline) and decoded in FactExtractor.
+    // A-spec plus physical continuation lines (blank cols 1-18, content from 19+)
+DDS_SPEC : [aA] { getCharPositionInLine()==6 }? ~[\r\n]* NEWLINE?
+          ( ' '+ { getCharPositionInLine()>=18 }? ~[\r\n]+ NEWLINE? )*
+       -> popMode ;
 
 PS_FIXED : [pP] -> popMode,pushMode(FIXED_ProcedureSpec) ;
 
-HS_FIXED : [hH] -> popMode,pushMode(HeaderSpecMode) ;
+HS_FIXED_R400 : [hH] { rpg400 }? -> popMode,pushMode(HeaderSpec_R400) ;
+
+HS_FIXED : [hH] { !rpg400 }? -> popMode,pushMode(HeaderSpecMode) ;
 
 BLANK_LINE : [ ] [ ]* NEWLINE -> popMode,skip;
 
@@ -1034,7 +1058,7 @@ F_FREE_NEWLINE : NEWLINE { _modeStack.peek() == FIXED_FileSpec }? {System.out.pr
 
 FREE_NEWLINE :   NEWLINE { _modeStack.peek()!=FIXED_CalcSpec }? {System.out.println("FREE_NEWLINE");}-> skip,pushMode(CheckComment),pushMode(First5); //Note: Removed popMode
 
-FREE_SEMI : ';' {System.out.println("FREE_SEMI");}-> popMode, pushMode(FREE_ENDED);  //Captures // immediately following the semi colon
+FREE_SEMI : ';' {true}? -> popMode, pushMode(FREE_ENDED);  //Captures // immediately following the semi colon
 
 
 
@@ -1269,6 +1293,28 @@ OP_SETON : [sS] [eE] [tT] [oO] [nN] ;
 
 OP_SHTDN : [sS] [hH] [tT] [dD] [nN] ;
 
+OP_LOKUP : [lL] [oO] [kK] [uU] [pP] ;
+
+OP_RETRN : [rR] [eE] [tT] [rR] [nN] ;
+
+OP_SETOF : [sS] [eE] [tT] [oO] [fF] ;
+
+OP_WHEQ : [wW] [hH] [eE] [qQ] ;
+
+OP_WHNE : [wW] [hH] [nN] [eE] ;
+
+OP_REDPE : [rR] [eE] [dD] [pP] [eE] ;
+
+OP_BITOF : [bB] [iI] [tT] [oO] [fF] ;
+
+OP_DELET : [dD] [eE] [lL] [eE] [tT] ;
+
+OP_UPDAT : [uU] [pP] [dD] [aA] [tT] ;
+
+OP_DEFN : [dD] [eE] [fF] [nN] ;
+
+OP_SELEC : [sS] [eE] [lL] [eE] [cC] ;
+
 OP_SQRT : [sS] [qQ] [rR] [tT] ;
 
 OP_SUB : [sS] [uU] [bB] ;
@@ -1392,29 +1438,41 @@ EatCommentLines_NothingLeft : -> popMode, skip;
 
 mode InFactorStringMode;
 InFactor_StringContent : ( ~[\r\n']
-        {(getCharPositionInLine()>=12 && getCharPositionInLine()<=25)
+        {(!rpg400 && ((getCharPositionInLine()>=12 && getCharPositionInLine()<=25)
             || (getCharPositionInLine()>=36 && getCharPositionInLine()<=49)
-            || (getCharPositionInLine()>=50 && getCharPositionInLine()<=63)
+            || (getCharPositionInLine()>=50 && getCharPositionInLine()<=63)))
+          || (rpg400 && ((getCharPositionInLine()>=18 && getCharPositionInLine()<=27)
+            || (getCharPositionInLine()>=33 && getCharPositionInLine()<=42)
+            || (getCharPositionInLine()>=43 && getCharPositionInLine()<=48)))
         }? )+
         -> type(StringContent);
 
 InFactor_StringEscapedQuote : ['] [']
-        {(getCharPositionInLine()>=12 && getCharPositionInLine()<=24)
+        {(!rpg400 && ((getCharPositionInLine()>=12 && getCharPositionInLine()<=24)
             || (getCharPositionInLine()>=36 && getCharPositionInLine()<=48)
-            || (getCharPositionInLine()>=50 && getCharPositionInLine()<=62)
+            || (getCharPositionInLine()>=50 && getCharPositionInLine()<=62)))
+          || (rpg400 && ((getCharPositionInLine()>=18 && getCharPositionInLine()<=26)
+            || (getCharPositionInLine()>=33 && getCharPositionInLine()<=41)
+            || (getCharPositionInLine()>=43 && getCharPositionInLine()<=47)))
         }?
         -> type(StringEscapedQuote);
 
 InFactor_StringLiteralEnd : [']
-        {(getCharPositionInLine()>=12 && getCharPositionInLine()<=25)
+        {(!rpg400 && ((getCharPositionInLine()>=12 && getCharPositionInLine()<=25)
             || (getCharPositionInLine()>=36 && getCharPositionInLine()<=49)
-            || (getCharPositionInLine()>=50 && getCharPositionInLine()<=63)
+            || (getCharPositionInLine()>=50 && getCharPositionInLine()<=63)))
+          || (rpg400 && ((getCharPositionInLine()>=18 && getCharPositionInLine()<=27)
+            || (getCharPositionInLine()>=33 && getCharPositionInLine()<=42)
+            || (getCharPositionInLine()>=43 && getCharPositionInLine()<=48)))
         }?
         -> type(StringLiteralEnd), popMode;
 
-InFactor_EndFactor : {(getCharPositionInLine()==25)
+InFactor_EndFactor : {(!rpg400 && ((getCharPositionInLine()==25)
             || (getCharPositionInLine()==49)
-            || (getCharPositionInLine()==61)
+            || (getCharPositionInLine()==61)))
+          || (rpg400 && ((getCharPositionInLine()==27)
+            || (getCharPositionInLine()==42)
+            || (getCharPositionInLine()==48)))
         }?
         -> skip, popMode;
 
@@ -1632,331 +1690,331 @@ OS_Any : -> popMode;
 
 
 mode FIXED_CalcSpec;
-CS_Factor1_SPLAT_ALL : SPLAT_ALL {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_ALL);
+CS_Factor1_SPLAT_ALL : SPLAT_ALL { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_ALL);
 
-CS_Factor1_SPLAT_NONE : SPLAT_NONE {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_NONE);
+CS_Factor1_SPLAT_NONE : SPLAT_NONE { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_NONE);
 
-CS_Factor1_SPLAT_ILERPG : SPLAT_ILERPG {11+7<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_ILERPG);
+CS_Factor1_SPLAT_ILERPG : SPLAT_ILERPG { (!rpg400 && 11+7<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+7<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_ILERPG);
 
-CS_Factor1_SPLAT_CRTBNDRPG : SPLAT_CRTBNDRPG {11+10<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_CRTBNDRPG);
+CS_Factor1_SPLAT_CRTBNDRPG : SPLAT_CRTBNDRPG { (!rpg400 && 11+10<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+10<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_CRTBNDRPG);
 
-CS_Factor1_SPLAT_CRTRPGMOD : SPLAT_CRTRPGMOD {11+10<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_CRTRPGMOD);
+CS_Factor1_SPLAT_CRTRPGMOD : SPLAT_CRTRPGMOD { (!rpg400 && 11+10<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+10<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_CRTRPGMOD);
 
-CS_Factor1_SPLAT_VRM :  SPLAT_VRM{11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_VRM);
+CS_Factor1_SPLAT_VRM :  SPLAT_VRM{ (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_VRM);
 
-CS_Factor1_SPLAT_ALLG : SPLAT_ALLG {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_ALLG);
+CS_Factor1_SPLAT_ALLG : SPLAT_ALLG { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_ALLG);
 
-CS_Factor1_SPLAT_ALLU : SPLAT_ALLU {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_ALLU);
+CS_Factor1_SPLAT_ALLU : SPLAT_ALLU { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_ALLU);
 
-CS_Factor1_SPLAT_ALLX : SPLAT_ALLX {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_ALLX);
+CS_Factor1_SPLAT_ALLX : SPLAT_ALLX { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_ALLX);
 
-CS_Factor1_SPLAT_BLANKS : SPLAT_BLANKS {11+6<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_BLANKS);
+CS_Factor1_SPLAT_BLANKS : SPLAT_BLANKS { (!rpg400 && 11+6<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+6<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_BLANKS);
 
-CS_Factor1_SPLAT_CANCL : SPLAT_CANCL {11+6<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_CANCL);
+CS_Factor1_SPLAT_CANCL : SPLAT_CANCL { (!rpg400 && 11+6<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+6<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_CANCL);
 
-CS_Factor1_SPLAT_CYMD : SPLAT_CYMD {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_CYMD);
+CS_Factor1_SPLAT_CYMD : SPLAT_CYMD { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_CYMD);
 
-CS_Factor1_SPLAT_CMDY : SPLAT_CMDY {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_CMDY);
+CS_Factor1_SPLAT_CMDY : SPLAT_CMDY { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_CMDY);
 
-CS_Factor1_SPLAT_CDMY : SPLAT_CDMY {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_CDMY);
+CS_Factor1_SPLAT_CDMY : SPLAT_CDMY { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_CDMY);
 
-CS_Factor1_SPLAT_MDY : SPLAT_MDY {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_MDY);
+CS_Factor1_SPLAT_MDY : SPLAT_MDY { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_MDY);
 
-CS_Factor1_SPLAT_DMY : SPLAT_DMY {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_DMY);
+CS_Factor1_SPLAT_DMY : SPLAT_DMY { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_DMY);
 
-CS_Factor1_SPLAT_YMD : SPLAT_YMD {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_YMD);
+CS_Factor1_SPLAT_YMD : SPLAT_YMD { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_YMD);
 
-CS_Factor1_SPLAT_JUL : SPLAT_JUL {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_JUL);
+CS_Factor1_SPLAT_JUL : SPLAT_JUL { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_JUL);
 
-CS_Factor1_SPLAT_ISO : SPLAT_ISO {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_ISO);
+CS_Factor1_SPLAT_ISO : SPLAT_ISO { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_ISO);
 
-CS_Factor1_SPLAT_USA : SPLAT_USA {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_USA);
+CS_Factor1_SPLAT_USA : SPLAT_USA { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_USA);
 
-CS_Factor1_SPLAT_EUR : SPLAT_EUR {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_EUR);
+CS_Factor1_SPLAT_EUR : SPLAT_EUR { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_EUR);
 
-CS_Factor1_SPLAT_JIS : SPLAT_JIS {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_JIS);
+CS_Factor1_SPLAT_JIS : SPLAT_JIS { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_JIS);
 
-CS_Factor1_SPLAT_DATE : SPLAT_DATE {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_DATE);
+CS_Factor1_SPLAT_DATE : SPLAT_DATE { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_DATE);
 
-CS_Factor1_SPLAT_DAY : SPLAT_DAY {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_DAY);
+CS_Factor1_SPLAT_DAY : SPLAT_DAY { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_DAY);
 
-CS_Factor1_SPLAT_DETC : SPLAT_DETC {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_DETC);
+CS_Factor1_SPLAT_DETC : SPLAT_DETC { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_DETC);
 
-CS_Factor1_SPLAT_DETL : SPLAT_DETL {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_DETL);
+CS_Factor1_SPLAT_DETL : SPLAT_DETL { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_DETL);
 
-CS_Factor1_SPLAT_DTAARA : SPLAT_DTAARA {11+7<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_DTAARA);
+CS_Factor1_SPLAT_DTAARA : SPLAT_DTAARA { (!rpg400 && 11+7<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+7<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_DTAARA);
 
-CS_Factor1_SPLAT_END : SPLAT_END {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_END);
+CS_Factor1_SPLAT_END : SPLAT_END { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_END);
 
-CS_Factor1_SPLAT_ENTRY : SPLAT_ENTRY {11+6<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_ENTRY);
+CS_Factor1_SPLAT_ENTRY : SPLAT_ENTRY { (!rpg400 && 11+6<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+6<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_ENTRY);
 
-CS_Factor1_SPLAT_EQUATE : SPLAT_EQUATE {11+7<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_EQUATE);
+CS_Factor1_SPLAT_EQUATE : SPLAT_EQUATE { (!rpg400 && 11+7<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+7<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_EQUATE);
 
-CS_Factor1_SPLAT_EXTDFT : SPLAT_EXTDFT {11+7<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_EXTDFT);
+CS_Factor1_SPLAT_EXTDFT : SPLAT_EXTDFT { (!rpg400 && 11+7<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+7<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_EXTDFT);
 
-CS_Factor1_SPLAT_EXT : SPLAT_EXT {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_EXT);
+CS_Factor1_SPLAT_EXT : SPLAT_EXT { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_EXT);
 
-CS_Factor1_SPLAT_FILE : SPLAT_FILE {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_FILE);
+CS_Factor1_SPLAT_FILE : SPLAT_FILE { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_FILE);
 
-CS_Factor1_SPLAT_GETIN : SPLAT_GETIN {11+6<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_GETIN);
+CS_Factor1_SPLAT_GETIN : SPLAT_GETIN { (!rpg400 && 11+6<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+6<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_GETIN);
 
-CS_Factor1_SPLAT_HIVAL : SPLAT_HIVAL {11+6<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_HIVAL);
+CS_Factor1_SPLAT_HIVAL : SPLAT_HIVAL { (!rpg400 && 11+6<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+6<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_HIVAL);
 
-CS_Factor1_SPLAT_INIT : SPLAT_INIT {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_INIT);
+CS_Factor1_SPLAT_INIT : SPLAT_INIT { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_INIT);
 
-CS_Factor1_SPLAT_INDICATOR : SPLAT_INDICATOR {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_INDICATOR);
+CS_Factor1_SPLAT_INDICATOR : SPLAT_INDICATOR { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_INDICATOR);
 
-CS_Factor1_SPLAT_INZSR : SPLAT_INZSR {11+6<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_INZSR);
+CS_Factor1_SPLAT_INZSR : SPLAT_INZSR { (!rpg400 && 11+6<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+6<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_INZSR);
 
-CS_Factor1_SPLAT_IN : SPLAT_IN {11+3<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_IN);
+CS_Factor1_SPLAT_IN : SPLAT_IN { (!rpg400 && 11+3<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+3<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_IN);
 
-CS_Factor1_SPLAT_JOBRUN : SPLAT_JOBRUN {11+7<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_JOBRUN);
+CS_Factor1_SPLAT_JOBRUN : SPLAT_JOBRUN { (!rpg400 && 11+7<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+7<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_JOBRUN);
 
-CS_Factor1_SPLAT_JOB : SPLAT_JOB {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_JOB);
+CS_Factor1_SPLAT_JOB : SPLAT_JOB { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_JOB);
 
-CS_Factor1_SPLAT_LDA : SPLAT_LDA {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_LDA);
+CS_Factor1_SPLAT_LDA : SPLAT_LDA { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_LDA);
 
-CS_Factor1_SPLAT_LIKE : SPLAT_LIKE {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_LIKE);
+CS_Factor1_SPLAT_LIKE : SPLAT_LIKE { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_LIKE);
 
-CS_Factor1_SPLAT_LONGJUL : SPLAT_LONGJUL {11+8<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_LONGJUL);
+CS_Factor1_SPLAT_LONGJUL : SPLAT_LONGJUL { (!rpg400 && 11+8<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+8<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_LONGJUL);
 
-CS_Factor1_SPLAT_LOVAL : SPLAT_LOVAL {11+6<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_LOVAL);
+CS_Factor1_SPLAT_LOVAL : SPLAT_LOVAL { (!rpg400 && 11+6<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+6<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_LOVAL);
 
-CS_Factor1_SPLAT_MONTH : SPLAT_MONTH {11+6<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_MONTH);
+CS_Factor1_SPLAT_MONTH : SPLAT_MONTH { (!rpg400 && 11+6<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+6<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_MONTH);
 
-CS_Factor1_SPLAT_NOIND : SPLAT_NOIND {11+6<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_NOIND);
+CS_Factor1_SPLAT_NOIND : SPLAT_NOIND { (!rpg400 && 11+6<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+6<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_NOIND);
 
-CS_Factor1_SPLAT_NOKEY : SPLAT_NOKEY {11+6<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_NOKEY);
+CS_Factor1_SPLAT_NOKEY : SPLAT_NOKEY { (!rpg400 && 11+6<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+6<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_NOKEY);
 
-CS_Factor1_SPLAT_NULL : SPLAT_NULL {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_NULL);
+CS_Factor1_SPLAT_NULL : SPLAT_NULL { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_NULL);
 
-CS_Factor1_SPLAT_OFL : SPLAT_OFL {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_OFL);
+CS_Factor1_SPLAT_OFL : SPLAT_OFL { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_OFL);
 
-CS_Factor1_SPLAT_ON : SPLAT_ON {11+3<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_ON);
+CS_Factor1_SPLAT_ON : SPLAT_ON { (!rpg400 && 11+3<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+3<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_ON);
 
-CS_Factor1_SPLAT_OFF : SPLAT_OFF {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_OFF);
+CS_Factor1_SPLAT_OFF : SPLAT_OFF { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_OFF);
 
-CS_Factor1_SPLAT_PDA : SPLAT_PDA {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_PDA);
+CS_Factor1_SPLAT_PDA : SPLAT_PDA { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_PDA);
 
-CS_Factor1_SPLAT_PLACE : SPLAT_PLACE {11+6<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_PLACE);
+CS_Factor1_SPLAT_PLACE : SPLAT_PLACE { (!rpg400 && 11+6<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+6<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_PLACE);
 
-CS_Factor1_SPLAT_PSSR : SPLAT_PSSR {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_PSSR);
+CS_Factor1_SPLAT_PSSR : SPLAT_PSSR { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_PSSR);
 
-CS_Factor1_SPLAT_ROUTINE : SPLAT_ROUTINE {11+8<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_ROUTINE);
+CS_Factor1_SPLAT_ROUTINE : SPLAT_ROUTINE { (!rpg400 && 11+8<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+8<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_ROUTINE);
 
-CS_Factor1_SPLAT_START : SPLAT_START {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_START);
+CS_Factor1_SPLAT_START : SPLAT_START { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_START);
 
-CS_Factor1_SPLAT_SYS : SPLAT_SYS {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_SYS);
+CS_Factor1_SPLAT_SYS : SPLAT_SYS { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_SYS);
 
-CS_Factor1_SPLAT_TERM : SPLAT_TERM {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_TERM);
+CS_Factor1_SPLAT_TERM : SPLAT_TERM { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_TERM);
 
-CS_Factor1_SPLAT_TOTC : SPLAT_TOTC {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_TOTC);
+CS_Factor1_SPLAT_TOTC : SPLAT_TOTC { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_TOTC);
 
-CS_Factor1_SPLAT_TOTL : SPLAT_TOTL {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_TOTL);
+CS_Factor1_SPLAT_TOTL : SPLAT_TOTL { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_TOTL);
 
-CS_Factor1_SPLAT_USER : SPLAT_USER {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_USER);
+CS_Factor1_SPLAT_USER : SPLAT_USER { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_USER);
 
-CS_Factor1_SPLAT_VAR : SPLAT_VAR {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_VAR);
+CS_Factor1_SPLAT_VAR : SPLAT_VAR { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_VAR);
 
-CS_Factor1_SPLAT_YEAR : SPLAT_YEAR {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_YEAR);
+CS_Factor1_SPLAT_YEAR : SPLAT_YEAR { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_YEAR);
 
-CS_Factor1_SPLAT_ZEROS : SPLAT_ZEROS {11+6<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_ZEROS);
+CS_Factor1_SPLAT_ZEROS : SPLAT_ZEROS { (!rpg400 && 11+6<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+6<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_ZEROS);
 
-CS_Factor1_SPLAT_HMS : SPLAT_HMS {11+4<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_HMS);
+CS_Factor1_SPLAT_HMS : SPLAT_HMS { (!rpg400 && 11+4<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+4<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_HMS);
 
-CS_Factor1_SPLAT_INLR : SPLAT_INLR {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_INLR);
+CS_Factor1_SPLAT_INLR : SPLAT_INLR { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_INLR);
 
-CS_Factor1_SPLAT_INOF : SPLAT_INOF {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_INOF);
+CS_Factor1_SPLAT_INOF : SPLAT_INOF { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_INOF);
 
 //DurationCodes
-CS_Factor1_SPLAT_D : SPLAT_D {11+2<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_D);
+CS_Factor1_SPLAT_D : SPLAT_D { (!rpg400 && 11+2<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+2<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_D);
 
-CS_Factor1_SPLAT_DAYS : SPLAT_DAYS {11+5<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_DAYS);
+CS_Factor1_SPLAT_DAYS : SPLAT_DAYS { (!rpg400 && 11+5<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+5<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_DAYS);
 
-CS_Factor1_SPLAT_H : SPLAT_H {11+2<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_H);
+CS_Factor1_SPLAT_H : SPLAT_H { (!rpg400 && 11+2<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+2<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_H);
 
-CS_Factor1_SPLAT_HOURS : SPLAT_HOURS {11+6<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_HOURS);
+CS_Factor1_SPLAT_HOURS : SPLAT_HOURS { (!rpg400 && 11+6<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+6<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_HOURS);
 
-CS_Factor1_SPLAT_MINUTES : SPLAT_MINUTES {11+8<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_MINUTES);
+CS_Factor1_SPLAT_MINUTES : SPLAT_MINUTES { (!rpg400 && 11+8<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+8<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_MINUTES);
 
-CS_Factor1_SPLAT_MONTHS : SPLAT_MONTHS {11+7<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_MONTHS);
+CS_Factor1_SPLAT_MONTHS : SPLAT_MONTHS { (!rpg400 && 11+7<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+7<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_MONTHS);
 
-CS_Factor1_SPLAT_M : SPLAT_M {11+2<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_M);
+CS_Factor1_SPLAT_M : SPLAT_M { (!rpg400 && 11+2<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+2<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_M);
 
-CS_Factor1_SPLAT_MN : SPLAT_MN {11+3<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_MN);
+CS_Factor1_SPLAT_MN : SPLAT_MN { (!rpg400 && 11+3<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+3<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_MN);
 
-CS_Factor1_SPLAT_MS : SPLAT_MS {11+3<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_MS);
+CS_Factor1_SPLAT_MS : SPLAT_MS { (!rpg400 && 11+3<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+3<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_MS);
 
-CS_Factor1_SPLAT_MSECONDS : SPLAT_MSECONDS {11+9<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_MSECONDS);
+CS_Factor1_SPLAT_MSECONDS : SPLAT_MSECONDS { (!rpg400 && 11+9<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+9<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_MSECONDS);
 
-CS_Factor1_SPLAT_SECONDS : SPLAT_SECONDS {11+8<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_SECONDS);
+CS_Factor1_SPLAT_SECONDS : SPLAT_SECONDS { (!rpg400 && 11+8<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+8<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_SECONDS);
 
-CS_Factor1_SPLAT_YEARS : SPLAT_YEARS {11+6<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_YEARS);
+CS_Factor1_SPLAT_YEARS : SPLAT_YEARS { (!rpg400 && 11+6<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+6<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_YEARS);
 
-CS_Factor1_SPLAT_Y : SPLAT_Y {11+2<= getCharPositionInLine() && getCharPositionInLine()<=24 }? -> type(SPLAT_Y);
+CS_Factor1_SPLAT_Y : SPLAT_Y { (!rpg400 && 11+2<= getCharPositionInLine() && getCharPositionInLine()<=24) || (rpg400 && 17+2<= getCharPositionInLine() && getCharPositionInLine()<=30) }? -> type(SPLAT_Y);
 
 //Factor 2
-CS_Factor2_SPLAT_ALL : SPLAT_ALL {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_ALL);
+CS_Factor2_SPLAT_ALL : SPLAT_ALL { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_ALL);
 
-CS_Factor2_SPLAT_NONE : SPLAT_NONE {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_NONE);
+CS_Factor2_SPLAT_NONE : SPLAT_NONE { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_NONE);
 
-CS_Factor2_SPLAT_ILERPG : SPLAT_ILERPG {35+7<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_ILERPG);
+CS_Factor2_SPLAT_ILERPG : SPLAT_ILERPG { (!rpg400 && 35+7<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+7<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_ILERPG);
 
-CS_Factor2_SPLAT_CRTBNDRPG : SPLAT_CRTBNDRPG {35+10<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_CRTBNDRPG);
+CS_Factor2_SPLAT_CRTBNDRPG : SPLAT_CRTBNDRPG { (!rpg400 && 35+10<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+10<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_CRTBNDRPG);
 
-CS_Factor2_SPLAT_CRTRPGMOD : SPLAT_CRTRPGMOD {35+10<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_CRTRPGMOD);
+CS_Factor2_SPLAT_CRTRPGMOD : SPLAT_CRTRPGMOD { (!rpg400 && 35+10<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+10<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_CRTRPGMOD);
 
-CS_Factor2_SPLAT_VRM : SPLAT_VRM {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_VRM);
+CS_Factor2_SPLAT_VRM : SPLAT_VRM { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_VRM);
 
-CS_Factor2_SPLAT_ALLG : SPLAT_ALLG {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_ALLG);
+CS_Factor2_SPLAT_ALLG : SPLAT_ALLG { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_ALLG);
 
-CS_Factor2_SPLAT_ALLU : SPLAT_ALLU {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_ALLU);
+CS_Factor2_SPLAT_ALLU : SPLAT_ALLU { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_ALLU);
 
-CS_Factor2_SPLAT_ALLX : SPLAT_ALLX {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_ALLX);
+CS_Factor2_SPLAT_ALLX : SPLAT_ALLX { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_ALLX);
 
-CS_Factor2_SPLAT_BLANKS : SPLAT_BLANKS {35+6<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_BLANKS);
+CS_Factor2_SPLAT_BLANKS : SPLAT_BLANKS { (!rpg400 && 35+6<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+6<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_BLANKS);
 
-CS_Factor2_SPLAT_CANCL : SPLAT_CANCL {35+6<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_CANCL);
+CS_Factor2_SPLAT_CANCL : SPLAT_CANCL { (!rpg400 && 35+6<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+6<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_CANCL);
 
-CS_Factor2_SPLAT_CYMD : SPLAT_CYMD {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_CYMD);
+CS_Factor2_SPLAT_CYMD : SPLAT_CYMD { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_CYMD);
 
-CS_Factor2_SPLAT_CMDY : SPLAT_CMDY {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_CMDY);
+CS_Factor2_SPLAT_CMDY : SPLAT_CMDY { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_CMDY);
 
-CS_Factor2_SPLAT_CDMY : SPLAT_CDMY {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_CDMY);
+CS_Factor2_SPLAT_CDMY : SPLAT_CDMY { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_CDMY);
 
-CS_Factor2_SPLAT_MDY : SPLAT_MDY {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_MDY);
+CS_Factor2_SPLAT_MDY : SPLAT_MDY { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_MDY);
 
-CS_Factor2_SPLAT_DMY : SPLAT_DMY {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_DMY);
+CS_Factor2_SPLAT_DMY : SPLAT_DMY { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_DMY);
 
-CS_Factor2_SPLAT_YMD : SPLAT_YMD {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_YMD);
+CS_Factor2_SPLAT_YMD : SPLAT_YMD { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_YMD);
 
-CS_Factor2_SPLAT_JUL : SPLAT_JUL {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_JUL);
+CS_Factor2_SPLAT_JUL : SPLAT_JUL { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_JUL);
 
-CS_Factor2_SPLAT_ISO : SPLAT_ISO {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_ISO);
+CS_Factor2_SPLAT_ISO : SPLAT_ISO { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_ISO);
 
-CS_Factor2_SPLAT_USA : SPLAT_USA {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_USA);
+CS_Factor2_SPLAT_USA : SPLAT_USA { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_USA);
 
-CS_Factor2_SPLAT_EUR : SPLAT_EUR {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_EUR);
+CS_Factor2_SPLAT_EUR : SPLAT_EUR { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_EUR);
 
-CS_Factor2_SPLAT_JIS : SPLAT_JIS {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_JIS);
+CS_Factor2_SPLAT_JIS : SPLAT_JIS { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_JIS);
 
-CS_Factor2_SPLAT_DATE : SPLAT_DATE {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_DATE);
+CS_Factor2_SPLAT_DATE : SPLAT_DATE { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_DATE);
 
-CS_Factor2_SPLAT_DAY : SPLAT_DAY {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_DAY);
+CS_Factor2_SPLAT_DAY : SPLAT_DAY { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_DAY);
 
-CS_Factor2_SPLAT_DETC : SPLAT_DETC {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_DETC);
+CS_Factor2_SPLAT_DETC : SPLAT_DETC { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_DETC);
 
-CS_Factor2_SPLAT_DETL : SPLAT_DETL {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_DETL);
+CS_Factor2_SPLAT_DETL : SPLAT_DETL { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_DETL);
 
-CS_Factor2_SPLAT_DTAARA : SPLAT_DTAARA {35+7<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_DTAARA);
+CS_Factor2_SPLAT_DTAARA : SPLAT_DTAARA { (!rpg400 && 35+7<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+7<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_DTAARA);
 
-CS_Factor2_SPLAT_END : SPLAT_END {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_END);
+CS_Factor2_SPLAT_END : SPLAT_END { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_END);
 
-CS_Factor2_SPLAT_ENTRY : SPLAT_ENTRY {35+6<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_ENTRY);
+CS_Factor2_SPLAT_ENTRY : SPLAT_ENTRY { (!rpg400 && 35+6<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+6<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_ENTRY);
 
-CS_Factor2_SPLAT_EQUATE : SPLAT_EQUATE {35+7<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_EQUATE);
+CS_Factor2_SPLAT_EQUATE : SPLAT_EQUATE { (!rpg400 && 35+7<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+7<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_EQUATE);
 
-CS_Factor2_SPLAT_EXTDFT : SPLAT_EXTDFT {35+7<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_EXTDFT);
+CS_Factor2_SPLAT_EXTDFT : SPLAT_EXTDFT { (!rpg400 && 35+7<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+7<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_EXTDFT);
 
-CS_Factor2_SPLAT_EXT : SPLAT_EXT {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_EXT);
+CS_Factor2_SPLAT_EXT : SPLAT_EXT { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_EXT);
 
-CS_Factor2_SPLAT_FILE : SPLAT_FILE {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_FILE);
+CS_Factor2_SPLAT_FILE : SPLAT_FILE { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_FILE);
 
-CS_Factor2_SPLAT_GETIN : SPLAT_GETIN {35+6<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_GETIN);
+CS_Factor2_SPLAT_GETIN : SPLAT_GETIN { (!rpg400 && 35+6<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+6<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_GETIN);
 
-CS_Factor2_SPLAT_HIVAL : SPLAT_HIVAL {35+6<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_HIVAL);
+CS_Factor2_SPLAT_HIVAL : SPLAT_HIVAL { (!rpg400 && 35+6<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+6<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_HIVAL);
 
-CS_Factor2_SPLAT_INIT : SPLAT_INIT {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_INIT);
+CS_Factor2_SPLAT_INIT : SPLAT_INIT { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_INIT);
 
-CS_Factor2_SPLAT_INDICATOR : SPLAT_INDICATOR {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_INDICATOR);
+CS_Factor2_SPLAT_INDICATOR : SPLAT_INDICATOR { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_INDICATOR);
 
-CS_Factor2_SPLAT_INZSR : SPLAT_INZSR {35+6<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_INZSR);
+CS_Factor2_SPLAT_INZSR : SPLAT_INZSR { (!rpg400 && 35+6<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+6<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_INZSR);
 
-CS_Factor2_SPLAT_IN : SPLAT_IN {35+3<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_IN);
+CS_Factor2_SPLAT_IN : SPLAT_IN { (!rpg400 && 35+3<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+3<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_IN);
 
-CS_Factor2_SPLAT_JOBRUN : SPLAT_JOBRUN {35+7<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_JOBRUN);
+CS_Factor2_SPLAT_JOBRUN : SPLAT_JOBRUN { (!rpg400 && 35+7<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+7<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_JOBRUN);
 
-CS_Factor2_SPLAT_JOB : SPLAT_JOB {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_JOB);
+CS_Factor2_SPLAT_JOB : SPLAT_JOB { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_JOB);
 
-CS_Factor2_SPLAT_LDA : SPLAT_LDA {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_LDA);
+CS_Factor2_SPLAT_LDA : SPLAT_LDA { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_LDA);
 
-CS_Factor2_SPLAT_LIKE : SPLAT_LIKE {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_LIKE);
+CS_Factor2_SPLAT_LIKE : SPLAT_LIKE { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_LIKE);
 
-CS_Factor2_SPLAT_LONGJUL : SPLAT_LONGJUL {35+8<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_LONGJUL);
+CS_Factor2_SPLAT_LONGJUL : SPLAT_LONGJUL { (!rpg400 && 35+8<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+8<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_LONGJUL);
 
-CS_Factor2_SPLAT_LOVAL : SPLAT_LOVAL {35+6<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_LOVAL);
+CS_Factor2_SPLAT_LOVAL : SPLAT_LOVAL { (!rpg400 && 35+6<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+6<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_LOVAL);
 
-CS_Factor2_SPLAT_MONTH : SPLAT_MONTH {35+6<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_MONTH);
+CS_Factor2_SPLAT_MONTH : SPLAT_MONTH { (!rpg400 && 35+6<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+6<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_MONTH);
 
-CS_Factor2_SPLAT_NOIND : SPLAT_NOIND {35+6<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_NOIND);
+CS_Factor2_SPLAT_NOIND : SPLAT_NOIND { (!rpg400 && 35+6<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+6<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_NOIND);
 
-CS_Factor2_SPLAT_NOKEY : SPLAT_NOKEY {35+6<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_NOKEY);
+CS_Factor2_SPLAT_NOKEY : SPLAT_NOKEY { (!rpg400 && 35+6<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+6<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_NOKEY);
 
-CS_Factor2_SPLAT_NULL : SPLAT_NULL {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_NULL);
+CS_Factor2_SPLAT_NULL : SPLAT_NULL { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_NULL);
 
-CS_Factor2_SPLAT_OFL : SPLAT_OFL {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_OFL);
+CS_Factor2_SPLAT_OFL : SPLAT_OFL { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_OFL);
 
-CS_Factor2_SPLAT_ON : SPLAT_ON {35+3<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_ON);
+CS_Factor2_SPLAT_ON : SPLAT_ON { (!rpg400 && 35+3<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+3<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_ON);
 
-CS_Factor2_SPLAT_OFF : SPLAT_OFF {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_OFF);
+CS_Factor2_SPLAT_OFF : SPLAT_OFF { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_OFF);
 
-CS_Factor2_SPLAT_PDA : SPLAT_PDA {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_PDA);
+CS_Factor2_SPLAT_PDA : SPLAT_PDA { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_PDA);
 
-CS_Factor2_SPLAT_PLACE : SPLAT_PLACE {35+6<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_PLACE);
+CS_Factor2_SPLAT_PLACE : SPLAT_PLACE { (!rpg400 && 35+6<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+6<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_PLACE);
 
-CS_Factor2_SPLAT_PSSR : SPLAT_PSSR {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_PSSR);
+CS_Factor2_SPLAT_PSSR : SPLAT_PSSR { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_PSSR);
 
-CS_Factor2_SPLAT_ROUTINE : SPLAT_ROUTINE {35+8<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_ROUTINE);
+CS_Factor2_SPLAT_ROUTINE : SPLAT_ROUTINE { (!rpg400 && 35+8<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+8<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_ROUTINE);
 
-CS_Factor2_SPLAT_START : SPLAT_START {35+6<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_START);
+CS_Factor2_SPLAT_START : SPLAT_START { (!rpg400 && 35+6<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+6<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_START);
 
-CS_Factor2_SPLAT_SYS : SPLAT_SYS {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_SYS);
+CS_Factor2_SPLAT_SYS : SPLAT_SYS { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_SYS);
 
-CS_Factor2_SPLAT_TERM : SPLAT_TERM {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_TERM);
+CS_Factor2_SPLAT_TERM : SPLAT_TERM { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_TERM);
 
-CS_Factor2_SPLAT_TOTC : SPLAT_TOTC {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_TOTC);
+CS_Factor2_SPLAT_TOTC : SPLAT_TOTC { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_TOTC);
 
-CS_Factor2_SPLAT_TOTL : SPLAT_TOTL {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_TOTL);
+CS_Factor2_SPLAT_TOTL : SPLAT_TOTL { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_TOTL);
 
-CS_Factor2_SPLAT_USER : SPLAT_USER {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_USER);
+CS_Factor2_SPLAT_USER : SPLAT_USER { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_USER);
 
-CS_Factor2_SPLAT_VAR : SPLAT_VAR {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_VAR);
+CS_Factor2_SPLAT_VAR : SPLAT_VAR { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_VAR);
 
-CS_Factor2_SPLAT_YEAR : SPLAT_YEAR {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_YEAR);
+CS_Factor2_SPLAT_YEAR : SPLAT_YEAR { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_YEAR);
 
-CS_Factor2_SPLAT_ZEROS : SPLAT_ZEROS {35+6<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_ZEROS);
+CS_Factor2_SPLAT_ZEROS : SPLAT_ZEROS { (!rpg400 && 35+6<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+6<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_ZEROS);
 
-CS_Factor2_SPLAT_HMS : SPLAT_HMS {35+4<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_HMS);
+CS_Factor2_SPLAT_HMS : SPLAT_HMS { (!rpg400 && 35+4<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+4<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_HMS);
 
-CS_Factor2_SPLAT_INLR : SPLAT_INLR {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_INLR);
+CS_Factor2_SPLAT_INLR : SPLAT_INLR { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_INLR);
 
-CS_Factor2_SPLAT_INOF : SPLAT_INOF {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_INOF);
+CS_Factor2_SPLAT_INOF : SPLAT_INOF { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_INOF);
 //Duration
-CS_Factor2_SPLAT_D : SPLAT_D {35+2<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_D);
+CS_Factor2_SPLAT_D : SPLAT_D { (!rpg400 && 35+2<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+2<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_D);
 
-CS_Factor2_SPLAT_DAYS : SPLAT_DAYS {35+5<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_DAYS);
+CS_Factor2_SPLAT_DAYS : SPLAT_DAYS { (!rpg400 && 35+5<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+5<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_DAYS);
 
-CS_Factor2_SPLAT_H : SPLAT_H {35+2<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_H);
+CS_Factor2_SPLAT_H : SPLAT_H { (!rpg400 && 35+2<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+2<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_H);
 
-CS_Factor2_SPLAT_HOURS : SPLAT_HOURS {35+6<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_HOURS);
+CS_Factor2_SPLAT_HOURS : SPLAT_HOURS { (!rpg400 && 35+6<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+6<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_HOURS);
 
-CS_Factor2_SPLAT_MINUTES : SPLAT_MINUTES {35+8<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_MINUTES);
+CS_Factor2_SPLAT_MINUTES : SPLAT_MINUTES { (!rpg400 && 35+8<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+8<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_MINUTES);
 
-CS_Factor2_SPLAT_MONTHS : SPLAT_MONTHS {35+7<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_MONTHS);
+CS_Factor2_SPLAT_MONTHS : SPLAT_MONTHS { (!rpg400 && 35+7<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+7<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_MONTHS);
 
-CS_Factor2_SPLAT_M : SPLAT_M {35+2<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_M);
+CS_Factor2_SPLAT_M : SPLAT_M { (!rpg400 && 35+2<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+2<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_M);
 
-CS_Factor2_SPLAT_MN : SPLAT_MN {35+3<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_MN);
+CS_Factor2_SPLAT_MN : SPLAT_MN { (!rpg400 && 35+3<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+3<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_MN);
 
-CS_Factor2_SPLAT_MS : SPLAT_MS {35+3<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_MS);
+CS_Factor2_SPLAT_MS : SPLAT_MS { (!rpg400 && 35+3<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+3<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_MS);
 
-CS_Factor2_SPLAT_MSECONDS : SPLAT_MSECONDS {35+9<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_MSECONDS);
+CS_Factor2_SPLAT_MSECONDS : SPLAT_MSECONDS { (!rpg400 && 35+9<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+9<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_MSECONDS);
 
-CS_Factor2_SPLAT_SECONDS : SPLAT_SECONDS {35+8<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_SECONDS);
+CS_Factor2_SPLAT_SECONDS : SPLAT_SECONDS { (!rpg400 && 35+8<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+8<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_SECONDS);
 
-CS_Factor2_SPLAT_YEARS : SPLAT_YEARS {35+6<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_YEARS);
+CS_Factor2_SPLAT_YEARS : SPLAT_YEARS { (!rpg400 && 35+6<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+6<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_YEARS);
 
-CS_Factor2_SPLAT_Y : SPLAT_Y {35+2<= getCharPositionInLine() && getCharPositionInLine()<=48 }? -> type(SPLAT_Y);
+CS_Factor2_SPLAT_Y : SPLAT_Y { (!rpg400 && 35+2<= getCharPositionInLine() && getCharPositionInLine()<=48) || (rpg400 && 32+2<= getCharPositionInLine() && getCharPositionInLine()<=45) }? -> type(SPLAT_Y);
 
 //Result 
 
@@ -1990,92 +2048,168 @@ CS_Result_SPLAT_Y : SPLAT_Y {49+2<= getCharPositionInLine() && getCharPositionIn
 CS_Result_SPLAT_S : SPLAT_S {49+2<= getCharPositionInLine() && getCharPositionInLine()<=62 }? -> type(SPLAT_S);
 
 CS_BlankFactor : '              '
-        {(getCharPositionInLine()==25)
+        { !rpg400 && ((getCharPositionInLine()==25)
             || (getCharPositionInLine()==49)
-            || (getCharPositionInLine()==63)}?
+            || (getCharPositionInLine()==63))}?
 ;
 
 // Factor to end of line is blank
 CS_BlankFactor_EOL : '              '
-    { getCharPositionInLine()==25 }? [ ]* NEWLINE -> type(EOL), popMode;
+    { !rpg400 && getCharPositionInLine()==25 }? [ ]* NEWLINE -> type(EOL), popMode;
+
+// ---- RPG/400 (RPG III) column geometry: factor1 18-27, opcode 28-32,
+// ---- factor2 33-42, result 43-48, len 49-51, dec 52 (+flag 53), indicators 54-59.
+
+    // additional C-spec control indicators continuing in cols 12-17 (hidden)
+CS_R400_IndFlag12 : [nN] { rpg400 && getCharPositionInLine()==12 }? -> channel(HIDDEN), pushMode(IndicatorMode);
+
+CS_R400_IndFlag15 : [nN] { rpg400 && getCharPositionInLine()==15 }? -> channel(HIDDEN), pushMode(IndicatorMode);
+
+CS_R400_Ind13 : [0-9A-Za-z] [0-9A-Za-z]
+    { rpg400 && (getCharPositionInLine()==14 || getCharPositionInLine()==17)
+      && (_input.LA(1)==' ' || _input.LA(1)=='\r' || _input.LA(1)=='\n')
+      && !(alphanumericOrIdChar(_input.LA(-3))) }? -> channel(HIDDEN)
+   ;
+
+CS_R400_WsTo17 : ([ ]
+    { rpg400 && getCharPositionInLine()>=12 && getCharPositionInLine()<=17 }? )+
+    -> skip;
+
+    // blank factor1 (cols 18-27), factor2 (33-42) and result (43-48)
+CS_R400_BlankF1 : { rpg400 && getCharPositionInLine()==17 }? ' '+
+    { rpg400 && getCharPositionInLine()==27 }? -> type(CS_BlankFactor);
+
+CS_R400_BlankF2 : { rpg400 && getCharPositionInLine()==32 }? ' '+
+    { rpg400 && getCharPositionInLine()==42 }? -> type(CS_BlankFactor);
+
+CS_R400_BlankRes : { rpg400 && getCharPositionInLine()==42 }? ' '+
+    { rpg400 && getCharPositionInLine()==48 }? -> type(CS_BlankFactor);
+
+    // blank opcode area (cols 28-32)
+CS_R400_OpBlank : { rpg400 && getCharPositionInLine()==27 }? ' '+
+    { rpg400 && getCharPositionInLine()==32 }? -> type(CS_OperationAndExtender);
+
+    // trailing blanks of the opcode area (short opcodes)
+CS_R400_WsOp : ([ ]
+    { rpg400 && getCharPositionInLine()>=29 && getCharPositionInLine()<=32 }? )+
+    -> skip;
+
+CS_R400_WsAfterF1 : ([ ]
+    { rpg400 && getCharPositionInLine()>=18 && getCharPositionInLine()<=27 }? )+
+    -> skip;
+
+CS_R400_WsAfterF2 : ([ ]
+    { rpg400 && getCharPositionInLine()>=34 && getCharPositionInLine()<=42 }? )+
+    -> skip;
+
+CS_R400_WsAfterRes : ([ ]
+    { rpg400 && getCharPositionInLine()>=44 && getCharPositionInLine()<=48 }? )+
+    -> skip;
+
+    // rest of line blank after the indicators (indicators end at col 59)
+CS_R400_BlankEOL : { rpg400 && getCharPositionInLine()>=59 }? ' '* NEWLINE -> type(EOL), popMode;
 
 CS_FactorWs : (' '
-    { (getCharPositionInLine()>=12 && getCharPositionInLine()<=25)
-      || (getCharPositionInLine()>=36 && getCharPositionInLine()<=49)
+    { !rpg400 && ((getCharPositionInLine()>=12 && getCharPositionInLine()<=25)
+      || (getCharPositionInLine()>=36 && getCharPositionInLine()<=49))
     }?  
     )+
     -> skip;
 
 CS_FactorWs2 : (' '
-    { (getCharPositionInLine()>=50 && getCharPositionInLine()<=63)
+    { !rpg400 && (getCharPositionInLine()>=50 && getCharPositionInLine()<=63)
     }? )+
     -> skip;
         
 // This rather awkward token matches a literal. including whitespace literals
 CS_FactorContentHexLiteral : [xX] [']
-    { (getCharPositionInLine()>=13 && getCharPositionInLine()<=25)
+    { (!rpg400 && ((getCharPositionInLine()>=13 && getCharPositionInLine()<=25)
             || (getCharPositionInLine()>=37 && getCharPositionInLine()<=49)
-            || (getCharPositionInLine()>=51 && getCharPositionInLine()<=63)
+            || (getCharPositionInLine()>=51 && getCharPositionInLine()<=63)))
+      || (rpg400 && ((getCharPositionInLine()>=19 && getCharPositionInLine()<=27)
+            || (getCharPositionInLine()>=34 && getCharPositionInLine()<=42)
+            || (getCharPositionInLine()>=44 && getCharPositionInLine()<=48)))
     }?
     -> type(HexLiteralStart), pushMode(InFactorStringMode);
         
 CS_FactorContentDateLiteral : [dD] [']
-    { (getCharPositionInLine()>=13 && getCharPositionInLine()<=25)
+    { (!rpg400 && ((getCharPositionInLine()>=13 && getCharPositionInLine()<=25)
             || (getCharPositionInLine()>=37 && getCharPositionInLine()<=49)
-            || (getCharPositionInLine()>=51 && getCharPositionInLine()<=63)
+            || (getCharPositionInLine()>=51 && getCharPositionInLine()<=63)))
+      || (rpg400 && ((getCharPositionInLine()>=19 && getCharPositionInLine()<=27)
+            || (getCharPositionInLine()>=34 && getCharPositionInLine()<=42)
+            || (getCharPositionInLine()>=44 && getCharPositionInLine()<=48)))
     }?
          -> type(DateLiteralStart), pushMode(InFactorStringMode);
         
 CS_FactorContentTimeLiteral : [tT] [']
-    { (getCharPositionInLine()>=13 && getCharPositionInLine()<=25)
+    { (!rpg400 && ((getCharPositionInLine()>=13 && getCharPositionInLine()<=25)
             || (getCharPositionInLine()>=37 && getCharPositionInLine()<=49)
-            || (getCharPositionInLine()>=51 && getCharPositionInLine()<=63)
+            || (getCharPositionInLine()>=51 && getCharPositionInLine()<=63)))
+      || (rpg400 && ((getCharPositionInLine()>=19 && getCharPositionInLine()<=27)
+            || (getCharPositionInLine()>=34 && getCharPositionInLine()<=42)
+            || (getCharPositionInLine()>=44 && getCharPositionInLine()<=48)))
     }?
     -> type(TimeLiteralStart), pushMode(InFactorStringMode);
         
 CS_FactorContentGraphicLiteral : [gG] [']
-    {(getCharPositionInLine()>=13 && getCharPositionInLine()<=25)
+    {(!rpg400 && ((getCharPositionInLine()>=13 && getCharPositionInLine()<=25)
             || (getCharPositionInLine()>=37 && getCharPositionInLine()<=49)
-            || (getCharPositionInLine()>=51 && getCharPositionInLine()<=63)
+            || (getCharPositionInLine()>=51 && getCharPositionInLine()<=63)))
+      || (rpg400 && ((getCharPositionInLine()>=19 && getCharPositionInLine()<=27)
+            || (getCharPositionInLine()>=34 && getCharPositionInLine()<=42)
+            || (getCharPositionInLine()>=44 && getCharPositionInLine()<=48)))
     }?
     -> type(GraphicLiteralStart), pushMode(InFactorStringMode);
         
 CS_FactorContentUCS2Literal : [uU] ['] 
-    {(getCharPositionInLine()>=13 && getCharPositionInLine()<=25)
+    {(!rpg400 && ((getCharPositionInLine()>=13 && getCharPositionInLine()<=25)
             || (getCharPositionInLine()>=37 && getCharPositionInLine()<=49)
-            || (getCharPositionInLine()>=51 && getCharPositionInLine()<=63)
+            || (getCharPositionInLine()>=51 && getCharPositionInLine()<=63)))
+      || (rpg400 && ((getCharPositionInLine()>=19 && getCharPositionInLine()<=27)
+            || (getCharPositionInLine()>=34 && getCharPositionInLine()<=42)
+            || (getCharPositionInLine()>=44 && getCharPositionInLine()<=48)))
     }?
     -> type(UCS2LiteralStart), pushMode(InFactorStringMode);
         
 CS_FactorContentStringLiteral : ['] 
-     {(getCharPositionInLine()>=12 && getCharPositionInLine()<=25)
+     {(!rpg400 && ((getCharPositionInLine()>=12 && getCharPositionInLine()<=25)
             || (getCharPositionInLine()>=36 && getCharPositionInLine()<=49)
-            || (getCharPositionInLine()>=50 && getCharPositionInLine()<=63)
+            || (getCharPositionInLine()>=50 && getCharPositionInLine()<=63)))
+      || (rpg400 && ((getCharPositionInLine()>=18 && getCharPositionInLine()<=27)
+            || (getCharPositionInLine()>=33 && getCharPositionInLine()<=42)
+            || (getCharPositionInLine()>=43 && getCharPositionInLine()<=48)))
     }?
     -> type(StringLiteralStart), pushMode(InFactorStringMode);
                 
 CS_FactorContent : (~[\r\n'\'' :]
-    {(getCharPositionInLine()>=12 && getCharPositionInLine()<=25)
-            || (getCharPositionInLine()>=36 && getCharPositionInLine()<=49)
+    { (!rpg400 && ((getCharPositionInLine()>=12 && getCharPositionInLine()<=25)
+            || (getCharPositionInLine()>=36 && getCharPositionInLine()<=49)))
+      || (rpg400 && ((getCharPositionInLine()>=18 && getCharPositionInLine()<=27)
+            || (getCharPositionInLine()>=33 && getCharPositionInLine()<=42)))
     }? )+;
 
 CS_ResultContent : (~[\r\n'\'' :]
-    { (getCharPositionInLine()>=50 && getCharPositionInLine()<=63)
+    { (!rpg400 && (getCharPositionInLine()>=50 && getCharPositionInLine()<=63))
+      || (rpg400 && (getCharPositionInLine()>=43 && getCharPositionInLine()<=48))
     }? )+
     -> type(CS_FactorContent);
 
 CS_FactorColon : ([:]
-    { (getCharPositionInLine()>12 && getCharPositionInLine()<25)
+    { (!rpg400 && ((getCharPositionInLine()>12 && getCharPositionInLine()<25)
       || (getCharPositionInLine()>36 && getCharPositionInLine()<49)
-      || (getCharPositionInLine()>50 && getCharPositionInLine()<63)
+      || (getCharPositionInLine()>50 && getCharPositionInLine()<63)))
+      || (rpg400 && ((getCharPositionInLine()>18 && getCharPositionInLine()<27)
+      || (getCharPositionInLine()>33 && getCharPositionInLine()<42)
+      || (getCharPositionInLine()>43 && getCharPositionInLine()<48)))
     }? )
     -> type(COLON);
 
 CS_OperationAndExtender_Blank :  '          '
-    { getCharPositionInLine()==35 }? ;
+    { !rpg400 && getCharPositionInLine()==35 }? ;
 
 CS_OperationAndExtender_WS : ( [ ]
-    { getCharPositionInLine()>=26 && getCharPositionInLine()<36
+    { !rpg400 && getCharPositionInLine()>=26 && getCharPositionInLine()<36
     }? )+
     -> skip;
 
@@ -2203,7 +2337,7 @@ CS_Operation_ELSE : OP_ELSE { getCharPositionInLine()>=29 && getCharPositionInLi
 
 CS_Operation_ELSEIF : OP_ELSEIF { getCharPositionInLine()>=31 && getCharPositionInLine()<36 }? -> type(OP_ELSEIF), pushMode(FREE);
 
-CS_Operation_END : OP_END { getCharPositionInLine()>=28 && getCharPositionInLine()<36 }? -> type(OP_END);
+CS_Operation_END : OP_END { (getCharPositionInLine()>=28 && getCharPositionInLine()<36) || (rpg400 && getCharPositionInLine()>=31 && getCharPositionInLine()<36) }? -> type(OP_END);
 
 CS_Operation_ENDCS : OP_ENDCS { getCharPositionInLine()>=30 && getCharPositionInLine()<36 }? -> type(OP_ENDCS);
 
@@ -2215,7 +2349,7 @@ CS_Operation_ENDIF : OP_ENDIF { getCharPositionInLine()>=30 && getCharPositionIn
 
 CS_Operation_ENDMON : OP_ENDMON { getCharPositionInLine()>=31 && getCharPositionInLine()<36 }? -> type(OP_ENDMON);
 
-CS_Operation_ENDSL : OP_ENDSL { getCharPositionInLine()>=30 && getCharPositionInLine()<36 }? -> type(OP_ENDSL);
+CS_Operation_ENDSL : OP_ENDSL { (getCharPositionInLine()>=30 && getCharPositionInLine()<36) || (rpg400 && getCharPositionInLine()>=31 && getCharPositionInLine()<36) }? -> type(OP_ENDSL);
 
 CS_Operation_ENDSR : OP_ENDSR { getCharPositionInLine()>=30 && getCharPositionInLine()<36 }? -> type(OP_ENDSR);
 
@@ -2261,7 +2395,7 @@ CS_Operation_ITER : OP_ITER { getCharPositionInLine()>=29 && getCharPositionInLi
 
 CS_Operation_KFLD : OP_KFLD { getCharPositionInLine()>=29 && getCharPositionInLine()<36 }? -> type(OP_KFLD);
 
-CS_Operation_KLIST : OP_KLIST { getCharPositionInLine()>=30 && getCharPositionInLine()<36 }? -> type(OP_KLIST);
+CS_Operation_KLIST : OP_KLIST { (getCharPositionInLine()>=30 && getCharPositionInLine()<36) || (rpg400 && getCharPositionInLine()>=28 && getCharPositionInLine()<33) }? -> type(OP_KLIST);
 
 CS_Operation_LEAVE : OP_LEAVE { getCharPositionInLine()>=30 && getCharPositionInLine()<36 }? -> type(OP_LEAVE);
 
@@ -2351,6 +2485,28 @@ CS_Operation_SETOFF : OP_SETOFF { getCharPositionInLine()>=31 && getCharPosition
 
 CS_Operation_SETON : OP_SETON { getCharPositionInLine()>=30 && getCharPositionInLine()<36 }? -> type(OP_SETON);
 
+CS_Operation_LOKUP : OP_LOKUP { rpg400 && getCharPositionInLine()>=28 && getCharPositionInLine()<36 }? -> type(OP_LOKUP);
+
+CS_Operation_RETRN : OP_RETRN { rpg400 && getCharPositionInLine()>=28 && getCharPositionInLine()<36 }? -> type(OP_RETRN);
+
+CS_Operation_SETOF : OP_SETOF { rpg400 && getCharPositionInLine()>=28 && getCharPositionInLine()<36 }? -> type(OP_SETOF);
+
+CS_Operation_WHEQ : OP_WHEQ { rpg400 && getCharPositionInLine()>=28 && getCharPositionInLine()<36 }? -> type(OP_WHEQ);
+
+CS_Operation_WHNE : OP_WHNE { rpg400 && getCharPositionInLine()>=28 && getCharPositionInLine()<36 }? -> type(OP_WHNE);
+
+CS_Operation_REDPE : OP_REDPE { rpg400 && getCharPositionInLine()>=28 && getCharPositionInLine()<36 }? -> type(OP_REDPE);
+
+CS_Operation_BITOF : OP_BITOF { rpg400 && getCharPositionInLine()>=28 && getCharPositionInLine()<36 }? -> type(OP_BITOF);
+
+CS_Operation_DELET : OP_DELET { rpg400 && getCharPositionInLine()>=28 && getCharPositionInLine()<36 }? -> type(OP_DELET);
+
+CS_Operation_UPDAT : OP_UPDAT { rpg400 && getCharPositionInLine()>=28 && getCharPositionInLine()<36 }? -> type(OP_UPDAT);
+
+CS_Operation_DEFN : OP_DEFN { rpg400 && getCharPositionInLine()>=28 && getCharPositionInLine()<36 }? -> type(OP_DEFN);
+
+CS_Operation_SELEC : OP_SELEC { rpg400 && getCharPositionInLine()>=28 && getCharPositionInLine()<36 }? -> type(OP_SELEC);
+
 CS_Operation_SORTA : OP_SORTA { getCharPositionInLine()>=30 && getCharPositionInLine()<36 }? -> type(OP_SORTA), pushMode(FREE), pushMode(FixedOpExtender);
 
 CS_Operation_SHTDN : OP_SHTDN { getCharPositionInLine()>=30 && getCharPositionInLine()<36 }? -> type(OP_SHTDN);
@@ -2408,27 +2564,41 @@ CS_Operation_Z_ADD : OP_Z_ADD { getCharPositionInLine()>=30 && getCharPositionIn
 CS_Operation_Z_SUB : OP_Z_SUB { getCharPositionInLine()>=30 && getCharPositionInLine()<36 }? -> type(OP_Z_SUB);
 
 CS_OperationAndExtender :  ([a-zA-Z0-9\\-]
-    { getCharPositionInLine()>=26 && getCharPositionInLine()<36
+    { !rpg400 && getCharPositionInLine()>=26 && getCharPositionInLine()<36
     }? )+;
 
-CS_OperationExtenderOpen : OPEN_PAREN { getCharPositionInLine()>=26 && getCharPositionInLine()<36 }? -> type(OPEN_PAREN);
+CS_OperationExtenderOpen : OPEN_PAREN { !rpg400 && getCharPositionInLine()>=26 && getCharPositionInLine()<36 }? -> type(OPEN_PAREN);
 
-CS_OperationExtenderClose : CLOSE_PAREN { getCharPositionInLine()>=26 && getCharPositionInLine()<36 }?
+CS_OperationExtenderClose : CLOSE_PAREN { !rpg400 && getCharPositionInLine()>=26 && getCharPositionInLine()<36 }?
     ( ' '
     { getCharPositionInLine()>=26 && getCharPositionInLine()<36
     }? )* { setText(getText().trim()); }
     -> type(CLOSE_PAREN);
   
-CS_FieldLength : [+\\- 0-9] [+\\- 0-9] [+\\- 0-9] [+\\- 0-9] [+\\- 0-9]  { getCharPositionInLine()==68 }? ;
+CS_FieldLength : [+\\- 0-9] [+\\- 0-9] [+\\- 0-9] [+\\- 0-9] [+\\- 0-9]  { !rpg400 && getCharPositionInLine()==68 }? ;
 
-CS_DecimalPositions : [ 0-9] [ 0-9] { getCharPositionInLine()==70 }?
+CS_R400_FieldLength : [+\\- 0-9] [+\\- 0-9] [+\\- 0-9]  { rpg400 && getCharPositionInLine()==51 }? -> type(CS_FieldLength);
+
+CS_DecimalPositions : [ 0-9] [ 0-9] { !rpg400 && getCharPositionInLine()==70 }?
     -> pushMode(IndicatorMode), pushMode(IndicatorMode), pushMode(IndicatorMode); 
 
-CS_WhiteSpace : [ \t] { getCharPositionInLine()>=77 }? [ \t]* -> skip  ; 
+CS_R400_DecimalPositions : [ 0-9] [ 0-9NHP] { rpg400 && getCharPositionInLine()==53 }?
+    -> type(CS_DecimalPositions), pushMode(IndicatorMode), pushMode(IndicatorMode), pushMode(IndicatorMode);
 
-CS_Comments : ~[\r\n] { getCharPositionInLine()>80 }? ~[\r\n]*  ;
+CS_WhiteSpace : [ \t]
+    { (!rpg400 && getCharPositionInLine()>=77) || (rpg400 && getCharPositionInLine()>=60) }? [ \t]* -> skip  ; 
 
-CS_FixedComments : ~[\r\n] { getCharPositionInLine()>=77 }? ~[\r\n]*  ;
+CS_Comments : ~[\r\n] { !rpg400 && getCharPositionInLine()>80 }? ~[\r\n]*  ;
+
+CS_FixedComments : ~[\r\n] { !rpg400 && getCharPositionInLine()>=77 }? ~[\r\n]*  ;
+
+CS_R400_Comments : ~[\r\n] { rpg400 && getCharPositionInLine()>=60 }? ~[\r\n]* -> type(CS_FixedComments)
+   ;
+
+CS_R400_CommentsHid : ~[\r\n] { rpg400 && getCharPositionInLine()==59 }? ~[\r\n]* -> channel(HIDDEN)
+   ;
+
+
 
 CS_EOL : NEWLINE -> type(EOL), popMode;
 
@@ -2492,6 +2662,8 @@ mode IndicatorMode;
 BlankIndicator : [ ] [ ] -> popMode;
 
 GeneralIndicator : ([0] [1-9] | [1-9] [0-9]) -> popMode;
+
+GeneralIndicatorR400 : [0-9] [0-9] -> popMode;
 
 FunctionKeyIndicator : [Kk] [A-NP-Ya-np-y] -> popMode;
 
@@ -2664,3 +2836,132 @@ HS_CONTINUATION : NEWLINE
 
 HS_EOL : NEWLINE -> type(EOL), popMode;
 
+
+
+// ===================== RPG/400 (RPG III) spec modes =====================
+
+mode FIXED_FileSpec_R400;
+FR_Name : WORD5 WORD_WCOLON WORD_WCOLON WORD_WCOLON
+    { rpg400 && getCharPositionInLine()==14 }? -> type(FS_RecordName);
+
+FR_Type : [a-zA-Z ] { rpg400 && getCharPositionInLine()==15 }? -> type(FS_Type);
+
+FR_Desig : [a-zA-Z ] { rpg400 && getCharPositionInLine()==16 }? -> type(FS_Designation);
+
+FR_Eof : [eE ] { rpg400 && getCharPositionInLine()==17 }? -> type(FS_EndOfFile);
+
+FR_Add : [aA ] { rpg400 && getCharPositionInLine()==18 }? -> type(FS_Addution);
+
+FR_Format : [a-zA-Z ] { rpg400 && getCharPositionInLine()==19 }? -> type(FS_Format);
+
+FR_RecName : [0-9A-Za-z$#@]+
+    { rpg400 && getCharPositionInLine()>=20 && getCharPositionInLine()<=30 }?;
+
+FR_Mid : ([ ]
+    { rpg400 && getCharPositionInLine()>=20 && getCharPositionInLine()<=30 }?)+
+    ;
+
+
+FR_RAddr : [a-zA-Z0-9 ] [a-zA-Z0-9 ]
+    { rpg400 && getCharPositionInLine()==32 }?;
+
+FR_Blank : ([ 0-9A-Za-z]
+    { rpg400 && getCharPositionInLine()>=33 && getCharPositionInLine()<=39 }?)+
+    ;
+
+
+FR_Device : WORD5 [a-zA-Z ] [a-zA-Z ] { rpg400 && getCharPositionInLine()==46 }?;
+
+FR_KwBlank : ([ 0-9A-Za-z$#@]
+    { rpg400 && getCharPositionInLine()>=47 && getCharPositionInLine()<=65 }?)+
+    ;
+
+
+FR_KRENAME : [kK] [rR] [eE] [nN] [aA] [mM] [eE]
+    { rpg400 && getCharPositionInLine()==59 }?;
+
+FR_KINFDS : [kK] [iI] [nN] [fF] [dD] [sS]
+    { rpg400 && getCharPositionInLine()==58 }?;
+
+FR_KSFILE : [kK] [sS] [fF] [iI] [lL] [eE]
+    { rpg400 && getCharPositionInLine()==58 }?;
+
+FR_KwName : { rpg400 && getCharPositionInLine()>=59 }? [0-9A-Za-z$#@]+
+    { rpg400 && getCharPositionInLine()>=60 }?;
+
+FR_Junk : ~[\r\n] { rpg400 && getCharPositionInLine()>=66 }? ~[\r\n]* -> channel(HIDDEN);
+
+FR_EOL : NEWLINE -> type(EOL), popMode;
+
+
+mode FIXED_InputSpec_R400;
+    // lead blanks 7-18 (hidden) - field/subfield continuation lines
+IR_LeadHide : ([ ]
+    { rpg400 && getCharPositionInLine()>=7 && getCharPositionInLine()<=18 }?)+
+    -> channel(HIDDEN);
+
+IR_StarLine : '*' { rpg400 && getCharPositionInLine()==8 }? ~[\r\n]* -> channel(HIDDEN);
+
+IR_Name : [0-9A-Za-z$#@*] WORD_WCOLON WORD_WCOLON WORD_WCOLON WORD_WCOLON
+    WORD_WCOLON WORD_WCOLON WORD_WCOLON
+    { rpg400 && getCharPositionInLine()==14 }?;
+
+IR_82 : [0-9] [0-9]
+    { rpg400 && (getCharPositionInLine()==20 || getCharPositionInLine()==21) }?;
+
+IR_DS : [dDsS] [dDsS]
+    { rpg400 && getCharPositionInLine()==20 }?;
+
+    // option/number single char at col 18 (e.g. "S" before DS)
+IR_OptJunk : [0-9A-Za-z] { rpg400 && getCharPositionInLine()>=17 && getCharPositionInLine()<=19 }? -> channel(HIDDEN);
+
+    // subfield/from-file name, starting col 21 (not a "DS" line)
+IR_SubName : { rpg400 && getCharPositionInLine()>=18 }? [0-9A-Za-z$#@]+
+    { rpg400 && getCharPositionInLine()<=32
+      && !( (_input.LA(-6)=='D'||_input.LA(-6)=='d') && (_input.LA(-5)=='S'||_input.LA(-5)=='s') ) }?
+   ;
+
+IR_Len : [0-9 ] [0-9 ] [0-9 ]
+    { rpg400 && (getCharPositionInLine()==52 || getCharPositionInLine()==53) }?
+   ;
+
+    // mid blanks 19-80 (hidden)
+IR_MidHide : ([ ]
+    { rpg400 && getCharPositionInLine()>=19 && getCharPositionInLine()<=80 }?)+
+    -> channel(HIDDEN);
+
+IR_From : [0-9]+
+    { rpg400 && getCharPositionInLine()>=43 && getCharPositionInLine()<=45 }?
+   ;
+
+IR_DSLength : { rpg400 && getCharPositionInLine()<49 }? [0-9] [0-9]*
+    { rpg400 && getCharPositionInLine()>=49 && getCharPositionInLine()<=54 }?
+    -> channel(HIDDEN)
+   ;
+
+IR_To : [0-9A-Za-z] ([0-9A-Za-z ] { rpg400 && getCharPositionInLine()>=45 && getCharPositionInLine()<=54 }?)*
+    { rpg400 && getCharPositionInLine()>=44 && getCharPositionInLine()<=54 }?
+   ;
+
+IR_JunkMid : { rpg400 && getCharPositionInLine()==42 }? [0-9A-Za-z] [0-9A-Za-z ]*
+    { rpg400 && getCharPositionInLine()>=45 && getCharPositionInLine()<=52 }?
+    -> channel(HIDDEN);
+
+IR_FieldName : ~[\r\n ] { rpg400 && getCharPositionInLine()>=53 }? ~[\r\n]*
+   ;
+
+IR_Junk : ~[\r\n] { rpg400 && getCharPositionInLine()>=53 }? ~[\r\n]* -> channel(HIDDEN);
+
+IR_EOL : NEWLINE -> type(EOL), popMode;
+
+
+mode FIXED_Espec_R400;
+ER_Hide : ~[\r\n]+ -> channel(HIDDEN);
+
+ER_EOL : NEWLINE -> type(EOL), popMode;
+
+
+mode HeaderSpec_R400;
+HR_Hide : ~[\r\n]+ -> channel(HIDDEN);
+
+HR_EOL : NEWLINE -> type(EOL), popMode;

@@ -1,0 +1,494 @@
+      *****************************************************************         
+      * USER-NAME    :  ハピネット                                    *         
+      * FILE-NAME    :  移動データ　　　　　　　　　　　　　　　　　 ?*         
+      * FILE-ID      :  ＤＩＤＰ００                                  *         
+      * SOFT-HOUSE   :  ㈱ＩＣＲ                                      *         
+      * AUTHOR       :  S.T                                           *         
+      * CREATE       :  94/08/02                                      *         
+      * AUTHOR       :  K.ITOU                                        *         
+      * UPDATE       :  96/04/20                                      *         
+      *****************************************************************         
+     A***                                   UNIQUE                              
+     A          R IDREC                     TEXT(' 移動データ ')                
+      *                                                                         
+     A            IDDEL          1A         COLHDG(' 削除区分 ')                
+     A            IDFID          2A         COLHDG(' 識別 "ID" ')               
+      * KEY                                                                     
+     A            IDIDN          8A         COLHDG(' 移動№ ')                  
+     A            IDIGY          2A         COLHDG(' 移動行№ ')                
+      *                                                                         
+     A            IDTHK          4A         COLHDG(' 取引区分 ')                
+     A            IDKJD1         6S 0       COLHDG(' 年月 ' ' 移動指示日 ')     
+     A            IDKJD2         2S 0       COLHDG(' 日　 ' ' 移動指示日 ')     
+     A            IDAAK          1A         COLHDG(' 預け預り区分 ')            
+     A            IDRKK          1A         COLHDG(' FIL ')                     
+     A            IDNOK          1A         COLHDG(' 納期区分 ')                
+     A            IDJHP          4A         COLHDG(' FIL ')                     
+     A            IDDST          2A         COLHDG(' 会社 ')                    
+     A            IDGIB          2A         COLHDG(' 事業部 ')                  
+     A            IDBUM          3A         COLHDG(' 部門 ')                    
+     A            IDBUK          3A         COLHDG(' 部課 ')                    
+     A            IDBUKG         3A         COLHDG(' 部課ＧＲ ')                
+     A            IDTAN          5A         COLHDG(' 担当 ')                    
+      *                                                                         
+     A            IDTRK1         1A         COLHDG(' 取引先区分 ' +             
+     A                                             ' 預先・出荷先 ')            
+     A            IDTRC1         7A         COLHDG(' 法人　　　 ' +             
+     A                                             ' 預先・出荷先 ')            
+     A            IDTRS1         4A         COLHDG(' 支店　　　 ' +             
+     A                                             ' 預先・出荷先 ')            
+     A            IDTRU1         1A         COLHDG(' 売場　　　 ' +             
+     A                                             ' 預先・出荷先 ')            
+      *                                                                         
+     A            IDTRK2         1A         COLHDG(' 取引先区分 ' +             
+     A                                             ' 預先・入荷先 ')            
+     A            IDTRC2         7A         COLHDG(' 法人　　　 ' +             
+     A                                             ' 預先・入荷先 ')            
+     A            IDTRS2         4A         COLHDG(' 支店　　　 ' +             
+     A                                             ' 預先・入荷先 ')            
+     A            IDTRU2         1A         COLHDG(' 売場　　　 ' +             
+     A                                             ' 預先・入荷先 ')            
+      *                                                                         
+     A            IDSOK          3A         COLHDG(' 倉庫 ')                    
+     A            IDZBK          3A         COLHDG(' 在庫部課 ')                
+      *                                                                         
+     A            IDDSTA         2A         COLHDG(' 会社　　 ' ' 社内相手先 ') 
+     A            IDGIBA         2A         COLHDG(' 事業部　 ' ' 相手先 ')     
+     A            IDBUMA         3A         COLHDG(' 部門　　 ' ' 相手先 ')     
+     A            IDBUKA         3A         COLHDG(' 部課　　 ' ' 相手先 ')     
+     A            IDBUGA         3A         COLHDG(' 部課ＧＲ ' ' 社内相手先 ') 
+     A            IDTANA         5A         COLHDG(' 担当　　 ' ' 相手先 ')     
+     A            IDSOKA         3A         COLHDG(' 倉庫　　 ' ' 相手先 ')     
+     A            IDZBKA         3A         COLHDG(' 在庫部課 ' ' 相手先 ')     
+      *                                                                         
+     A            IDNOD1         6S 0       COLHDG(' 年月 ' ' 納期 ')           
+     A            IDNOD2         2S 0       COLHDG(' 日　 ' ' 納期 ')           
+     A            IDSGD1         6S 0       COLHDG(' 年月 ' ' 作業日 ')         
+     A            IDSGD2         2S 0       COLHDG(' 日　 ' ' 作業日 ')         
+     A            IDGKD1         6S 0       COLHDG(' 年月 ' ' 出荷限界日 ')     
+     A            IDGKD2         2S 0       COLHDG(' 日　 ' ' 出荷限界日 ')     
+      *                                                                         
+     A            IDTDN          8A         COLHDG(' 伝№ ' ' 取置№ ')         
+     A            IDTGY          2A         COLHDG(' 行№ ' ' 取置№ ')         
+     A            IDIDNA         8A         COLHDG(' 伝№ ' ' 移動№ ( 相手 )') 
+     A            IDIGYA         2A         COLHDG(' 行№ ' ' 移動№ ( 相手 )') 
+     A            IDNDN          8A         COLHDG(' 伝№ ' ' 入出庫№ ')       
+     A            IDNGY          2A         COLHDG(' 行№ ' ' 入出庫№ ')       
+      *                                                                         
+     A            IDCTG1         2A         COLHDG(' 大 ｶﾃｺﾞﾘｰ ')               
+     A            IDCTG2         2A         COLHDG(' 中 ｶﾃｺﾞﾘｰ ')               
+     A            IDCTG3         2A         COLHDG(' 小 ｶﾃｺﾞﾘｰ ')               
+      *                                                                         
+     A            IDHNC         13A         COLHDG(' 商品 ｺｰﾄﾞ ')               
+     A            IDTNIN         1A         COLHDG(' 入力単位 ')                
+     A            IDKNS          9P 3       COLHDG(' 換算値 ')                  
+     A            IDIDS          7P 0       COLHDG(' 移動数 ')                  
+     A            IDIDT         11P 2       COLHDG(' 移動単価 ')                
+     A            IDTKK          1A         COLHDG(' 単価決定区分 ')            
+     A            IDKIN         11P 0       COLHDG(' 金額 ')                    
+     A            IDZEI         11P 0       COLHDG(' 消費税 ')                  
+     A            IDHISZ         7P 0       COLHDG(' 在庫引当数 ' '/ FIL')      
+     A            IDHIST         7P 0       COLHDG(' 取置引当数 ' '/ 入庫数 ')  
+     A            IDSKS          7P 0       COLHDG(' 出庫数　　 ' '/ 取置数 ')  
+     A            IDSU1          7P 0       COLHDG(' FIL ')                     
+     A            IDSSS          7P 0       COLHDG(' FIL        ' '/ 積送数 ')  
+     A            IDSU2          7P 0       COLHDG(' 出庫指示数 ')              
+     A            IDSU3          7P 0       COLHDG(' FIL ')                     
+     A            IDGHGZ        11P 2       COLHDG(' 月次標準原価 ' +           
+     A                                             '( 全社 )')                  
+     A            IDIHG         11P 2       COLHDG(' 移動平均原価 ')            
+     A            IDTNG         11P 2       COLHDG(' 手入力原価 ')              
+     A            IDGHGT        11P 2       COLHDG(' 月次標準原価 ' +           
+     A                                             '( 部課 )')                  
+     A            IDARR1        11P 0       COLHDG(' 粗利 ( 暫定 )')            
+     A            IDARR2        11P 0       COLHDG(' 粗利 ( 確定 )')            
+     A            IDSYG          1A         COLHDG(' 採用原価 ')                
+      *                                                                         
+     A            IDKRK          1A         COLHDG(' 完了区分 ')                
+     A            IDKRS          1A         COLHDG(' 完了手段 ')                
+     A            IDNSD1         6S 0       COLHDG(' 年月 ' +                   
+     A                                             ' 入出庫日 ')                
+     A            IDNSD2         2S 0       COLHDG(' 日　 ' +                   
+     A                                             ' 入出庫日 ')                
+     A            IDISD1         6S 0       COLHDG(' 年月 ' ' 伝票日付 ')       
+     A            IDISD2         2S 0       COLHDG(' 日　 ' ' 伝票日付 ')       
+     A            IDKKN         10A         COLHDG(' 計画№ ')                  
+     A            IDONO         15A         COLHDG(' 送り状№ ')                
+     A            IDADN         15A         COLHDG(' 仕入№ ')                  
+     A            IDBIK1        22O         COLHDG(' 備考１ ')                  
+     A            IDBIK2        22O         COLHDG(' 備考２ ')                  
+     A            IDKIN1         5P 0       COLHDG(' FIL ')                     
+     A            IDKIN2         5P 0       COLHDG(' FIL ')                     
+     A            IDJAN         13A         COLHDG(' JANｺｰﾄﾞ ')                 
+      *                                                                         
+     A            IDTRK3         1A         COLHDG(' 取引先区分 ' ' FIL ')      
+     A            IDTRC3         7A         COLHDG(' 法人　　　 ' ' FIL ')      
+     A            IDTRS3         4A         COLHDG(' 支店　　　 ' ' FIL ')      
+     A            IDTRU3         1A         COLHDG(' 売場　　　 ' ' FIL ')      
+      *                                                                         
+     A            IDHSR          4A         COLHDG(' 配送 ﾙｰﾄ ')                
+     A            IDTKR          5P 4       COLHDG(' 単価掛率 ')                
+     A            IDTDS          1A         COLHDG(' 都度請求 ')                
+     A            IDTMT          1A         COLHDG(' 単価未定 ')                
+     A            IDKKJ          1A         COLHDG(' 仮計上 ')                  
+     A            IDJHB          1A         COLHDG(' 受発注媒体 ')              
+     A            IDAAKA         1A         COLHDG(' 相手預け預り区分 ')        
+      *                                                                         
+     A            IDSMKM         1A         COLHDG(' 締処理区分　　 ' +         
+     A                                             ' 締処理 ﾏｽﾀ 情報 ')         
+     A            IDSMBM         2S 0       COLHDG(' 締日　　　　　 ' +         
+     A                                             ' 締処理 ﾏｽﾀ 情報 ')         
+     A            IDSKDM         9P 0       COLHDG(' 締切日　　　　 ' +         
+     A                                             ' 締処理 ﾏｽﾀ 情報 ')         
+      *                                                                         
+     A            IDUPT          1A         COLHDG(' 更新 ｴﾘｱ       ' +         
+     A                                             ' 締処理 ﾄﾗﾝ 情報 ')         
+     A            IDSMBT         2S 0       COLHDG(' 締日　　　　　 ' +         
+     A                                             ' 締処理 ﾄﾗﾝ 情報 ')         
+     A            IDSQD1         6S 0       COLHDG(' 年月　請求日　 ' +         
+     A                                             ' 締処理 ﾄﾗﾝ 情報 ')         
+     A            IDSQD2         2S 0       COLHDG(' 日　　請求日　 ' +         
+     A                                             ' 締処理 ﾄﾗﾝ 情報 ')         
+      *                                                                         
+     A            IDTRK4         1A         COLHDG(' 取引先区分 ' ' FIL ')      
+     A            IDTRC4         7A         COLHDG(' 法人　　　 ' ' FIL ')      
+     A            IDTRS4         4A         COLHDG(' 支店　　　 ' ' FIL ')      
+     A            IDTRU4         1A         COLHDG(' 売場　　　 ' ' FIL ')      
+      *                                                                         
+     A            IDTRK5         1A         COLHDG(' 取引先区分 ' ' 仕入先 ')   
+     A            IDTRC5         7A         COLHDG(' 法人　　　 ' ' 仕入先 ')   
+     A            IDTRS5         4A         COLHDG(' 支店　　　 ' ' 仕入先 ')   
+     A            IDTRU5         1A         COLHDG(' 売場　　　 ' ' 仕入先 ')   
+      *                                                                         
+     A            IDSZKT         1A         COLHDG(' 消費税区分 ' +             
+     A                                             ' 取引先情報 ')              
+     A            IDZRKT         1A         COLHDG(' 税率区分　 ' +             
+     A                                             ' 取引先情報 ')              
+     A            IDZSKT         1A         COLHDG(' 税算出区分 ' +             
+     A                                             ' 取引先情報 ')              
+      *                                                                         
+     A            IDMMK          1A         COLHDG(' 金額　　 ' ' 丸め区分 ' +  
+     A                                             ' 　取引先情報 ')            
+     A            IDMMS          1A         COLHDG(' 消費税　 ' ' 丸め区分 ' +  
+     A                                             ' 　取引先情報 ')            
+     A            IDMMT          1A         COLHDG(' 単価　　 ' ' 丸め区分 ' +  
+     A                                             ' 　取引先情報 ')            
+     A            IDMMST         1A         COLHDG(' 先方単価 ' ' 丸め区分 ' +  
+     A                                             ' 　取引先情報 ')            
+      *                                                                         
+     A            IDMKK          1A         COLHDG(' 金額　　 ' ' 丸め桁数 ' +  
+     A                                             ' 　取引先情報 ')            
+     A            IDMKS          1A         COLHDG(' 消費税　 ' ' 丸め桁数 ' +  
+     A                                             ' 　取引先情報 ')            
+     A            IDMKT          1A         COLHDG(' 単価　　 ' ' 丸め桁数 ' +  
+     A                                             ' 　取引先情報 ')            
+     A            IDMKST         1A         COLHDG(' 先方単価 ' ' 丸め桁数 ' +  
+     A                                             ' 　取引先情報 ')            
+      *                                                                         
+     A            IDASH          1A         COLHDG(' ｱｿｰﾄ  表示　　 ' +         
+     A                                             ' 取引先情報 ')              
+      *                                                                         
+     A            IDDSB          2A         COLHDG(' 伝票種別　　　 ' +         
+     A                                             ' 取引先情報 ')              
+     A            IDNHK          1A         COLHDG(' 年表示区分　　 ' +         
+     A                                             ' 取引先情報 ')              
+     A            IDDMS          2S 0       COLHDG(' 伝票明細数　　 ' +         
+     A                                             ' 取引先情報 ')              
+     A            IDTK01         1A         COLHDG(' 配送業者　　　 ' +         
+     A                                             ' 取引先情報 ')              
+     A            IDTK04         1A         COLHDG(' 諸口　　　　　 ' +         
+     A                                             ' 取引先情報 ')              
+     A            IDTK23         1A         COLHDG(' ＴＲＣ区分　　 ' +         
+     A                                             ' 取引先情報 ')              
+      *                                                                         
+     A            IDSPHC        13A         COLHDG(' 先方商品 ｺｰﾄﾞ    ' +       
+     A                                             ' 取引条件情報 ')            
+     A            IDBRH         10A         COLHDG(' 分類／品別　　　 ' +       
+     A                                             ' 取引条件情報 ')            
+     A            IDJCA          2A         COLHDG(' ＪＣＡ区分　　　 ' +       
+     A                                             ' 取引条件情報 ')            
+     A            IDSPKT         9P 0       COLHDG(' 先方小売単価　　 ' +       
+     A                                             ' 取引条件情報 ')            
+      *                                                                         
+     A            IDSAS          5P 2       COLHDG(' 載数　　　　 ' +           
+     A                                             ' 商品情報 ')                
+     A            IDTNI1         1A         COLHDG(' 単位 (1)     ' +           
+     A                                             ' 商品情報 ')                
+     A            IDTNI2         1A         COLHDG(' 単位 (2)     ' +           
+     A                                             ' 商品情報 ')                
+     A            IDTNI3         1A         COLHDG(' 単位 (3)     ' +           
+     A                                             ' 商品情報 ')                
+     A            IDKNS1         9P 3       COLHDG(' 換算値 (1)   ' +           
+     A                                             ' 商品情報 ')                
+     A            IDKNS2         9P 3       COLHDG(' 換算値 (2)   ' +           
+     A                                             ' 商品情報 ')                
+     A            IDKNS3         9P 3       COLHDG(' 換算値 (3)   ' +           
+     A                                             ' 商品情報 ')                
+     A            IDMKTK         9P 0       COLHDG(' ﾒｰｶ 希望小売単価 ' +       
+     A                                             ' 税抜 ' ' 商品情報 ')       
+     A            IDMKTZ         9P 0       COLHDG(' ﾒｰｶ 希望小売単価 ' +       
+     A                                             ' 税額 ' ' 商品情報 ')       
+     A            IDTNIB         1A         COLHDG(' ベース単位　 ' +           
+     A                                             ' 商品情報 ')                
+     A            IDHZK          1A         COLHDG(' 非在庫区分　 ' +           
+     A                                             ' 商品情報 ')                
+     A            IDSZKU         1A         COLHDG(' 消費税区分（売） ' +       
+     A                                             ' 商品情報 ')                
+     A            IDSZKK         1A         COLHDG(' 消費税区分（買） ' +       
+     A                                             ' 商品情報 ')                
+     A            IDZRKS         1A         COLHDG(' 税率区分　　 ' +           
+     A                                             ' 商品情報 ')                
+     A            IDAST          1A         COLHDG(' アソート区分 ' +           
+     A                                             ' 商品情報 ')                
+     A            IDKHI          1A         COLHDG(' 経費　　　　 ' +           
+     A                                             ' 商品情報 ')                
+     A            IDS004         1A         COLHDG(' 商品区分　　 ' +           
+     A                                             ' 商品情報 ')                
+     A            IDHNTP         3A         COLHDG(' 品 ﾀｲﾌﾟ      ' +           
+     A                                             ' 商品情報 ')                
+     A            IDSET         13A         COLHDG(' ｾｯﾄ 品親 ｺｰﾄﾞ ' +          
+     A                                             ' 商品情報 ')                
+      *                                                                         
+     A            IDBJDT         9P 0       COLHDG(' 物流指示日 ')              
+     A            IDBJTM         7P 0       COLHDG(' 物流指示時刻 ')            
+     A            IDBJDN         8A         COLHDG(' 伝№ ' ' 作業指示№ ')     
+     A            IDBJGY         2A         COLHDG(' 行№ ' ' 作業指示№ ')     
+      *                                                                         
+     A            IDTDP          5P 0       COLHDG(' 手書伝票 ﾍﾟｰｼﾞ ')          
+     A            IDDN1          8A         COLHDG(' 伝№ ' ' 対応受注№ ')     
+     A            IDGY1          2A         COLHDG(' 伝№ ' ' 対応受注№ ')     
+     A            IDTEK          1A         COLHDG(' 訂正区分 ' ' 元伝情報 ')   
+     A            IDMTD          9P 0       COLHDG(' 伝票日付 ' ' 元伝情報 ')   
+      *                                                                         
+     A            IDSB11         2A         COLHDG(' 大 ' ' 商品分類 (1) ')     
+     A            IDSB12         2A         COLHDG(' 中 ' ' 商品分類 (1) ')     
+     A            IDSB13         2A         COLHDG(' 小 ' ' 商品分類 (1) ')     
+     A            IDSB21         2A         COLHDG(' 大 ' ' 商品分類 (2) ')     
+     A            IDSB22         2A         COLHDG(' 中 ' ' 商品分類 (2) ')     
+     A            IDSB23         2A         COLHDG(' 小 ' ' 商品分類 (2) ')     
+     A            IDSB31         2A         COLHDG(' 大 ' ' 商品分類 (3) ')     
+     A            IDSB32         2A         COLHDG(' 中 ' ' 商品分類 (3) ')     
+     A            IDSB33         2A         COLHDG(' 小 ' ' 商品分類 (3) ')     
+     A            IDSB41         2A         COLHDG(' 大 ' ' 商品分類 (4) ')     
+     A            IDSB42         2A         COLHDG(' 中 ' ' 商品分類 (4) ')     
+     A            IDSB43         2A         COLHDG(' 小 ' ' 商品分類 (4) ')     
+     A            IDSBA1         2A         COLHDG(' 大 ' ' 商品分類 (10)')     
+     A            IDSBA2         2A         COLHDG(' 中 ' ' 商品分類 (10)')     
+     A            IDSBA3         2A         COLHDG(' 小 ' ' 商品分類 (10)')     
+      *                                                                         
+     A            IDHNJ         22O         COLHDG(' 商品名 ')                  
+     A            IDHNA         25A         COLHDG(' 商品名 (ｶﾅ) ')             
+      *                                                                         
+     A            IDKGT          3P 0       COLHDG(' 個口数 ')                  
+     A            IDSKNO        10A         COLHDG(' 配置 ')                    
+     A            IDYM1          6S 0       COLHDG(' 年月 ' ' FIL ')            
+     A            IDDD1          2S 0       COLHDG(' 日　 ' ' FIL ')            
+     A            IDSASG         5P 2       COLHDG(' 載数 ')                    
+     A            IDDPGS         3P 0       COLHDG(' 伝票行数 ')                
+     A            IDDPKN        11P 0       COLHDG(' 伝票合計金額 ')            
+     A            IDDPSZ        11P 0       COLHDG(' 伝票合計消費税 ')          
+     A            IDTNIP         1A         COLHDG(' ﾊﾟｯｷﾝｸﾞ 単位 ')            
+     A            IDPAS         11P 2       COLHDG(' ﾊﾟｯｷﾝｸﾞ 数 ')              
+      *                                                                         
+     A            IDTRK6         1A         COLHDG(' 取引先区分 ' ' FIL ')      
+     A            IDTRC6         7A         COLHDG(' 法人　　　 ' ' FIL ')      
+     A            IDTRS6         4A         COLHDG(' 支店　　　 ' ' FIL ')      
+     A            IDTRU6         1A         COLHDG(' 売場　　　 ' ' FIL ')      
+      *                                                                         
+     A            IDFIL1         7P 0       COLHDG(' FIL ')                     
+     A            IDTNIS         1A         COLHDG(' 載数単位 ')                
+     A            IDFIL2         9P 0       COLHDG(' FIL ')                     
+     A            IDFIL3         9P 0       COLHDG(' FIL ')                     
+     A            IDFIL4         9P 0       COLHDG(' FIL ')                     
+      *                                                                         
+     A            IDSYD1         6S 0       COLHDG(' 年月 ' ' 本日日付 ')       
+     A            IDSYD2         2S 0       COLHDG(' 日　 ' ' 本日日付 ')       
+      *                                                                         
+     A            IDPC01         1A         COLHDG(' ﾁｪｯｸﾘｽﾄ      ' 'PRT')      
+     A            IDPC02         1A         COLHDG(' 伝票　　　　 ' 'PRT')      
+     A            IDPC03         1A         COLHDG(' 日報　　　　 ' 'PRT')      
+     A            IDPC04         1A         COLHDG(' 移動指示区分 ' 'PRT')      
+     A            IDPC05         1A         COLHDG(' ｴﾗｰﾘｽﾄ       ' 'PRT')      
+     A            IDPC06         1A         COLHDG(' ﾋﾟｯｷﾝｸﾞﾘｽﾄ   ' 'PRT')      
+     A            IDPC07         1A         COLHDG(' ｱｿｰﾄﾘｽﾄ      ' 'PRT')      
+     A            IDPC08         1A         COLHDG('ﾛｹｰｼｮﾝ 未決定 ' 'PRT')      
+     A            IDPC09         1A         COLHDG(' 移動指示 ﾘｽﾄ.' 'PRT')      
+     A            IDPC10         1A         COLHDG(' FIL          ' 'PRT')      
+      *                                                                         
+     A            IDKB01         1A         COLHDG(' 受払　　　　 ' ' 区分 ')   
+     A            IDKB02         1A         COLHDG(' 計上　　　　 ' ' 区分 ')   
+     A            IDKB03         1A         COLHDG(' 経費　　　　 ' ' 区分 ')   
+     A            IDKB04         1A         COLHDG(' 訂正不可　　 ' ' 区分 ')   
+     A            IDKB05         1A         COLHDG(' 指示済　　　 ' ' 区分 ')   
+     A            IDKB06         1A         COLHDG(' 伝送済　　　 ' ' 区分 ')   
+     A            IDKB07         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB08         1A         COLHDG(' 確定　　　　 ' ' 区分 ')   
+     A            IDKB09         1A         COLHDG(' 取置　　　　 ' ' 区分 ')   
+     A            IDKB10         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB11         1A         COLHDG(' 引当　　　　 ' ' 区分 ')   
+     A            IDKB12         1A         COLHDG(' 積送中　　　 ' ' 区分 ')   
+     A            IDKB13         1A         COLHDG(' 良／不良　　 ' ' 区分 ')   
+     A            IDKB14         1A         COLHDG(' 欠品　　　　 ' ' 区分 ')   
+     A            IDKB15         1A         COLHDG(' 在庫反映　　 ' ' 区分 ')   
+     A            IDKB16         1A         COLHDG(' コメント　　 ' ' 区分 ')   
+     A            IDKB17         1A         COLHDG(' 調整　　　　 ' ' 区分 ')   
+     A            IDKB18         1A         COLHDG(' 単伝区分　　 ' ' 区分 ')   
+     A            IDKB19         1A         COLHDG(' 行分納　　　 ' ' 区分 ')   
+     A            IDKB20         1A         COLHDG(' 赤黒　　　　 ' ' 区分 ')   
+     A            IDKB21         1A         COLHDG(' 出荷停止　　 ' ' 区分 ')   
+     A            IDKB22         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB23         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB24         1A         COLHDG(' №摘要有　　 ' ' 区分 ')   
+     A            IDKB25         1A         COLHDG(' 手配区分　　 ' ' 区分 ')   
+     A            IDKB26         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB27         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB28         1A         COLHDG(' 作業区分　　 ' ' 区分 ')   
+     A            IDKB29         1A         COLHDG(' 入出庫区分　 ' ' 区分 ')   
+     A            IDKB30         1A         COLHDG(' 本支店　　　 ' ' 区分 ')   
+     A            IDKB31         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB32         1A         COLHDG(' ﾋﾟｯｷﾝｸﾞ 方法 ' ' 区分 ')   
+     A            IDKB33         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB34         1A         COLHDG(' 出荷サブ　　 ' ' 区分 ')   
+     A            IDKB35         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB36         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB37         1A         COLHDG(' 入力便区分　 ' ' 区分 ')   
+     A            IDKB38         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB39         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB40         1A         COLHDG(' 入力配送業者 ' ' 区分 ')   
+     A            IDKB41         1A         COLHDG(' 伝票種別１　 ' ' 区分 ')   
+     A            IDKB42         1A         COLHDG(' 振替区分　　 ' ' 区分 ')   
+     A            IDKB43         1A         COLHDG(' 組立区分　　 ' ' 区分 ')   
+     A            IDKB44         1A         COLHDG(' ＭＭ商材　　 ' ' 区分 ')   
+     A            IDKB45         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB46         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB47         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB48         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB49         1A         COLHDG(' ＡＭ区分　　 ' ' 区分 ')   
+     A            IDKB50         1A         COLHDG(' 積送入荷済　 ' ' 区分 ')   
+      * ( CPU 情報 )                                                            
+     A            IDCP01         1A         COLHDG(' 設定　　　　 ' 'CPU')      
+     A            IDCP02         1A         COLHDG(' 倉庫物理　　 ' 'CPU')      
+     A            IDCP03         1A         COLHDG(' 部課物理　　 ' 'CPU')      
+     A            IDCP04         1A         COLHDG(' 相手倉庫物理 ' 'CPU')      
+     A            IDCP05         1A         COLHDG(' 相手部課物理 ' 'CPU')      
+     A            IDCP06         1A         COLHDG(' 請求物理　　 ' 'CPU')      
+     A            IDCP07         1A         COLHDG(' 倉庫親　　　 ' 'CPU')      
+     A            IDCP08         1A         COLHDG(' 相手倉庫親　 ' 'CPU')      
+     A            IDCP09         1A         COLHDG(' 部課処理　　 ' 'CPU')      
+     A            IDCP10         1A         COLHDG(' 相手部課処理 ' 'CPU')      
+      * ( 配信 ｺﾝﾄﾛｰﾙ )                                                         
+     A            IDHK01         1A         COLHDG(' 東京　　 ' ' 配信 CTL')    
+     A            IDHK02         1A         COLHDG(' 大阪　　 ' ' 配信 CTL')    
+     A            IDHK03         1A         COLHDG(' 船橋　　 ' ' 配信 CTL')    
+     A            IDHK04         1A         COLHDG(' ﾋﾗﾅｶ     ' ' 配信 CTL')    
+     A            IDHK05         1A         COLHDG(' FIL      ' ' 配信 CTL')    
+     A            IDHK06         1A         COLHDG(' FIL      ' ' 配信 CTL')    
+     A            IDHK07         1A         COLHDG(' FIL      ' ' 配信 CTL')    
+     A            IDHK08         1A         COLHDG(' FIL      ' ' 配信 CTL')    
+     A            IDHK09         1A         COLHDG(' FIL      ' ' 配信 CTL')    
+     A            IDHK10         1A         COLHDG(' FIL      ' ' 配信 CTL')    
+      *                                                                         
+     A            IDUP01         1A         COLHDG(' ｵﾝﾗｲﾝ    ' ' 更新 CTL')    
+     A            IDUP02         1A         COLHDG(' 日次　　 ' ' 更新 CTL')    
+     A            IDUP03         1A         COLHDG(' 締時　　 ' ' 更新 CTL')    
+     A            IDUP04         1A         COLHDG(' 月次　　 ' ' 更新 CTL')    
+     A            IDUP05         1A         COLHDG(' 年次　　 ' ' 更新 CTL')    
+     A            IDUP06         1A         COLHDG(' 会計　　 ' ' 更新 CTL')    
+     A            IDUP07         1A         COLHDG(' FIL      ' ' 更新 CTL')    
+     A            IDUP08         1A         COLHDG(' 物流指示 ' ' 更新 CTL')    
+     A            IDUP09         1A         COLHDG(' 作業指示 ' ' 更新 CTL')    
+     A            IDUP10         1A         COLHDG(' 出荷確定 ' ' 更新 CTL')    
+     A            IDUP11         1A         COLHDG(' 伝送 FLG ' ' 更新 CTL')    
+     A            IDUP12         1A         COLHDG(' FIL      ' ' 更新 CTL')    
+      * ( ｼｽﾃﾑ 管理 )                                                           
+     A            IDCDT          9P 0       COLHDG(' 作成日 ')                  
+     A            IDCTM          7P 0       COLHDG(' 作成時刻 ')                
+     A            IDUDT          9P 0       COLHDG(' 更新日 ')                  
+     A            IDUTM          7P 0       COLHDG(' 更新時刻 ')                
+     A            IDWID         10A         COLHDG(' ﾜｰｸｽﾃｰｼｮﾝID ')             
+     A            IDOPC          5A         COLHDG(' ｵﾍﾟﾚｰﾀｺｰﾄﾞ ')              
+     A            IDDST1         2A         COLHDG(' ﾃﾞｰﾀ 設定 ')               
+     A            IDDST2         2A         COLHDG(' ﾃﾞｰﾀ 更新 ')               
+     A            IDTRN         11P 0       COLHDG(' ﾄﾗﾝｻﾞｸｼｮﾝ № ')            
+      *                                                                         
+     A            IDRSS          3P 0       COLHDG(' 累積週数 ')                
+      *                                                                         
+     A            IDTRKD         1A         COLHDG(' 取区 ' ' 計上得意先 ')     
+     A            IDTRCD         7A         COLHDG(' 法人 ' ' 計上得意先 ')     
+     A            IDTRSD         4A         COLHDG(' 支店 ' ' 計上得意先 ')     
+     A            IDTRUD         1A         COLHDG(' 売場 ' ' 計上得意先 ')     
+     A            IDBUKK         3A         COLHDG(' 管理会計部課 ')            
+     A            IDKB51         1A         COLHDG(' 自他社       ' ' 区分 ')   
+SA006A            IDKB52         1A         COLHDG(' 西松屋伝送済 ' ' 区分 ')   
+     A            IDKB53         1A         COLHDG(' BLP 伝送済   ' ' 区分 ')   
+     A            IDKB54         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB55         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB56         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB57         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB58         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB59         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB60         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB61         1A         COLHDG(' ｱｿｰﾄ  親子　 ' ' 区分 ')   
+     A            IDKB62         1A         COLHDG(' 親入力単位　 ' ' 区分 ')   
+     A            IDKB63         1A         COLHDG(' 自動物流指示 ' ' 区分 ')   
+ 5.13A            IDKB64         1A         COLHDG(' H/T 作成 ﾃﾞｰﾀ' ' 区分 ')   
+     A            IDKB65         1A         COLHDG(' 検品 ﾃﾞｰﾀ 作成区分 ')      
+ 6.19A            IDKB66         1A         COLHDG(' ﾛｹｰｼｮﾝ 管理  ' ' 区分 ')   
+     A            IDKB67         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB68         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB69         1A         COLHDG(' FIL          ' ' 区分 ')   
+     A            IDKB70         1A         COLHDG(' FIL          ' ' 区分 ')   
+      *                                                                         
+     A            IDPDN          8A         COLHDG(' ﾋﾟｯｷﾝｸﾞ № ')              
+     A            IDAKN          6A         COLHDG(' 赤黒№ ')                  
+     A            IDMAKN         6A         COLHDG(' 元赤黒№ ')                
+      *                                                                         
+     A            IDLOK          1A         COLHDG(' ﾛｹｰｼｮﾝ 区分 ')             
+     A            IDLO1          1A         COLHDG(' ﾛｹｰｼｮﾝ 1 ')                
+     A            IDLO2          1A         COLHDG(' ﾛｹｰｼｮﾝ 2 ')                
+     A            IDGJKS         3P 0       COLHDG(' 作業指示回数 ')            
+     A            IDOSYS         7P 0       COLHDG(' 親出荷数 ')                
+      *                                                                         
+     A            IDSP02         1A         COLHDG(' 案内伝票　 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            IDSP03         1A         COLHDG(' 案内入力　 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            IDSP04         1A         COLHDG(' 指示区分　 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            IDSP05         1A         COLHDG(' テープ色　 ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            IDSP06         1A         COLHDG(' ﾋﾟｯｷﾝｸﾞﾘｽﾄ.' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            IDSP07         1A         COLHDG(' ｱｿｰﾄﾘｽﾄ    ' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            IDSP08         1A         COLHDG(' ｱｿｰﾄ 管理 .' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+     A            IDSP09         1A         COLHDG(' ﾊﾟｯｷﾝｸﾞﾘｽﾄ.' 'ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ')
+      *                                                                         
+     A            IDSU06         1A         COLHDG(' ＰＣ取込 ' ' 更新 CTL')    
+     A            IDSU07         1A         COLHDG(' 伝採番済 ' ' 更新 CTL')    
+     A            IDCOL          4A         COLHDG(' 色 ｺｰﾄﾞ ')                 
+      *                                                                         
+     A            IDSSJS         7P 0       COLHDG(' 出荷指示数 ')              
+     A            IDSHSZ         7P 0       COLHDG(' 在庫引当数 ')              
+     A            IDSHST         7P 0       COLHDG(' 取置／不良引当数 ')        
+     A            IDSSKS         7P 0       COLHDG(' 出荷数 ')                  
+     A            IDSSU1         7P 0       COLHDG(' ｷｬﾝｾﾙ 数 ')                
+     A            IDSSU2         7P 0       COLHDG(' 欠品数 ')                  
+     A            IDSSU3         7P 0       COLHDG(' 出荷指示数 ')              
+     A            IDSSU4         7P 0       COLHDG(' 移動数 ')                  
+     A            IDSKIN        11P 0       COLHDG(' 出荷金額 ')                
+     A            IDKB71         1A         COLHDG(' FIL ' ' 区分 ')            
+..... *  ADD 97.08.18                                                           
+.....A            IDNKB          1A         COLHDG(' 納品先区分 ')              
+.....A            IDTRKN         1A         COLHDG(' 取引先区分 ' ' 納品先 ')   
+.....A            IDTRCN         7A         COLHDG(' 法人 ' ' 納品先 ')         
+.....A            IDTRSN         4A         COLHDG(' 支店 ' ' 納品先 ')         
+.....A            IDTRUN         1A         COLHDG(' 売場 ' ' 納品先 ')         
+.....A            IDKB80         1A         COLHDG(' FIL80 ' ' 区分 ')          
+.....A            IDKB81         1A         COLHDG(' FIL81 ' ' 区分 ')          
+.....A            IDKB82         1A         COLHDG(' FIL82 ' ' 区分 ')          
+.....A            IDKB83         1A         COLHDG(' FIL83 ' ' 区分 ')          
+.....A            IDKB84         1A         COLHDG(' FIL84 ' ' 区分 ')          
+.....A            IDKB85         1A         COLHDG(' FIL85 ' ' 区分 ')          
+.....A            IDKB86         1A         COLHDG(' FIL86 ' ' 区分 ')          
+.....A            IDKB87         1A         COLHDG(' FIL87 ' ' 区分 ')          
+.....A            IDKB88         1A         COLHDG(' FIL88 ' ' 区分 ')          
+.....A            IDKB89         1A         COLHDG(' FIL89 ' ' 区分 ')          
+      * <KEY>                                                                   
+     A          K IDIDN                                                         
+     A          K IDAKN                                                         
+     A          K IDIGY                                                         

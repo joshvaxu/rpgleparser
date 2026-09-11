@@ -1,0 +1,83 @@
+      *****************************************************************         
+      * USER-NAME    :  ハピネット                                    *         
+      * FILE-NAME    :  申告受付開始ファイル　　　　　　　　　　　　 ?*         
+      * FILE-ID      :  ＦＢＵＰ００                                  *         
+      * SOFT-HOUSE   :  ㈱ＩＣＲ                                      *         
+      * AUTHOR       :  M.M                                           *         
+      * CREATE       :  95/02/21                                      *         
+      * AUTHOR       :  X.XXXXXX                                      *         
+      * UPDATE       :    /  /                                        *         
+      *****************************************************************         
+     A***                                   UNIQUE                              
+     A          R BUREC                     TEXT(' 申告受付開始ファイル ')      
+      *                                                                         
+     A            BUDEL          1A         COLHDG(' 削除区分 ')                
+     A            BUFID          2A         COLHDG(' 識別 "BU" ')               
+      * KEY                                                                     
+     A            BUSTYM         6A         COLHDG(' 開始年月　　 ' ' 計画№ ') 
+     A            BUTBS          2A         COLHDG(' 対象部門識別 ' ' 計画№ ') 
+     A            BURNB          1A         COLHDG(' 連番　　　　 ' ' 計画№ ') 
+      *                                                                         
+     A            BUTRKS         1A         COLHDG(' 取引先区分 ' ' 仕入先 ')   
+     A            BUTRCS         7A         COLHDG(' 法人　　　 ' ' 仕入先 ')   
+     A            BUTRSS         4A         COLHDG(' 支店　　　 ' ' 仕入先 ')   
+     A            BUTRUS         1A         COLHDG(' 売場　　　 ' ' 仕入先 ')   
+     A            BUTSM1         6S 0       COLHDG(' 対象年月１ ')              
+     A            BUTSM2         6S 0       COLHDG(' 対象年月２ ')              
+     A            BUTSM3         6S 0       COLHDG(' 対象年月３ ')              
+      *                                                                         
+     A            BUPC01         1A         COLHDG(' ﾁｪｯｸﾘｽﾄ  ' ' ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ') 
+     A            BUPC02         1A         COLHDG(' FIL      ' ' ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ') 
+     A            BUPC03         1A         COLHDG(' FIL      ' ' ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ') 
+     A            BUPC04         1A         COLHDG(' FIL      ' ' ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ') 
+     A            BUPC05         1A         COLHDG(' FIL      ' ' ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ') 
+     A            BUPC06         1A         COLHDG(' FIL      ' ' ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ') 
+     A            BUPC07         1A         COLHDG(' FIL      ' ' ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ') 
+     A            BUPC08         1A         COLHDG(' FIL      ' ' ﾌﾟﾘﾝﾄｺﾝﾄﾛｰﾙ') 
+      *                                                                         
+     A            BUKB01         1A         COLHDG(' 申告締切 ' ' 区分 ')       
+     A            BUKB02         1A         COLHDG(' ＦＩＬ　 ' ' 区分 ')       
+     A            BUKB03         1A         COLHDG(' ＦＩＬ　 ' ' 区分 ')       
+     A            BUKB04         1A         COLHDG(' ＦＩＬ　 ' ' 区分 ')       
+     A            BUKB05         1A         COLHDG(' ＦＩＬ　 ' ' 区分 ')       
+     A            BUKB06         1A         COLHDG(' ＦＩＬ　 ' ' 区分 ')       
+     A            BUKB07         1A         COLHDG(' ＦＩＬ　 ' ' 区分 ')       
+     A            BUKB08         1A         COLHDG(' ＦＩＬ　 ' ' 区分 ')       
+     A            BUKB09         1A         COLHDG(' ＦＩＬ　 ' ' 区分 ')       
+     A            BUKB10         1A         COLHDG(' ＦＩＬ　 ' ' 区分 ')       
+      *                                                                         
+     A            BUCP01         1A         COLHDG(' 設定　 ' ' CPU 区分 ')     
+     A            BUCP02         1A         COLHDG(' 処理　 ' ' CPU 区分 ')     
+     A            BUCP03         1A         COLHDG(' 配信１ ' ' CPU 区分 ')     
+     A            BUCP04         1A         COLHDG(' 配信２ ' ' CPU 区分 ')     
+     A            BUCP05         1A         COLHDG(' 配信３ ' ' CPU 区分 ')     
+     A            BUCP06         1A         COLHDG(' 配信４ ' ' CPU 区分 ')     
+     A            BUCP07         1A         COLHDG(' 配信５ ' ' CPU 区分 ')     
+     A            BUCP08         1A         COLHDG(' ＦＩＬ ' ' CPU 区分 ')     
+     A            BUCP09         1A         COLHDG(' ＦＩＬ ' ' CPU 区分 ')     
+     A            BUCP10         1A         COLHDG(' ＦＩＬ ' ' CPU 区分 ')     
+      *                                                                         
+     A            BUHK01         1A         COLHDG(' (1)' ' 配信 ｺﾝﾄﾛｰﾙ ')      
+     A            BUHK02         1A         COLHDG(' (2)' ' 配信 ｺﾝﾄﾛｰﾙ ')      
+     A            BUHK03         1A         COLHDG(' (3)' ' 配信 ｺﾝﾄﾛｰﾙ ')      
+     A            BUHK04         1A         COLHDG(' (4)' ' 配信 ｺﾝﾄﾛｰﾙ ')      
+     A            BUHK05         1A         COLHDG(' (5)' ' 配信 ｺﾝﾄﾛｰﾙ ')      
+      *                                                                         
+     A            BUUP01         1A         COLHDG(' FIL 更新済 ')              
+     A            BUUP02         1A         COLHDG(' FIL 更新済 ')              
+     A            BUUP03         1A         COLHDG(' FIL 更新済 ')              
+     A            BUUP04         1A         COLHDG(' FIL 更新済 ')              
+     A            BUUP05         1A         COLHDG(' FIL 更新済 ')              
+      * ( ｼｽﾃﾑ 管理 )                                                           
+     A            BUCDT          9P 0       COLHDG(' 作成日 ')                  
+     A            BUCTM          7P 0       COLHDG(' 作成時刻 ')                
+     A            BUUDT          9P 0       COLHDG(' 更新日 ')                  
+     A            BUUTM          7P 0       COLHDG(' 更新時刻 ')                
+     A            BUWID         10A         COLHDG(' ﾜｰｸｽﾃｰｼｮﾝID ')             
+     A            BUOPC          5A         COLHDG(' ｵﾍﾟﾚｰﾀｺｰﾄﾞ ')              
+     A            BUDST1         1A         COLHDG(' ﾃﾞｰﾀ 設定 ')               
+     A            BUDST2         1A         COLHDG(' ﾃﾞｰﾀ 更新 ')               
+      * <KEY>                                                                   
+     A          K BUSTYM                                                        
+     A          K BUTBS                                                         
+     A          K BURNB                                                         

@@ -1,0 +1,86 @@
+      *****************************************************************         
+      * USER-NAME    :  ÉnÉsÉlÉbÉg                                    *         
+      * FILE-NAME    :  É~ÉbÉNÉXÉfÅ[É^Å@ÇkÇeÇPÇUÅ@Å@Å@Å@Å@Å@Å@Å@Å@Å@ ?*         
+      * FILE-ID      :  ÇcÇlÇwÇkÇPÇU                                  *         
+      * SOFT-HOUSE   :  áäÇhÇbÇq                                      *         
+      * AUTHOR       :  X.XXXXXX                                      *         
+      * CREATE       :  98/08/27                                      *         
+      * AUTHOR       :  X.XXXXXX                                      *         
+      * UPDATE       :    /  /                                        *         
+      *****************************************************************         
+      *< éÛíç >                                                                 
+     A          R JUREC                     PFILE(DJUP00)                       
+      *                                                                         
+     A          K JUSOK                                                         
+     A*******   K JUZBK                                                         
+     A          K JUHNC                                                         
+     A**951115  K JUCDT                                                         
+     A**951115  K JUCTM                                                         
+     A          K JUNOD1                                                        
+     A          K JUNOD2                                                        
+     A          K JUKB01                                                        
+     A          K JUJDN                                                         
+     A          K JUTRKT                                                        
+     A          K JUTRCT                                                        
+     A          K JUTRST                                                        
+     A          K JUTRUT                                                        
+      *                                                                         
+     A          O JUDEL                     COMP(NE ' ')                        
+     A          S JUKRK                     COMP(NE '1')                        
+      *< î≠íç >                                                                 
+     A          R HAREC                     PFILE(DHAP00)                       
+      *                                                                         
+     A          K HASOK                                                         
+     A*******   K HAZBK                                                         
+     A          K HAHNC                                                         
+     A**951115  K HACDT                                                         
+     A**951115  K HACTM                                                         
+     A          K HANOD1                                                        
+     A          K HANOD2                                                        
+     A          K HAKB01                                                        
+     A          K HAHDN                                                         
+     A          K HATRKS                                                        
+     A          K HATRCS                                                        
+     A          K HATRSS                                                        
+     A          K HATRUS                                                        
+      *                                                                         
+     A          O HADEL                     COMP(NE ' ')                        
+     A          S HAKRK                     COMP(NE '1')                        
+      *< à⁄ìÆ >                                                                 
+     A          R IDREC                     PFILE(DIDP00)                       
+      *                                                                         
+     A          K IDSOK                                                         
+     A*******   K IDZBK                                                         
+     A          K IDHNC                                                         
+     A**951115  K IDCDT                                                         
+     A**951115  K IDCTM                                                         
+     A          K IDNOD1                                                        
+     A          K IDNOD2                                                        
+     A          K IDKB01                                                        
+     A          K IDIDN                                                         
+     A          K IDTRK1                                                        
+     A          K IDTRC1                                                        
+     A          K IDTRS1                                                        
+     A          K IDTRU1                                                        
+      *                                                                         
+     A          O IDDEL                     COMP(NE ' ')                        
+     A          S IDKRK                     COMP(NE '1')                        
+      *< ï‘ïiéwé¶ >                                                             
+     A          R HNREC                     PFILE(DHNP00)                       
+      *                                                                         
+     A          K HNSOK                                                         
+     A********  K HNZBK                                                         
+     A          K HNHNC                                                         
+     A**951115  K HNCDT                                                         
+     A**951115  K HNCTM                                                         
+     A          K HNNOD1                                                        
+     A          K HNNOD2                                                        
+     A          K HNKB01                                                        
+     A          K HNCDN                                                         
+     A          K HNTRKT                                                        
+     A          K HNTRCT                                                        
+     A          K HNTRST                                                        
+     A          K HNTRUT                                                        
+      *                                                                         
+     A          O HNDEL                     COMP(NE ' ')                        
+     A          S HNKRK                     COMP(NE '1')                        
